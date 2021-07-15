@@ -10,7 +10,7 @@ interface Map {
     setDateUpper(date: Date): void
     lowerValid?: Date
     upperValid?: Date
-    COVIDData?: DailyReport[]
+    COVIDData: DailyReport[]
 }
 
 export const MapContext = createContext<Map>({
@@ -18,9 +18,10 @@ export const MapContext = createContext<Map>({
     setSelected: () => {},
     setDateLower: () => {},
     setDateUpper: () => {},
+    COVIDData: []
 });
 
-type DailyReport = {
+export type DailyReport = {
     active_cases: number
     active_cases_change: number
     avaccine: number
@@ -48,7 +49,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [dateLower, setDateLower] = useState<Date>()
     const [dateUpper, setDateUpper] = useState<Date>()
 
-    const [data, setDailyData] = useState<DailyReport[]>()
+    const [data, setDailyData] = useState<DailyReport[]>([])
 
     const lowerValid = new Date()
     lowerValid.setFullYear(2020, 2, 1)
@@ -66,7 +67,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
         fetch(`https://api.opencovid.ca/summary?loc=${selected}&after=${dateFormat(dateLower ?? lowerValid)}&before=${dateFormat(dateUpper ?? upperValid)}`)
             .then(res => res.json())
-            .then(res => setDailyData(res))
+            .then(res => setDailyData(res.summary))
 
     }, [selected, dateLower, dateUpper])
 
