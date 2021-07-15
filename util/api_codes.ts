@@ -4,7 +4,7 @@ export enum OpenCOVID {
     Manitoba = "MB",
     NewBrunswick = "NB",
     NewfoundlandLabrador = "NL",
-    NorthwestTerritories = "NWT",
+    NorthwestTerritories = "NT",
     NovaScotia = "NS",
     Nunavut = "NU",
     Ontario = "ON",

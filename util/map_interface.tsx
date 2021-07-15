@@ -2,18 +2,33 @@ import React, {ReactNode, createContext, useContext, useState, useEffect} from "
 import {OpenCOVID} from "./api_codes";
 
 interface Map {
-    selected?: OpenCOVID,
-    setSelected(select?: OpenCOVID): void;
+    selected?: OpenCOVID
+    setSelected(select?: OpenCOVID): void
+    dateLower?: Date
+    dateUpper?: Date
+    setDateLower(date: Date): void
+    setDateUpper(date: Date): void
+    lowerValid?: Date
+    upperValid?: Date
 }
 
 export const MapContext = createContext<Map>({
     selected: undefined,
-    setSelected: () => {}},
-);
+    setSelected: () => {},
+    setDateLower: () => {},
+    setDateUpper: () => {},
+});
 
 export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     const [selected, setSelected] = useState<OpenCOVID>()
+    const [dateLower, setDateLower] = useState<Date>()
+    const [dateUpper, setDateUpper] = useState<Date>()
+
+    const lowerValid = new Date()
+    lowerValid.setFullYear(2020, 2, 1)
+
+    const upperValid = new Date()
 
     useEffect(() => {
         if (!selected) return;
@@ -29,7 +44,13 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     return (
         <MapContext.Provider value={{
             selected,
-            setSelected
+            setSelected,
+            dateLower,
+            dateUpper,
+            setDateLower,
+            setDateUpper,
+            lowerValid,
+            upperValid
         }}>{children}</MapContext.Provider>
     );
 }
