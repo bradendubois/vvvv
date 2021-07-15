@@ -18,7 +18,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     useEffect(() => {
         if (!selected) return;
 
-        fetch(`https://api.opencovid.ca/summary?date=7-1-2021`)
+        fetch(`https://api.opencovid.ca/summary?loc=${selected}&date=7-1-2021`)
             .then(res => res.json())
             .then(res => {
                 console.log(res)
