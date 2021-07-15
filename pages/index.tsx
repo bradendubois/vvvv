@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 // @ts-ignore
 // TODO
@@ -27,13 +27,17 @@ const Home = () => {
 
     const context = useMap()
 
+    useEffect(() => { console.log(context.COVIDData) }, [context.COVIDData])
+
     return (
         <div className={styles.container}>
 
             <p>{context.selected ?? "None Yet"}</p>
 
+            <p>{context.COVIDData?.length}</p>
+
             <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
-            <DatePicker minDate={context.dateLower ?? context.lowerValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
+            <DatePicker minDate={context.dateLower ?? context.lowerValid} maxDate={context.upperValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
 
             <main className={styles.main}>
                 <Postcard province={OpenCOVID.Yukon} />

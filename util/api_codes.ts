@@ -8,7 +8,7 @@ export enum OpenCOVID {
     NovaScotia = "NS",
     Nunavut = "NU",
     Ontario = "ON",
-    PrinceEdwardIsland = "PEI",
+    PrinceEdwardIsland = "PE",
     Quebec = "QC",
     Saskatchewan = "SK",
     Yukon = "YT",
