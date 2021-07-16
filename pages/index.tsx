@@ -39,7 +39,7 @@ const Home = () => {
             <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
             <DatePicker minDate={context.dateLower ?? context.lowerValid} maxDate={context.upperValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
 
-            <ResponsiveContainer>
+            <ResponsiveContainer height={500}>
                 <LineChart>
                     <Legend verticalAlign={"top"} />
                     <Tooltip />
