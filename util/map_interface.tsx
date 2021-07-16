@@ -1,5 +1,5 @@
 import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
-import {CanadaRegions, OpenCOVIDLabel} from "./api_codes";
+import { CanadaRegions } from "./api_codes";
 
 interface Map {
     selected?: CanadaRegions
