@@ -5,8 +5,7 @@ import {LineChart, Line, YAxis, XAxis, CartesianGrid, Tooltip, Legend, Responsiv
 // TODO
 import ReactDatePicker from "react-datepicker";
 
-import {DailyReport, MapContext, useMap} from "../util/map_interface";
-import {CanadaRegions} from "../util/api_codes";
+import { useMap } from "../util/map_interface";
 
 import styles from '../styles/Home.module.scss'
 import "react-datepicker/dist/react-datepicker.css";

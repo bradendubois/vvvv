@@ -1,0 +1,25 @@
+.canada {
+
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+  }
+
+  button {
+
+    margin: 5px;
+    padding: 5px;
+    transition: .3s;
+
+    &.enabled {
+      background-color: #0ff;
+    }
+
+    &.disabled {
+
+    }
+  }
+}
