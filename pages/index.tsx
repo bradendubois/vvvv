@@ -1,15 +1,16 @@
-import {useEffect, useState} from "react"
-import {LineChart, Line, YAxis, XAxis, CartesianGrid, Tooltip, Legend} from "recharts"
+import {Fragment, useEffect, useState} from "react"
+import {LineChart, Line, YAxis, XAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from "recharts"
 
 // @ts-ignore
 // TODO
 import ReactDatePicker from "react-datepicker";
 
 import {DailyReport, MapContext, useMap} from "../util/map_interface";
-import {OpenCOVID} from "../util/api_codes";
+import {CanadaRegions} from "../util/api_codes";
 
 import styles from '../styles/Home.module.scss'
 import "react-datepicker/dist/react-datepicker.css";
+import CanadaMap from "../components/canadaMap";
 
 
 const DatePicker = ({...params}) => {
@@ -23,18 +24,6 @@ const DatePicker = ({...params}) => {
         />
     )
 }
-
-const Postcard = ({ province }: { province: OpenCOVID }) => {
-
-    const context = useMap();
-
-    return (
-        <div>
-            <button onClick={() => context.setSelected(province)}>{province}</button>
-        </div>
-    )
-}
-
 
 const Home = () => {
 
@@ -51,18 +40,33 @@ const Home = () => {
             <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
             <DatePicker minDate={context.dateLower ?? context.lowerValid} maxDate={context.upperValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
 
-            <LineChart width={1000} height={400} data={context.COVIDData}>
-                <Legend verticalAlign={"top"} />
-                <Tooltip />
+            <ResponsiveContainer>
+                <LineChart>
+                    <Legend verticalAlign={"top"} />
+                    <Tooltip />
 
-                <Line name={"Active Cases"} yAxisId={"L"} type={"monotone"} dataKey={"active_cases"} stroke={"#8884d8"}/>
-                <CartesianGrid scale={1} stroke={"#ccc"}/>
-                <XAxis dataKey={"date"}/>
-                <YAxis yAxisId={"L"} orientation={"left"}/>
+                    <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
+                    <XAxis dataKey={"date"} allowDuplicatedCategory={false}/>
 
-                <Line  yAxisId={"R"} type={"monotone"} dataKey={"cumulative_avaccine"}/>
-                <YAxis yAxisId={"R"} orientation={"right"}/>
-            </LineChart>
+                    <YAxis yAxisId={"L"} orientation={"left"}/>
+                    <YAxis yAxisId={"R"} orientation={"right"}/>
+
+                    {/* Active Cases*/}
+                    {Array.from(context.ShowRegions).map(x => <Line
+                        data={context.COVIDData.filter(y => y.province == x)}
+                        yAxisId={"L"}
+                        dataKey={"active_cases"}
+                    />)}
+
+                    {/* Vaccine Administration */}
+                    {Array.from(context.ShowRegions).map(x => <Line
+                        data={context.COVIDData.filter(y => y.province == x)}
+                        yAxisId={"R"}
+                        dataKey={"cumulative_avaccine"}
+                    />)}
+
+                </LineChart>
+            </ResponsiveContainer>
 
             {/*
             <LineChart width={1000} height={400} data={context.COVIDData}>
@@ -74,20 +78,9 @@ const Home = () => {
 */}
             {/* Picker of Canadian regions */}
             <main className={styles.main}>
-                <Postcard province={OpenCOVID.Yukon} />
-                <Postcard province={OpenCOVID.NorthwestTerritories} />
-                <Postcard province={OpenCOVID.Nunavut} />
 
-                <Postcard province={OpenCOVID.BritishColumbia} />
-                <Postcard province={OpenCOVID.Alberta} />
-                <Postcard province={OpenCOVID.Saskatchewan} />
-                <Postcard province={OpenCOVID.Manitoba} />
-                <Postcard province={OpenCOVID.Ontario} />
-                <Postcard province={OpenCOVID.Quebec} />
-                <Postcard province={OpenCOVID.NewfoundlandLabrador} />
-                <Postcard province={OpenCOVID.NewBrunswick} />
-                <Postcard province={OpenCOVID.PrinceEdwardIsland} />
-                <Postcard province={OpenCOVID.NovaScotia} />
+                <CanadaMap />
+
             </main>
         </div>
     )

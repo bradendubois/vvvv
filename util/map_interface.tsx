@@ -1,9 +1,9 @@
 import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
-import {OpenCOVID} from "./api_codes";
+import {CanadaRegions, OpenCOVIDLabel} from "./api_codes";
 
 interface Map {
-    selected?: OpenCOVID
-    setSelected(select?: OpenCOVID): void
+    selected?: CanadaRegions
+    setSelected(select?: CanadaRegions): void
     dateLower?: Date
     dateUpper?: Date
     setDateLower(date: Date): void
@@ -11,6 +11,8 @@ interface Map {
     lowerValid?: Date
     upperValid?: Date
     COVIDData: DailyReport[]
+    toggleRegion(region: CanadaRegions): void
+    ShowRegions: Set<CanadaRegions | String>
 }
 
 export const MapContext = createContext<Map>({
@@ -18,7 +20,9 @@ export const MapContext = createContext<Map>({
     setSelected: () => {},
     setDateLower: () => {},
     setDateUpper: () => {},
-    COVIDData: []
+    COVIDData: [],
+    toggleRegion() {},
+    ShowRegions: new Set()
 });
 
 export type DailyReport = {
@@ -45,11 +49,12 @@ export type DailyReport = {
 
 export const MapProvider = ({ children }: { children: ReactNode}) => {
 
-    const [selected, setSelected] = useState<OpenCOVID>()
+    const [selected, setSelected] = useState<CanadaRegions>()
     const [dateLower, setDateLower] = useState<Date>()
     const [dateUpper, setDateUpper] = useState<Date>()
 
     const [data, setDailyData] = useState<DailyReport[]>([])
+    const [regions, setRegions] = useState<Set<CanadaRegions>>(new Set())
 
     const lowerValid = new Date()
     lowerValid.setFullYear(2020, 2, 1)
@@ -60,16 +65,23 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
         return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
     }
 
+    const toggleRegion = (region: CanadaRegions) => {
+        if (regions.has(region))
+            setRegions(new Set(Array.from(regions).filter(x => x !== region)))
+        else
+            setRegions(new Set(Array.from(regions).concat([region])))
+    }
+
     useEffect(() => {
 
         // Need valid dates, and a location
-        if (!(selected && dateLower && dateUpper)) return;
+        if (!(dateLower && dateUpper)) return;
 
-        fetch(`https://api.opencovid.ca/summary?loc=${selected}&after=${dateFormat(dateLower ?? lowerValid)}&before=${dateFormat(dateUpper ?? upperValid)}`)
+        fetch(`https://api.opencovid.ca/summary?after=${dateFormat(dateLower ?? lowerValid)}&before=${dateFormat(dateUpper ?? upperValid)}`)
             .then(res => res.json())
             .then(res => setDailyData(res.summary))
 
-    }, [selected, dateLower, dateUpper])
+    }, [dateLower, dateUpper])
 
     return (
         <MapContext.Provider value={{
@@ -81,7 +93,9 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setDateUpper,
             lowerValid,
             upperValid,
-            COVIDData: data
+            COVIDData: data,
+            toggleRegion,
+            ShowRegions: regions
         }}>{children}</MapContext.Provider>
     );
 }
