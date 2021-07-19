@@ -1,35 +1,7 @@
+// scss-lint:disable NestingDepth SelectorDepth
 .container {
 
   display: flex;
   flex-direction: column;
 
-  .range {
-
-    align-items: center;
-
-    display: flex;
-    flex-direction: row;
-
-    justify-content: space-between;
-
-    p {
-      font-size: 12pt;
-    }
-
-    > div {
-
-      p {
-        font-size: 14pt;
-        font-weight: 600;
-      }
-
-      &:first-of-type {
-        text-align: left;
-      }
-
-      &:last-of-type {
-        text-align: right;
-      }
-    }
-  }
 }
