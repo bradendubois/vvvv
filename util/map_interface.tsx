@@ -3,8 +3,6 @@ import { CanadaRegions } from "./api_codes";
 import useSWR from "swr";
 
 interface Map {
-    selected?: CanadaRegions
-    setSelected(select?: CanadaRegions): void
     dateLower?: Date
     dateUpper?: Date
     setDateLower(date: Date): void
@@ -17,8 +15,6 @@ interface Map {
 }
 
 export const MapContext = createContext<Map>({
-    selected: undefined,
-    setSelected: () => {},
     setDateLower: () => {},
     setDateUpper: () => {},
     COVIDData: [],
@@ -58,14 +54,18 @@ upperValid.setHours(0, 0, 0, 0)
 
 export const MapProvider = ({ children }: { children: ReactNode}) => {
 
+    // We fetch data from the OpenCOVID API
     const { data, error } = useSWR('/api/opencovid')
 
-    const [selected, setSelected] = useState<CanadaRegions>()
+    // User-determined filters on data
     const [dateLower, setDateLower] = useState<Date>()
     const [dateUpper, setDateUpper] = useState<Date>()
-
-    const [filteredData, setFilteredData] = useState<DailyReport[]>([])
     const [regions, setRegions] = useState<Set<CanadaRegions>>(new Set())
+
+    // Results after applying user-defined filters
+    const [filteredData, setFilteredData] = useState<DailyReport[]>([])
+
+
 
     const toggleRegion = (region: CanadaRegions) => {
         if (regions.has(region))
@@ -75,38 +75,31 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     }
 
     useEffect(() => {
-        console.log("DATA", data)
-    }, [data])
 
-    useEffect(() => {
-
-        // Need valid dates, and a location
-        if (!(dateLower && dateUpper)) return;
-
-        let filtered = data.filter((x: DailyReport) => {
+        data && data.forEach((x: DailyReport) => {
 
             let s = x.date.split("-")
+
             let date = new Date()
             date.setDate(parseInt(s[0]))
             date.setMonth(parseInt(s[1])-1)
             date.setFullYear(parseInt(s[2]))
             date.setHours(0, 0, 0, 0)
 
-            console.log(x.date, date, date >= dateLower, date <= dateUpper)
-
-            return date >= dateLower && date <= dateUpper
+            x.date_obj = date
         })
 
-        console.log("Filtered", filtered)
+    }, [data])
 
+    useEffect(() => {
+        // Need valid dates
+        if (!(dateLower && dateUpper)) return;
+        let filtered = data.filter((x: DailyReport) => x.date_obj >= dateLower && x.date_obj <= dateUpper)
         setFilteredData(filtered)
-
     }, [dateLower, dateUpper])
 
     return (
         <MapContext.Provider value={{
-            selected,
-            setSelected,
             dateLower,
             dateUpper,
             setDateLower,
