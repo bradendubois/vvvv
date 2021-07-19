@@ -1,5 +1,6 @@
 import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
 import { CanadaRegions } from "./api_codes";
+import useSWR from "swr";
 
 interface Map {
     selected?: CanadaRegions
@@ -44,26 +45,27 @@ export type DailyReport = {
     province: String
     recovered: number
     testing: number
-    testing_info: String
+    testing_info: String,
+
+    date_obj: Date
 }
 
+const lowerValid = new Date()
+lowerValid.setFullYear(2020, 2, 1)
+
+const upperValid = new Date();
+upperValid.setHours(0, 0, 0, 0)
+
 export const MapProvider = ({ children }: { children: ReactNode}) => {
+
+    const { data, error } = useSWR('/api/opencovid')
 
     const [selected, setSelected] = useState<CanadaRegions>()
     const [dateLower, setDateLower] = useState<Date>()
     const [dateUpper, setDateUpper] = useState<Date>()
 
-    const [data, setDailyData] = useState<DailyReport[]>([])
+    const [filteredData, setFilteredData] = useState<DailyReport[]>([])
     const [regions, setRegions] = useState<Set<CanadaRegions>>(new Set())
-
-    const lowerValid = new Date()
-    lowerValid.setFullYear(2020, 2, 1)
-
-    const upperValid = new Date();
-
-    const dateFormat = (date: Date): String => {
-        return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
-    }
 
     const toggleRegion = (region: CanadaRegions) => {
         if (regions.has(region))
@@ -73,13 +75,31 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     }
 
     useEffect(() => {
+        console.log("DATA", data)
+    }, [data])
+
+    useEffect(() => {
 
         // Need valid dates, and a location
         if (!(dateLower && dateUpper)) return;
 
-        fetch(`https://api.opencovid.ca/summary?after=${dateFormat(dateLower ?? lowerValid)}&before=${dateFormat(dateUpper ?? upperValid)}`)
-            .then(res => res.json())
-            .then(res => setDailyData(res.summary))
+        let filtered = data.filter((x: DailyReport) => {
+
+            let s = x.date.split("-")
+            let date = new Date()
+            date.setDate(parseInt(s[0]))
+            date.setMonth(parseInt(s[1])-1)
+            date.setFullYear(parseInt(s[2]))
+            date.setHours(0, 0, 0, 0)
+
+            console.log(x.date, date, date >= dateLower, date <= dateUpper)
+
+            return date >= dateLower && date <= dateUpper
+        })
+
+        console.log("Filtered", filtered)
+
+        setFilteredData(filtered)
 
     }, [dateLower, dateUpper])
 
@@ -93,7 +113,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setDateUpper,
             lowerValid,
             upperValid,
-            COVIDData: data,
+            COVIDData: filteredData,
             toggleRegion,
             ShowRegions: regions
         }}>{children}</MapContext.Provider>
