@@ -5,6 +5,13 @@ import style from '../styles/Home.module.scss'
 import { codes } from "../util/api_codes";
 
 
+export const color = {
+    active_cases: "#bd3253",
+    first_dose: "#2ca757",
+    final_dose: "#177ba3"
+}
+
+
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
  * to filter or otherwise alter visualized data
@@ -22,6 +29,23 @@ const Home = () =>  (
         <DateFilter />
 
         <hr />
+
+        <div className={style.colors}>
+            <div>
+                <div style={{ backgroundColor: color.active_cases }}/>
+                <p>Active Cases</p>
+            </div>
+
+            <div>
+                <div style={{ backgroundColor: color.first_dose }} />
+                <p>First Dose</p>
+            </div>
+
+            <div>
+                <div style={{ backgroundColor: color.final_dose }} />
+                <p>Second / Final Dose</p>
+            </div>
+        </div>
 
         <main className={style.main}>
 

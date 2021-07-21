@@ -2,6 +2,7 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { useMapContext } from "../util/map_interface";
 
 import style from "../styles/Chart.module.scss"
+import { color } from "../pages";
 
 type ChartProps = {
     code: string
@@ -16,14 +17,15 @@ const Chart = ({ display, code }: ChartProps) => {
 
     const context = useMapContext()
 
-    return (<div className={style[code]}>
+    return (<div className={`${style.container} ${style[code]}`}>
 
         <h4>{display}</h4>
 
+        <hr />
+
         {/* Snazzy ResponsiveContainer to make width responsive */}
-        <ResponsiveContainer className={code} height={300} width={350}>
+        <ResponsiveContainer className={code} height={250} width={350}>
             <LineChart data={context.canada[code]?.filter(x => x.date <= context.dateUpper && x.date >= context.dateLower)}>
-                <Legend verticalAlign={"top"} />
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
@@ -34,7 +36,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Line
                     yAxisId={"L"}
                     dataKey={"active_cases"}
-                    stroke={"#bd3253"}
+                    stroke={color.active_cases}
                 />
 
                 {/* Vaccine Administration - Second/Final Dose */}
@@ -42,7 +44,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Line
                     yAxisId={"R"}
                     dataKey={"first_dose_cumulative"}
-                    stroke={"#177ba3"}
+                    stroke={color.final_dose}
                 />
 
                 {/* Vaccine Administration - Second/Final Dose */}
@@ -50,7 +52,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Line
                     yAxisId={"R"}
                     dataKey={"final_dose_cumulative"}
-                    stroke={"#2ca757"}
+                    stroke={color.first_dose}
                 />
             </LineChart>
         </ResponsiveContainer>

@@ -1,6 +1,6 @@
 import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
 import useSWR from "swr";
-import { CanadaRegions, codes, regions } from "./api_codes";
+import { codes, regions } from "./api_codes";
 
 
 type MapInterface = {
@@ -12,6 +12,17 @@ type MapInterface = {
     upperValid: Date
 
     canada: col
+}
+
+const dates = {
+    lower: {
+        selected: new Date(),
+        limit: new Date()
+    },
+    upper: {
+        selected: new Date(),
+        limit: new Date()
+    }
 }
 
 // Lower-bound: Jan 1 2020

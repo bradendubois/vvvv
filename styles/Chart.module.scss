@@ -13,3 +13,17 @@
 .NB { grid-area: NB; }
 .PE { grid-area: PE; }
 
+.container {
+
+  display: flex;
+  flex-direction: column;
+
+  h4 {
+    margin: 0;
+    text-align: center;
+  }
+
+  hr {
+    margin: 3px 60px;
+  }
+}
