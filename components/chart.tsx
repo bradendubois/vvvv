@@ -28,7 +28,7 @@ const Chart = () => {
                     {/* Active Cases*/}
                     <YAxis yAxisId={"L"} orientation={"left"}/>
                     {Array.from(context.ShowRegions).map(x => <Line
-                        data={context.COVIDData.filter(y => y.province == x)}
+                        data={context.canada.filter(y => y.region == x)}
                         yAxisId={"L"}
                         dataKey={"active_cases"}
                         stroke={"#bd3253"}
@@ -37,7 +37,7 @@ const Chart = () => {
                     {/* Vaccine Administration */}
                     <YAxis yAxisId={"R"} orientation={"right"}/>
                     {Array.from(context.ShowRegions).map(x => <Line
-                        data={context.COVIDData.filter(y => y.province == x)}
+                        data={context.canada.filter(y => y.region == x)}
                         yAxisId={"R"}
                         dataKey={"cumulative_avaccine"}
                         stroke={"#177ba3"}

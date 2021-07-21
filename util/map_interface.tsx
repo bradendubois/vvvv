@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { CanadaRegions } from "./api_codes";
 
 
-interface MapInterface {
+type MapInterface = {
     dateLower?: Date
     dateUpper?: Date
     setDateLower(date: Date): void
@@ -11,6 +11,9 @@ interface MapInterface {
     lowerValid?: Date
     upperValid?: Date
     COVIDData: OpenCOVIDDaily[]
+
+    canada: COVIDDaily[]
+
     toggleRegion(region: CanadaRegions): void
     ShowRegions: Set<CanadaRegions | String>
 }
@@ -21,6 +24,7 @@ export const MapContext = createContext<MapInterface>({
     setDateLower: () => {},
     setDateUpper: () => {},
     COVIDData: [],
+    canada: [],
     toggleRegion() {},
     ShowRegions: new Set()
 });
@@ -53,6 +57,28 @@ export type OpenCOVIDDaily = {
 }
 
 
+// Type that both Canada and US data will be converted to
+export type COVIDDaily = {
+
+    country: String
+    region: String
+    date: Date
+
+    active_cases: number
+    cases: number
+    cases_cumulative: number
+
+    first_dose: number
+    first_dose_cumulative: number
+
+    final_dose: number
+    final_dose_cumulative: number
+
+    deaths: number
+    deaths_cumulative: number
+}
+
+
 // Lower-bound: Jan 1 2020
 const lowerValid = new Date()
 lowerValid.setFullYear(2020, 0, 1)
@@ -82,10 +108,16 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     // Results after applying user-defined filters
     const [filteredData, setFilteredData] = useState<OpenCOVIDDaily[]>([])
 
+
+
+    const [canadaData, setCanadaData] = useState<COVIDDaily[]>([])
+    const [filteredCanada, setFilteredCanada] = useState<COVIDDaily[]>([])
+
+
     // Once the data finally comes back from our API call, convert the dates to 'real' Date objects for comparisons
     useEffect(() => {
 
-        data && data.forEach((x: OpenCOVIDDaily) => {
+        data && setCanadaData(data.map((x: OpenCOVIDDaily) => {
 
             let s = x.date.split("-")
 
@@ -95,14 +127,25 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             date.setFullYear(parseInt(s[2]))
             date.setHours(0, 0, 0, 0)
 
-            x.date_obj = date
-        })
+            return {
+                country: "Canada",
+                region: x.province,
+                date,
+                active_cases: x.active_cases,
+                cases: x.cases,
+                cases_cumulative: x.cumulative_cases,
+                first_dose: x.avaccine - x.cvaccine,
+                first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
+
+            }
+        }))
+
     }, [data])
 
     // When the lower-bound or upper-bound on dates changes, filter what is presented to the user to within this range
     useEffect(() => {
-        data && dateUpper && setFilteredData(data.filter((x: OpenCOVIDDaily) => x.date_obj >= dateLower && x.date_obj <= dateUpper))
-    }, [data, dateLower, dateUpper])
+        canadaData && dateLower && dateUpper && setFilteredCanada(canadaData.filter(x => x.date >= dateLower && x.date <= dateUpper))
+    }, [canadaData, dateLower, dateUpper])
 
     /**
      * Toggle a region as being 'selected' or desired to show in any visualization areas
@@ -127,6 +170,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             lowerValid,
             upperValid,
             COVIDData: filteredData,
+            canada: filteredCanada,
             toggleRegion,
             ShowRegions: regions
         }}>{children}</MapContext.Provider>

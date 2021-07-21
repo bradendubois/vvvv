@@ -14,3 +14,21 @@ export enum CanadaRegions {
     PE = "PEI",
     NB = "New Brunswick"
 }
+
+
+export const CanadaCodes = [
+    "YT",
+    "NT",
+    "NV",
+
+    "BC",
+    "AB",
+    "SK",
+    "MB",
+    "ON",
+    "QC",
+    "NL",
+    "NS",
+    "PE",
+    "NB"
+]
