@@ -1,6 +1,6 @@
 import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
 import useSWR from "swr";
-import { CanadaRegions } from "./api_codes";
+import { CanadaRegions, codes } from "./api_codes";
 
 
 type MapInterface = {
@@ -126,17 +126,17 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             date.setMonth(parseInt(s[1])-1)
             date.setFullYear(parseInt(s[2]))
             date.setHours(0, 0, 0, 0)
-
+            console.log(x)
             return {
                 country: "Canada",
-                region: x.province,
+                region: codes[x.province as string].code,
+                display: codes[x.province as string].display ?? x.province,
                 date,
                 active_cases: x.active_cases,
                 cases: x.cases,
                 cases_cumulative: x.cumulative_cases,
                 first_dose: x.avaccine - x.cvaccine,
                 first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
-
             }
         }))
 

@@ -3,6 +3,7 @@ import CanadaMap from "../components/canadaMap";
 import DateFilter from "../components/dateFilter";
 
 import styles from '../styles/Home.module.scss'
+import { CanadaCodes, CanadaRegions, regions } from "../util/api_codes";
 
 
 /**
@@ -17,7 +18,7 @@ const Home = () =>  (
         <main className={styles.main}>
 
             {/* Visualization / Graph */}
-            <Chart />
+            {regions.map(x => <Chart region={x}/>)}
 
             {/* Selector for date range on data */}
             <DateFilter />
