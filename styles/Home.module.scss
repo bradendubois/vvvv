@@ -11,13 +11,13 @@
 
 .canada {
 
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template:
+          "YK NT NV . ."
+          "BC AB SK MB ONT"
+          "QC NL NS NB PE";
 
   > div {
     margin: 10px;
   }
-
 }

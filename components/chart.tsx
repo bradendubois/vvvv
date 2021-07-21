@@ -1,7 +1,7 @@
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useMapContext } from "../util/map_interface";
 
-import style from "../styles/Graph.module.scss"
+import style from "../styles/Chart.module.scss"
 
 type ChartProps = {
     code: string
@@ -16,7 +16,7 @@ const Chart = ({ display, code }: ChartProps) => {
 
     const context = useMapContext()
 
-    return (<div>
+    return (<div className={style[code]}>
 
         <h4>{display}</h4>
 
