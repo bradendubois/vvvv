@@ -1,10 +1,15 @@
-import Graph from "../components/graph";
+import Chart from "../components/chart";
 import CanadaMap from "../components/canadaMap";
 import DateFilter from "../components/dateFilter";
 
 import styles from '../styles/Home.module.scss'
 
 
+/**
+ * 'Main' app for the page; includes visualization, as well as user-selectable components
+ * to filter or otherwise alter visualized data
+ * @constructor
+ */
 const Home = () =>  (
 
     <div className={styles.container}>
@@ -12,7 +17,7 @@ const Home = () =>  (
         <main className={styles.main}>
 
             {/* Visualization / Graph */}
-            <Graph />
+            <Chart />
 
             {/* Selector for date range on data */}
             <DateFilter />

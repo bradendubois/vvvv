@@ -1,12 +1,12 @@
 import {CanadaRegions} from "../util/api_codes";
-import {useMap} from "../util/map_interface";
+import {useMapContext} from "../util/map_interface";
 
 
 import style from "../styles/CanadaMap.module.scss"
 
 const Postcard = ({ region }: { region: CanadaRegions }) => {
 
-    const context = useMap();
+    const context = useMapContext();
 
     return (
         <div className={region.replace(/\s/g,'')}>

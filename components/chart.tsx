@@ -1,17 +1,23 @@
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
-import { useMap } from "../util/map_interface";
+import { useMapContext } from "../util/map_interface";
 
 import style from "../styles/Graph.module.scss"
 
 
-const Graph = () => {
+/**
+ * A Chart built with 'recharts' LineChart component to visualize COVID information
+ * @constructor
+ */
+const Chart = () => {
 
-    const context = useMap()
+    const context = useMapContext()
 
     return (
         <div className={style.container}>
+
+            {/* Snazzy ResponsiveContainer to make width responsive */}
             <ResponsiveContainer height={500}>
+
                 <LineChart>
                     <Legend verticalAlign={"top"} />
                     <Tooltip />
@@ -19,10 +25,8 @@ const Graph = () => {
                     <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
                     <XAxis dataKey={"date"} allowDuplicatedCategory={false}/>
 
-                    <YAxis yAxisId={"L"} orientation={"left"}/>
-                    <YAxis yAxisId={"R"} orientation={"right"}/>
-
                     {/* Active Cases*/}
+                    <YAxis yAxisId={"L"} orientation={"left"}/>
                     {Array.from(context.ShowRegions).map(x => <Line
                         data={context.COVIDData.filter(y => y.province == x)}
                         yAxisId={"L"}
@@ -31,6 +35,7 @@ const Graph = () => {
                     />)}
 
                     {/* Vaccine Administration */}
+                    <YAxis yAxisId={"R"} orientation={"right"}/>
                     {Array.from(context.ShowRegions).map(x => <Line
                         data={context.COVIDData.filter(y => y.province == x)}
                         yAxisId={"R"}
@@ -43,4 +48,4 @@ const Graph = () => {
     )
 }
 
-export default Graph
+export default Chart

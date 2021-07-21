@@ -1,4 +1,4 @@
-import { useMap } from "../util/map_interface";
+import { useMapContext } from "../util/map_interface";
 
 // @ts-ignore
 // TODO
@@ -8,6 +8,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import style from "../styles/DateFilter.module.scss"
 
 
+/**
+ * Basic Date-Picker using the 'react-datepicker' library
+ * @param params Any parameters to provide the <ReactDatePicker /> component in addition to any defaults
+ * @constructor
+ */
 const DatePicker = ({...params}) => {
 
     return (
@@ -18,10 +23,14 @@ const DatePicker = ({...params}) => {
     )
 }
 
-
+/**
+ * A Date range selector enabling the user to select a 'lower-bound' and 'upper-bound' of
+ * dates with which to filter shown / displayed data
+ * @constructor
+ */
 const DateFilter = () => {
 
-    const context = useMap()
+    const context = useMapContext()
 
     return (<>
         {/* Date-filtering Module */}
@@ -34,7 +43,7 @@ const DateFilter = () => {
             </div>
 
             {/* Magic number 14: There are 10 provinces + 3 territories + 1 repatriated category comprising the data */}
-            {context.dateLower?.getTime() !== context.dateUpper?.getTime() && <p>Range Size: <span>{context.COVIDData.length / 14}</span></p>}
+            {context.dateLower?.getTime() !== context.dateUpper?.getTime() && <p>Range Size: <span>{context.COVIDData.length / 14} day(s)</span></p>}
 
             {/* Upper-bound of date filtering */}
             <div>
