@@ -1,9 +1,8 @@
 import Chart from "../components/chart";
-import CanadaMap from "../components/canadaMap";
 import DateFilter from "../components/dateFilter";
 
-import styles from '../styles/Home.module.scss'
-import { CanadaCodes, CanadaRegions, regions } from "../util/api_codes";
+import style from '../styles/Home.module.scss'
+import { CanadaCodes, CanadaRegions, codes, regions } from "../util/api_codes";
 
 
 /**
@@ -13,21 +12,17 @@ import { CanadaCodes, CanadaRegions, regions } from "../util/api_codes";
  */
 const Home = () =>  (
 
-    <div className={styles.container}>
+    <div className={style.container}>
 
-        <main className={styles.main}>
+        <main className={style.main}>
 
-            {/* Visualization / Graph */}
-            {regions.map(x => <Chart region={x}/>)}
+            {/* Canada Visualization / Graph */}
+            <div className={style.canada}>
+                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart {...x} />)}
+            </div>
 
             {/* Selector for date range on data */}
             <DateFilter />
-
-            <hr />
-
-            {/* Picker of Canadian regions */}
-            <CanadaMap />
-
         </main>
     </div>
 )

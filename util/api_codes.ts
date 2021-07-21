@@ -111,4 +111,6 @@ export const codes: Codes = {
     }
 }
 
-export const regions = Object.values(codes).map((x: any) => x.code)
+export const regions: String[] = Array.from(Object.values(codes).map((x: any) => x.code))
+
+console.log(regions)

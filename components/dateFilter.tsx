@@ -43,7 +43,7 @@ const DateFilter = () => {
             </div>
 
             {/* Magic number 14: There are 10 provinces + 3 territories + 1 repatriated category comprising the data */}
-            {context.dateLower?.getTime() !== context.dateUpper?.getTime() && <p>Range Size: <span>{context.COVIDData.length / 14} day(s)</span></p>}
+            {/* context.dateLower?.getTime() !== context.dateUpper?.getTime() && <p>Range Size: <span>{context.COVIDData.length / 14} day(s)</span></p> */}
 
             {/* Upper-bound of date filtering */}
             <div>
