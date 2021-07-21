@@ -23,7 +23,7 @@ const upperValid = new Date();
 
 // Lower-start: 2 months ago
 const lowerStart = new Date();
-lowerStart.setFullYear(upperValid.getFullYear(), upperValid.getMonth() - 2, upperValid.getDate())
+lowerStart.setFullYear(upperValid.getFullYear(), upperValid.getMonth() - 3, upperValid.getDate())
 
 // Default context with placeholder values
 export const MapContext = createContext<MapInterface>({
