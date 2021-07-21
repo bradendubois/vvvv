@@ -30,7 +30,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <XAxis dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
                 {/* Active Cases*/}
-                <YAxis yAxisId={"L"} orientation={"left"}/>
+                <YAxis fontSize={12} yAxisId={"L"} orientation={"left"}/>
                 <Line
                     yAxisId={"L"}
                     dataKey={"active_cases"}
@@ -38,7 +38,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 />
 
                 {/* Vaccine Administration - Second/Final Dose */}
-                <YAxis yAxisId={"R"} orientation={"right"}/>
+                <YAxis fontSize={12} yAxisId={"R"} orientation={"right"}/>
                 <Line
                     yAxisId={"R"}
                     dataKey={"first_dose_cumulative"}

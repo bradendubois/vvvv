@@ -2,7 +2,7 @@ import Chart from "../components/chart";
 import DateFilter from "../components/dateFilter";
 
 import style from '../styles/Home.module.scss'
-import { CanadaCodes, CanadaRegions, codes, regions } from "../util/api_codes";
+import { codes } from "../util/api_codes";
 
 
 /**
@@ -14,6 +14,15 @@ const Home = () =>  (
 
     <div className={style.container}>
 
+        <h1>Snazzy Vaccine-related Title, presumably</h1>
+
+        <hr />
+
+        {/* Selector for date range on data */}
+        <DateFilter />
+
+        <hr />
+
         <main className={style.main}>
 
             {/* Canada Visualization / Graph */}
@@ -21,8 +30,6 @@ const Home = () =>  (
                 {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart {...x} />)}
             </div>
 
-            {/* Selector for date range on data */}
-            <DateFilter />
         </main>
     </div>
 )
