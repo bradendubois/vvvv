@@ -30,6 +30,7 @@ const Home = () =>  (
 
         <hr />
 
+        {/* Basic 'legend' to indicate line values */}
         <div className={style.colors}>
             <div>
                 <div style={{ backgroundColor: color.active_cases }}/>

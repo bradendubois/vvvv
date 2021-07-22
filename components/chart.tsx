@@ -29,7 +29,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
-                <XAxis dataKey={"date_string"} allowDuplicatedCategory={false}/>
+                <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
                 {/* Active Cases*/}
                 <YAxis fontSize={12} yAxisId={"L"} orientation={"left"}/>

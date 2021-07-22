@@ -11,19 +11,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     let today = new Date()
 
-    let data = {
-        covid: {},
-        population: {}
-    }
-
-    await fetch(`https://api.opencovid.ca/summary?after=1-1-2020&before=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`)
+    // COVID Case Data
+    let covid = await fetch(`https://api.opencovid.ca/summary?after=1-1-2020&before=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`)
         .then(response => response.json())
-        .then(json => data.covid = json.summary)
+        .then(json => json.summary)
 
-    await fetch(`https://api.opencovid.ca/other?stat=prov`)
+    // Population Data
+    let population = await fetch(`https://api.opencovid.ca/other?stat=prov`)
         .then(response => response.json())
         .then(json => json.prov.map((p: Population) => [p.province_short, p.pop]))
-        .then(parsed => data.population = Object.fromEntries(parsed))
+        .then(parsed => Object.fromEntries(parsed))
 
-    res.status(200).json(data)
+    res.status(200).json({
+        covid,
+        population
+    })
 }
