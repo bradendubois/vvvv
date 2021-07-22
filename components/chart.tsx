@@ -39,7 +39,7 @@ const Chart = ({ display, code }: ChartProps) => {
                     stroke={color.active_cases}
                 />
 
-                {/* Vaccine Administration - Second/Final Dose */}
+                {/* Vaccine Administration - First Dose */}
                 <YAxis fontSize={12} yAxisId={"R"} orientation={"right"}/>
                 <Line
                     yAxisId={"R"}

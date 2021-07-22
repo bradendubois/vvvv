@@ -130,7 +130,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
         if (!data) return;
 
-        let mapped = data.map((x: OpenCOVIDDaily) => {
+        let mapped = data.covid.map((x: OpenCOVIDDaily) => {
 
             let s = x.date.split("-")
 
