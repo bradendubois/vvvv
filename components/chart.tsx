@@ -44,7 +44,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Line
                     yAxisId={"R"}
                     dataKey={"first_dose_cumulative"}
-                    stroke={color.final_dose}
+                    stroke={color.first_dose}
                 />
 
                 {/* Vaccine Administration - Second/Final Dose */}
@@ -52,7 +52,7 @@ const Chart = ({ display, code }: ChartProps) => {
                 <Line
                     yAxisId={"R"}
                     dataKey={"final_dose_cumulative"}
-                    stroke={color.first_dose}
+                    stroke={color.final_dose}
                 />
             </LineChart>
         </ResponsiveContainer>
