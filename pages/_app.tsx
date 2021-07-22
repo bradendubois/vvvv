@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-import { MapProvider } from "../util/map_interface";
+import { MapProvider } from "../util/context/provider";
 
 import '../styles/globals.scss'
 

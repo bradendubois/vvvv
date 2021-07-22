@@ -1,6 +1,12 @@
-import React, {ReactNode, createContext, useContext, useState, useEffect} from "react";
+
+// Default context with placeholder values
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
-import { codes, regions } from "./api_codes";
+import { codes, regions } from "../api_codes";
+
+import { COVIDDaily, OpenCOVIDDaily } from "../types";
+import { dates } from "./dates";
+
 
 
 type MapInterface = {
@@ -11,102 +17,24 @@ type MapInterface = {
     lowerValid: Date
     upperValid: Date
 
-    canada: col
+    canada: RegionEntry
 }
 
-const dates = {
-    lower: {
-        selected: new Date(),
-        limit: new Date()
-    },
-    upper: {
-        selected: new Date(),
-        limit: new Date()
-    }
-}
-
-// Lower-bound: Jan 1 2020
-const lowerValid = new Date()
-lowerValid.setFullYear(2020, 0, 1)
-
-// Upper-bound: Current date
-const upperValid = new Date();
-
-// Lower-start: 2 months ago
-const lowerStart = new Date();
-lowerStart.setFullYear(upperValid.getFullYear(), upperValid.getMonth() - 3, upperValid.getDate())
-
-// Default context with placeholder values
-export const MapContext = createContext<MapInterface>({
-    setDateLower: () => {},
-    setDateUpper: () => {},
-    dateLower: lowerStart,
-    dateUpper: upperValid,
-    lowerValid,
-    upperValid,
-    canada: {},
-});
-
-
-// One daily summary for one region in Canada
-export type OpenCOVIDDaily = {
-
-    active_cases: number
-    active_cases_change: number
-    date: String
-    province: String
-    testing_info: String,
-    date_obj: Date  // A JS Date object created from 'date' to enable easier comparisons
-
-    avaccine: number    // total vaccines administered (first & second doses included)
-    cases: number
-    cvaccine: number    // 'completed' vaccines (second doses, or any single-doses administered)
-    deaths: number
-    dvaccine: number    // vaccines distributed
-    recovered: number
-    testing: number
-    cumulative_avaccine: number
-    cumulative_cases: number
-    cumulative_cvaccine: number
-    cumulative_deaths: number
-    cumulative_dvaccine: number
-    cumulative_recovered: number
-    cumulative_testing: number
-}
-
-
-// Type that both Canada and US data will be converted to
-export type COVIDDaily = {
-
-    country: String
-    region: String
-    date: Date
-    date_string: string,
-
-    active_cases: number
-    cases: number
-    cases_cumulative: number
-
-    first_dose: number
-    first_dose_cumulative: number
-
-    final_dose: number
-    final_dose_cumulative: number
-
-    deaths: number
-    deaths_cumulative: number
-}
-
-
-type col = {
+type RegionEntry = {
     [key: string]: COVIDDaily[]
 }
 
 
-// Clear the 'time' to fix comparisons on the same day, as time is set when the Date object is created
-lowerValid.setHours(0, 0, 0, 0)
-lowerStart.setHours(0, 0, 0, 0)
-upperValid.setHours(0, 0, 0, 0)
+export const MapContext = createContext<MapInterface>({
+    setDateLower: () => {},
+    setDateUpper: () => {},
+    dateLower: dates.lower.start,
+    dateUpper: dates.upper.start,
+    lowerValid: dates.lower.limit,
+    upperValid: dates.upper.limit,
+    canada: {},
+});
+
 
 /**
  * Main context provider for all COVID-related data
@@ -117,15 +45,13 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     // We fetch data from the OpenCOVID API
     const { data, error } = useSWR('/api/opencovid')
+    const [canadaData, setCanadaData] = useState<RegionEntry>({})
 
     // User-determined filters on data
-    const [dateLower, setDateLower] = useState<Date>(lowerStart)
-    const [dateUpper, setDateUpper] = useState<Date>(upperValid)
+    const [dateLower, setDateLower] = useState<Date>(dates.lower.start)
+    const [dateUpper, setDateUpper] = useState<Date>(dates.upper.start)
 
-    const [canadaData, setCanadaData] = useState<col>({})
-
-
-    // Once the data finally comes back from our API call, convert the dates to 'real' Date objects for comparisons
+    // Clean up Canadian OpenCOVID data
     useEffect(() => {
 
         if (!data) return;
@@ -169,7 +95,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             }
         })
 
-        let obj: col = Object.fromEntries(regions.map(entry => [entry, []]))
+        let obj: RegionEntry = Object.fromEntries(regions.map(entry => [entry, []]))
 
         mapped.forEach((point: COVIDDaily) => {
             obj[point.region as string].push(point)
@@ -190,8 +116,8 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             dateUpper,
             setDateLower,
             setDateUpper,
-            lowerValid,
-            upperValid,
+            lowerValid: dates.lower.limit,
+            upperValid: dates.upper.limit,
             canada: canadaData
         }}>{children}</MapContext.Provider>
     );

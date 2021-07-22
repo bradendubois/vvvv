@@ -1,5 +1,5 @@
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useMapContext } from "../util/map_interface";
+import { useMapContext } from "../util/context/provider";
 
 import style from "../styles/Chart.module.scss"
 import { color } from "../pages";

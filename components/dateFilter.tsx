@@ -1,4 +1,4 @@
-import { useMapContext } from "../util/map_interface";
+import { useMapContext } from "../util/context/provider";
 
 // @ts-ignore
 // TODO
