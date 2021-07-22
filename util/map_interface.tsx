@@ -140,19 +140,32 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             date.setFullYear(parseInt(s[2]))
             date.setHours(0, 0, 0, 0)
 
+            let code = codes[x.province as string].code
+            let display = codes[x.province as string].display
+            let population = data.population[code]
+
             return {
                 country: "Canada",
-                region: codes[x.province as string].code,
-                display: codes[x.province as string].display ?? x.province,
+                region: code,
+                display: display ?? x.province,
                 date,
                 date_string: x.date,
                 active_cases: x.active_cases,
                 cases: x.cases,
                 cases_cumulative: x.cumulative_cases,
+
                 first_dose: x.avaccine - x.cvaccine,
                 first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
+
                 final_dose: x.cvaccine,
-                final_dose_cumulative: x.cumulative_cvaccine
+                final_dose_cumulative: x.cumulative_cvaccine,
+
+                first_dose_population: (x.avaccine - x.cvaccine) / population,
+                first_dose_population_cumulative: (x.cumulative_avaccine -  x.cumulative_cvaccine) / population,
+
+                final_dose_population: x.cvaccine / population,
+                final_dose_population_cumulative: x.cumulative_cvaccine / population,
+
             }
         })
 

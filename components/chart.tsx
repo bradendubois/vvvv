@@ -40,18 +40,17 @@ const Chart = ({ display, code }: ChartProps) => {
                 />
 
                 {/* Vaccine Administration - First Dose */}
-                <YAxis fontSize={12} yAxisId={"R"} orientation={"right"}/>
+                <YAxis fontSize={12} yAxisId={"R"} orientation={"right"} domain={[0, 1]}/>
                 <Line
                     yAxisId={"R"}
-                    dataKey={"first_dose_cumulative"}
+                    dataKey={"first_dose_population_cumulative"}
                     stroke={color.first_dose}
                 />
 
                 {/* Vaccine Administration - Second/Final Dose */}
-                <YAxis yAxisId={"R"} orientation={"right"}/>
                 <Line
                     yAxisId={"R"}
-                    dataKey={"final_dose_cumulative"}
+                    dataKey={"final_dose_population_cumulative"}
                     stroke={color.final_dose}
                 />
             </LineChart>

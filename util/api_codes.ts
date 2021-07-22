@@ -52,7 +52,7 @@ export const codes: Codes = {
     },
 
     "Nunavut": {
-        code: "NV",
+        code: "NU",
         display: "Nunavut"
     },
 
