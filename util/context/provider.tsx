@@ -6,6 +6,7 @@ import { codes, regions } from "../api_codes";
 
 import { COVIDDaily, OpenCOVIDDaily } from "../types";
 import { dates } from "./dates";
+import socrata from "../../pages/api/socrata";
 
 
 
@@ -43,9 +44,13 @@ export const MapContext = createContext<MapInterface>({
  */
 export const MapProvider = ({ children }: { children: ReactNode}) => {
 
-    // We fetch data from the OpenCOVID API
-    const { data, error } = useSWR('/api/opencovid')
+    // Canada - fetch data from the OpenCOVID API
+    const { data: openCovidData, error: openCovidError } = useSWR('/api/opencovid')
     const [canadaData, setCanadaData] = useState<RegionEntry>({})
+
+    // United States - fetch data from Socrata API
+    const { data: socrataData, error: socrataError } = useSWR('/api/socrata')
+    const [americaData, setAmericaData] = useState<RegionEntry>({})
 
     // User-determined filters on data
     const [dateLower, setDateLower] = useState<Date>(dates.lower.start)
@@ -54,9 +59,9 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     // Clean up Canadian OpenCOVID data
     useEffect(() => {
 
-        if (!data) return;
+        if (!openCovidData) return;
 
-        let mapped = data.covid.map((x: OpenCOVIDDaily) => {
+        let mapped = openCovidData.covid.map((x: OpenCOVIDDaily) => {
 
             let s = x.date.split("-")
 
@@ -68,7 +73,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
             let code = codes[x.province as string].code
             let display = codes[x.province as string].display
-            let population = data.population[code]
+            let population = openCovidData.population[code]
 
             return {
                 country: "Canada",
@@ -103,7 +108,64 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
         setCanadaData(obj)
 
-    }, [data])
+    }, [openCovidData])
+
+    // Clean up Canadian OpenCOVID data
+    useEffect(() => {
+
+        if (!socrataData) return;
+
+        console.log(socrataData)
+        return;
+        let mapped = socrataData.data.map((x: OpenCOVIDDaily) => {
+
+            let s = x.date.split("-")
+
+            let date = new Date()
+            date.setDate(parseInt(s[0]))
+            date.setMonth(parseInt(s[1])-1)
+            date.setFullYear(parseInt(s[2]))
+            date.setHours(0, 0, 0, 0)
+
+            let code = codes[x.province as string].code
+            let display = codes[x.province as string].display
+            let population = openCovidData.population[code]
+
+            return {
+                country: "Canada",
+                region: code,
+                display: display ?? x.province,
+                date,
+                date_string: x.date,
+                active_cases: x.active_cases,
+                cases: x.cases,
+                cases_cumulative: x.cumulative_cases,
+
+                first_dose: x.avaccine - x.cvaccine,
+                first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
+
+                final_dose: x.cvaccine,
+                final_dose_cumulative: x.cumulative_cvaccine,
+
+                first_dose_population: (x.avaccine - x.cvaccine) / population,
+                first_dose_population_cumulative: (x.cumulative_avaccine -  x.cumulative_cvaccine) / population,
+
+                final_dose_population: x.cvaccine / population,
+                final_dose_population_cumulative: x.cumulative_cvaccine / population,
+
+            }
+        })
+
+        let obj: RegionEntry = Object.fromEntries(regions.map(entry => [entry, []]))
+
+        mapped.forEach((point: COVIDDaily) => {
+            obj[point.region as string].push(point)
+        })
+
+        setCanadaData(obj)
+
+
+    }, [socrataData])
 
     // When the lower-bound or upper-bound on dates changes, filter what is presented to the user to within this range
     useEffect(() => {
