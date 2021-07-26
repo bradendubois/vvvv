@@ -57,11 +57,11 @@ const Home = () => {
 
             {/* Canada Visualization / Graph */}
             <div className={style.canada}>
-                {Object.values(canadaCodes).filter(x => x.code !== "RP").map(x => <Chart country={Country.Canada} region={x.code} display={x.display}/>)}
+                {Object.entries(canadaCodes).filter(x => x[1].code !== "RP").map(x => <Chart country={Country.Canada} region={x[1].code} display={x[1].display}/>)}
             </div>
 
             <div>
-                {Object.entries(americaCodes).filter(x => x[0] !== "RP").map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
+                {/* Object.entries(americaCodes).filter(x => x[0] !== "RP").map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)*/}
             </div>
 
         </main>

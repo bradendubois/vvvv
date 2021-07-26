@@ -14,7 +14,7 @@ type ChartProps = {
     display?: string
 }
 
-const cleanCanadaData = (covid: any, population: any) => {
+const cleanCanadaData = (covid: any, population: number) => {
 
     let x: COVIDDaily[] = covid.map((x: OpenCOVIDDaily) => {
 
@@ -28,9 +28,6 @@ const cleanCanadaData = (covid: any, population: any) => {
 
         let code = canadaCodes[x.province as string].code
         let display = canadaCodes[x.province as string].display
-
-        // @ts-ignore
-        let population: number = population[code]
 
         return {
             country: Country.Canada,
@@ -111,9 +108,9 @@ const Chart = ({ country, region, display }: ChartProps) => {
         if (!data) return;
 
         if (country == Country.Canada) {
-            setCleaned(cleanCanadaData(data))
+            setCleaned(cleanCanadaData(data.covid, data.population))
         } else if (country == Country.America) {
-            setCleaned(cleanAmericaData(data))
+            setCleaned(cleanAmericaData(data.vaccination))
         } else {
             throw new Error(`Unsupported country: ${country}`)
         }
@@ -129,7 +126,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
 
         {/* Snazzy ResponsiveContainer to make width responsive */}
         <ResponsiveContainer className={region} height={250} width={350}>
-            <LineChart data={data?.filter(x => x.date <= context.dateUpper && x.date >= context.dateLower)}>
+            <LineChart data={cleaned.filter((point: COVIDDaily) => point.date <= context.dateUpper && point.date >= context.dateLower)}>
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
