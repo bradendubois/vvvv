@@ -2,7 +2,7 @@ import Chart from "../components/chart";
 import DateFilter from "../components/dateFilter";
 
 import style from '../styles/Home.module.scss'
-import { codes } from "../util/api_codes";
+import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
 
 
@@ -57,11 +57,11 @@ const Home = () => {
 
             {/* Canada Visualization / Graph */}
             <div className={style.canada}>
-                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart data={context.canada[x.code]} {...x} />)}
+                {Object.values(canadaCodes).filter(x => x.code !== "RP").map(x => <Chart country={Country.Canada} region={x.code} display={x.display}/>)}
             </div>
 
             <div>
-                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart data={context.america[x.code]} {...x} />)}
+                {Object.entries(americaCodes).filter(x => x[0] !== "RP").map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
             </div>
 
         </main>

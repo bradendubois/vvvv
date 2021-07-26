@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    // let url = `https://data.cdc.gov/resource/8xkx-amqh.json?$where=date%20between%20%272020-01-01T00:00:00%27%20and%20%27${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}T00:00:00%27`
+    // let case_url = 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data'
 
     let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=date,location,administered_dose1_recip,series_complete_yes,administered_dose1_pop_pct,series_complete_pop_pct`
     let vaccination = await fetch(vaccination_url).then(response => response.json())

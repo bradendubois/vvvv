@@ -2,7 +2,7 @@
 // Default context with placeholder values
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
-import { codes, regions } from "../api_codes";
+import { americaCodes, americaRegions, canadaCodes, canadaRegions, Country } from "../api_codes";
 
 import { COVIDDaily, OpenCOVIDDaily, SocrataVaccinationDaily } from "../types";
 import { dates } from "./dates";
@@ -20,7 +20,7 @@ type MapInterface = {
     america: RegionEntry
 }
 
-type RegionEntry = {
+export type RegionEntry = {
     [key: string]: COVIDDaily[]
 }
 
@@ -71,12 +71,12 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             date.setFullYear(parseInt(s[2]))
             date.setHours(0, 0, 0, 0)
 
-            let code = codes[x.province as string].code
-            let display = codes[x.province as string].display
+            let code = canadaCodes[x.province as string].code
+            let display = canadaCodes[x.province as string].display
             let population = openCovidData.population[code]
 
             return {
-                country: "Canada",
+                country: Country.Canada,
                 region: code,
                 display: display ?? x.province,
                 date,
@@ -100,7 +100,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             }
         })
 
-        let obj: RegionEntry = Object.fromEntries(regions.map(entry => [entry, []]))
+        let obj: RegionEntry = Object.fromEntries(canadaRegions.map(entry => [entry, []]))
 
         mapped.forEach((point: COVIDDaily) => {
             obj[point.region as string].push(point)
@@ -120,12 +120,12 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             // The dates returned are initially a string
             let date = new Date(x.date as unknown as string)
 
-            let code = codes[x.location as string].code
+            let code = americaCodes[x.location as string].code
 
             return {
                 country: "United States",
                 region: code,
-                display: codes[x.location as string].display ?? x.location,
+                display: americaCodes[x.location as string].display ?? x.location,
                 date,
                 date_string: x.date,
                 active_cases: 0,
@@ -147,7 +147,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             }
         })
 
-        let obj: RegionEntry = Object.fromEntries(regions.map(entry => [entry, []]))
+        let obj: RegionEntry = Object.fromEntries(americaRegions.map(entry => [entry, []]))
 
         mapped.forEach((point: COVIDDaily) => {
             obj[point.region as string].push(point)
