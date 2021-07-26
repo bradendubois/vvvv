@@ -40,8 +40,8 @@ type Codes = {
 }
 
 export enum Country {
-    Canada,
-    America
+    Canada = "canada",
+    America = "america"
 }
 
 export const canadaCodes: Codes = {
