@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // Population Data
     let population = await fetch(`https://api.opencovid.ca/other?stat=prov`)
         .then(response => response.json())
-        .then(json => json.prov.find(x => x.province_short === region).pop)
+        .then(json => json.prov.find((x: any) => x.province_short === region).pop)
 
     res.status(200).json({
         covid,
