@@ -4,10 +4,8 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 import useSWR from "swr";
 import { codes, regions } from "../api_codes";
 
-import { COVIDDaily, OpenCOVIDDaily } from "../types";
+import { COVIDDaily, OpenCOVIDDaily, SocrataVaccinationDaily } from "../types";
 import { dates } from "./dates";
-import socrata from "../../pages/api/socrata";
-
 
 
 type MapInterface = {
@@ -19,6 +17,7 @@ type MapInterface = {
     upperValid: Date
 
     canada: RegionEntry
+    america: RegionEntry
 }
 
 type RegionEntry = {
@@ -34,6 +33,7 @@ export const MapContext = createContext<MapInterface>({
     lowerValid: dates.lower.limit,
     upperValid: dates.upper.limit,
     canada: {},
+    america: {}
 });
 
 
@@ -115,43 +115,34 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
         if (!socrataData) return;
 
-        console.log(socrataData)
-        return;
-        let mapped = socrataData.data.map((x: OpenCOVIDDaily) => {
+        let mapped = socrataData.vaccination.map((x: SocrataVaccinationDaily) => {
 
-            let s = x.date.split("-")
+            // The dates returned are initially a string
+            let date = new Date(x.date as unknown as string)
 
-            let date = new Date()
-            date.setDate(parseInt(s[0]))
-            date.setMonth(parseInt(s[1])-1)
-            date.setFullYear(parseInt(s[2]))
-            date.setHours(0, 0, 0, 0)
-
-            let code = codes[x.province as string].code
-            let display = codes[x.province as string].display
-            let population = openCovidData.population[code]
+            let code = codes[x.location as string].code
 
             return {
-                country: "Canada",
+                country: "United States",
                 region: code,
-                display: display ?? x.province,
+                display: codes[x.location as string].display ?? x.location,
                 date,
                 date_string: x.date,
-                active_cases: x.active_cases,
-                cases: x.cases,
-                cases_cumulative: x.cumulative_cases,
+                active_cases: 0,
+                cases: 0,
+                cases_cumulative: 0,
 
-                first_dose: x.avaccine - x.cvaccine,
-                first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
+                first_dose: 0,
+                first_dose_cumulative: parseInt(x.administered_dose1_recip),
 
-                final_dose: x.cvaccine,
-                final_dose_cumulative: x.cumulative_cvaccine,
+                final_dose: 0,
+                final_dose_cumulative: parseInt(x.series_complete_yes),
 
-                first_dose_population: (x.avaccine - x.cvaccine) / population,
-                first_dose_population_cumulative: (x.cumulative_avaccine -  x.cumulative_cvaccine) / population,
+                first_dose_population: 0,
+                first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct),
 
-                final_dose_population: x.cvaccine / population,
-                final_dose_population_cumulative: x.cumulative_cvaccine / population,
+                final_dose_population: 0,
+                final_dose_population_cumulative: parseInt(x.series_complete_pop_pct),
 
             }
         })
@@ -162,15 +153,9 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             obj[point.region as string].push(point)
         })
 
-        setCanadaData(obj)
-
+        setAmericaData(obj)
 
     }, [socrataData])
-
-    // When the lower-bound or upper-bound on dates changes, filter what is presented to the user to within this range
-    useEffect(() => {
-        // canadaData && dateLower && dateUpper && setFilteredCanada(canadaData.filter(x => x.date >= dateLower && x.date <= dateUpper))
-    }, [canadaData, dateLower, dateUpper])
 
     return (
         <MapContext.Provider value={{
@@ -180,7 +165,8 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setDateUpper,
             lowerValid: dates.lower.limit,
             upperValid: dates.upper.limit,
-            canada: canadaData
+            america: americaData,
+            canada: canadaData,
         }}>{children}</MapContext.Provider>
     );
 }

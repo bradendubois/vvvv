@@ -27,7 +27,7 @@ export type OpenCOVIDDaily = {
 
 
 // Data from Socrata API on American vaccination data
-type SocrataVaccinationDaily = {
+export type SocrataVaccinationDaily = {
     admin_per_100k: string
     admin_per_100k_12plus: string
     admin_per_100k_18plus: string

@@ -3,6 +3,7 @@ import DateFilter from "../components/dateFilter";
 
 import style from '../styles/Home.module.scss'
 import { codes } from "../util/api_codes";
+import { useMapContext } from "../util/context/provider";
 
 
 export const color = {
@@ -17,33 +18,37 @@ export const color = {
  * to filter or otherwise alter visualized data
  * @constructor
  */
-const Home = () =>  (
+const Home = () => {
 
-    <div className={style.container}>
+    const context = useMapContext()
+
+    return (
+
+        <div className={style.container}>
 
         <h1>Snazzy Vaccine-related Title, presumably</h1>
 
-        <hr />
+        <hr/>
 
         {/* Selector for date range on data */}
-        <DateFilter />
+        <DateFilter/>
 
-        <hr />
+        <hr/>
 
         {/* Basic 'legend' to indicate line values */}
         <div className={style.colors}>
             <div>
-                <div style={{ backgroundColor: color.active_cases }}/>
+                <div style={{backgroundColor: color.active_cases}}/>
                 <p>Active Cases</p>
             </div>
 
             <div>
-                <div style={{ backgroundColor: color.first_dose }} />
+                <div style={{backgroundColor: color.first_dose}}/>
                 <p>First Dose</p>
             </div>
 
             <div>
-                <div style={{ backgroundColor: color.final_dose }} />
+                <div style={{backgroundColor: color.final_dose}}/>
                 <p>Second / Final Dose</p>
             </div>
         </div>
@@ -52,11 +57,15 @@ const Home = () =>  (
 
             {/* Canada Visualization / Graph */}
             <div className={style.canada}>
-                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart {...x} />)}
+                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart data={context.canada[x.code]} {...x} />)}
+            </div>
+
+            <div>
+                {Object.values(codes).filter(x => x.code !== "RP").map(x => <Chart data={context.america[x.code]} {...x} />)}
             </div>
 
         </main>
-    </div>
-)
+    </div>)
+}
 
 export default Home

@@ -3,9 +3,11 @@ import { useMapContext } from "../util/context/provider";
 
 import style from "../styles/Chart.module.scss"
 import { color } from "../pages";
+import { COVIDDaily } from "../util/types";
 
 type ChartProps = {
     code: string
+    data: COVIDDaily[]
     display?: string
 }
 
@@ -13,19 +15,19 @@ type ChartProps = {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ display, code }: ChartProps) => {
+const Chart = ({ display, code, data }: ChartProps) => {
 
     const context = useMapContext()
 
     return (<div className={`${style.container} ${style[code]}`}>
 
-        <h4>{display}</h4>
+        <h4>{display ?? code}</h4>
 
         <hr />
 
         {/* Snazzy ResponsiveContainer to make width responsive */}
         <ResponsiveContainer className={code} height={250} width={350}>
-            <LineChart data={context.canada[code]?.filter(x => x.date <= context.dateUpper && x.date >= context.dateLower)}>
+            <LineChart data={data?.filter(x => x.date <= context.dateUpper && x.date >= context.dateLower)}>
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
