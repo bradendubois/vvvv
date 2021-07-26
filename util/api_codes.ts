@@ -174,6 +174,7 @@ export const americaCodes = {
     "WV": "West Virginia",
     "WY": "Wyoming",
 
+    /*
     "RP": "RP",
     "US": "US",
     "MH": "MH",
@@ -183,6 +184,7 @@ export const americaCodes = {
     "VA2": "VA2",
     "DD2": "DD2",
     "BP2": "BP2",
+    */
 }
 
 

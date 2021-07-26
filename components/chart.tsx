@@ -46,10 +46,10 @@ const cleanCanadaData = (covid: any, population: number) => {
             final_dose_cumulative: x.cumulative_cvaccine,
 
             first_dose_population: (x.avaccine - x.cvaccine) / population,
-            first_dose_population_cumulative: (x.cumulative_avaccine -  x.cumulative_cvaccine) / population,
+            first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
 
             final_dose_population: x.cvaccine / population,
-            final_dose_population_cumulative: x.cumulative_cvaccine / population,
+            final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
 
         }
     })
@@ -75,19 +75,20 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[]) => {
             cases_cumulative: 0,
 
             first_dose: 0,
-            first_dose_cumulative: parseInt(x.administered_dose1_recip),
+            first_dose_cumulative: parseInt(x.administered_dose1_recip) / 100,
 
             final_dose: 0,
-            final_dose_cumulative: parseInt(x.series_complete_yes),
+            final_dose_cumulative: parseInt(x.series_complete_yes) / 100,
 
             first_dose_population: 0,
-            first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct),
+            first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
 
             final_dose_population: 0,
-            final_dose_population_cumulative: parseInt(x.series_complete_pop_pct),
-
+            final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
     })
+
+    return mapped
 }
 
 
@@ -125,8 +126,8 @@ const Chart = ({ country, region, display }: ChartProps) => {
         <hr />
 
         {/* Snazzy ResponsiveContainer to make width responsive */}
-        <ResponsiveContainer className={region} height={250} width={350}>
-            <LineChart data={cleaned.filter((point: COVIDDaily) => point.date <= context.dateUpper && point.date >= context.dateLower)}>
+        <ResponsiveContainer  height={250} width={350}>
+            <LineChart className={region} data={cleaned.filter((point: COVIDDaily) => point.date <= context.dateUpper && point.date >= context.dateLower)}>
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
