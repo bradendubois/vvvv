@@ -111,7 +111,8 @@ const Chart = ({ country, region, display }: ChartProps) => {
         if (country == Country.Canada) {
             setCleaned(cleanCanadaData(data.covid, data.population))
         } else if (country == Country.America) {
-            setCleaned(cleanAmericaData(data.vaccination))
+            // @ts-ignore
+            setCleaned(cleanAmericaData(data.vaccination as SocrataVaccinationDaily[]))
         } else {
             throw new Error(`Unsupported country: ${country}`)
         }
