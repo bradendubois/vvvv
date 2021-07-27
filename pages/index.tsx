@@ -56,10 +56,14 @@ const Home = () => {
         <main className={style.main}>
 
             {/* Canada Visualization / Graph */}
+            <h2>Canada</h2>
+            <hr />
             <div className={style.canada}>
                 {Object.entries(canadaCodes).filter(x => x[1].code !== "RP").map(x => <Chart country={Country.Canada} region={x[1].code} display={x[1].display}/>)}
             </div>
 
+            <h2>United States</h2>
+            <hr />
             <div className={style.america}>
                 {Object.entries(americaCodes).filter(x => x[0] !== "RP").map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
             </div>
