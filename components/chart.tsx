@@ -43,9 +43,7 @@ const cleanCanadaData = (covid: any, population: number) => {
 
 const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) => {
 
-    console.log(cases)
-
-    return vaccination.map((x: SocrataVaccinationDaily) => {
+    let mapped = vaccination.map((x: SocrataVaccinationDaily) => {
 
         // The dates returned are initially a string
         let date = new Date(x.date as unknown as string)
