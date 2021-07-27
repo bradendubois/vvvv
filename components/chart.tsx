@@ -1,12 +1,14 @@
+import { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { RegionEntry, useMapContext } from "../util/context/provider";
+import useSWR from "swr";
+
+import { color } from "../pages";
+import { Country } from "../util/api_codes";
+import { useMapContext } from "../util/context/provider";
+import { COVIDDaily, OpenCOVIDDaily, SocrataVaccinationDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
-import { color } from "../pages";
-import { COVIDDaily, OpenCOVIDDaily, SocrataVaccinationDaily } from "../util/types";
-import { useEffect, useState } from "react";
-import { americaCodes, americaRegions, canadaCodes, Country } from "../util/api_codes";
-import useSWR from "swr";
+
 
 type ChartProps = {
     country: Country
@@ -26,31 +28,12 @@ const cleanCanadaData = (covid: any, population: number) => {
         date.setFullYear(parseInt(s[2]))
         date.setHours(0, 0, 0, 0)
 
-        let code = canadaCodes[x.province as string].code
-        let display = canadaCodes[x.province as string].display
-
         return {
-            country: Country.Canada,
-            region: code,
-            display: display ?? x.province,
             date,
             date_string: x.date,
             active_cases: x.active_cases,
-            cases: x.cases,
-            cases_cumulative: x.cumulative_cases,
-
-            first_dose: x.avaccine - x.cvaccine,
-            first_dose_cumulative: x.cumulative_avaccine -  x.cumulative_cvaccine,
-
-            final_dose: x.cvaccine,
-            final_dose_cumulative: x.cumulative_cvaccine,
-
-            first_dose_population: (x.avaccine - x.cvaccine) / population,
             first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
-
-            final_dose_population: x.cvaccine / population,
             final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
-
         }
     })
 
@@ -66,24 +49,10 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[]) => {
         let date = new Date(x.date as unknown as string)
 
         return {
-            region: "",
-            display: "",
             date,
-            date_string: x.date,
+            date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
             active_cases: 0,
-            cases: 0,
-            cases_cumulative: 0,
-
-            first_dose: 0,
-            first_dose_cumulative: parseInt(x.administered_dose1_recip) / 100,
-
-            final_dose: 0,
-            final_dose_cumulative: parseInt(x.series_complete_yes) / 100,
-
-            first_dose_population: 0,
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
-
-            final_dose_population: 0,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
     })
