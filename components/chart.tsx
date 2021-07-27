@@ -45,7 +45,7 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) =>
 
     console.log(cases)
 
-    let mapped = vaccination.map((x: SocrataVaccinationDaily) => {
+    return vaccination.map((x: SocrataVaccinationDaily) => {
 
         // The dates returned are initially a string
         let date = new Date(x.date as unknown as string)
@@ -61,7 +61,7 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) =>
         }
     })
 
-    cases.forEach(day => {
+    cases.forEach((day: any) => {
 
         let d = new Date(day.submission_date as unknown as string)
         console.log(d)
