@@ -41,7 +41,9 @@ const cleanCanadaData = (covid: any, population: number) => {
 }
 
 
-const cleanAmericaData = (vaccination: SocrataVaccinationDaily[]) => {
+const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) => {
+
+    console.log(cases)
 
     let mapped = vaccination.map((x: SocrataVaccinationDaily) => {
 
@@ -52,10 +54,24 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[]) => {
             date,
             date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
             active_cases: 0,
+            new_case: 0,
+            new_death: 0,
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
     })
+
+    cases.forEach(day => {
+
+        let d = new Date(day.submission_date as unknown as string)
+        console.log(d)
+        let same = mapped.find(x => x.date_string ==`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`)
+        if (same) {
+            same.new_case = parseInt(day.new_case)
+            same.new_death = parseInt(day.new_death)
+        }
+    })
+
 
     return mapped
 }
@@ -81,7 +97,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
             setCleaned(cleanCanadaData(data.covid, data.population))
         } else if (country == Country.America) {
             // @ts-ignore
-            setCleaned(cleanAmericaData(data.vaccination as SocrataVaccinationDaily[]))
+            setCleaned(cleanAmericaData(data.vaccination as SocrataVaccinationDaily[], data.cases))
         } else {
             throw new Error(`Unsupported country: ${country}`)
         }
@@ -108,6 +124,18 @@ const Chart = ({ country, region, display }: ChartProps) => {
                 <Line
                     yAxisId={"L"}
                     dataKey={"active_cases"}
+                    stroke={color.active_cases}
+                />
+
+                <Line
+                    yAxisId={"L"}
+                    dataKey={"new_death"}
+                    stroke={color.active_cases}
+                />
+
+                <Line
+                    yAxisId={"L"}
+                    dataKey={"new_case"}
                     stroke={color.active_cases}
                 />
 
