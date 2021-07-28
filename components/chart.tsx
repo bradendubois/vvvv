@@ -18,7 +18,9 @@ type ChartProps = {
 
 const cleanCanadaData = (covid: any, population: number) => {
 
-    let x: COVIDDaily[] = covid.map((x: OpenCOVIDDaily) => {
+    let current: number[] = []
+
+    let x: COVIDDaily[] = covid.map((x: OpenCOVIDDaily, i: number) => {
 
         let s = x.date.split("-")
 
@@ -28,13 +30,23 @@ const cleanCanadaData = (covid: any, population: number) => {
         date.setFullYear(parseInt(s[2]))
         date.setHours(0, 0, 0, 0)
 
-        return {
+        let point = {
             date,
             date_string: x.date,
             active_cases: x.active_cases,
+            new_cases_normalized_100k: (x.cases / population) * 100000,
+            new_cases_normalized_100k_average: 0,
             first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
             final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
         }
+
+        if (current.push(x.cases) > 7) {
+            current = current.splice(-7)
+        }
+
+        point.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
+
+        return point
     })
 
     return x
@@ -119,23 +131,25 @@ const Chart = ({ country, region, display }: ChartProps) => {
 
                 {/* Active Cases*/}
                 <YAxis fontSize={12} yAxisId={"L"} orientation={"left"}/>
-                <Line
+
+                {/* <Line
                     yAxisId={"L"}
                     dataKey={"active_cases"}
                     stroke={color.active_cases}
-                />
+                /> */}
+
+                {/* <Line
+                    yAxisId={"L"}
+                    dataKey={"new_cases_normalized_100k"}
+                    stroke={color.active_cases}
+                /> */}
 
                 <Line
                     yAxisId={"L"}
-                    dataKey={"new_death"}
+                    dataKey={"new_cases_normalized_100k_average"}
                     stroke={color.active_cases}
                 />
 
-                <Line
-                    yAxisId={"L"}
-                    dataKey={"new_case"}
-                    stroke={color.active_cases}
-                />
 
                 {/* Vaccine Administration - First Dose */}
                 <YAxis fontSize={12} yAxisId={"R"} orientation={"right"} domain={[0, 1]}/>
