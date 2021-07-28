@@ -1,10 +1,11 @@
+import Head from "next/head";
 import Chart from "../components/chart";
 import DateFilter from "../components/dateFilter";
 
-import style from '../styles/Home.module.scss'
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
 
+import style from '../styles/Home.module.scss'
 
 export const color = {
     active_cases: "#bd3253",
@@ -21,54 +22,59 @@ const Home = () => {
 
     const context = useMapContext()
 
-    return (
+    return (<>
+
+        <Head>
+            <title>Vaccines Versus Variants, Visualized</title>
+        </Head>
 
         <div className={style.container}>
 
-        <h1>Snazzy Vaccine-related Title, presumably</h1>
+            <h1>Vaccines Versus Variants, Visualized</h1>
 
-        <hr/>
+            <hr/>
 
-        {/* Selector for date range on data */}
-        <DateFilter/>
+            {/* Selector for date range on data */}
+            <DateFilter/>
 
-        <hr/>
+            <hr/>
 
-        {/* Basic 'legend' to indicate line values */}
-        <div className={style.colors}>
-            <div>
-                <div style={{backgroundColor: color.active_cases}}/>
-                <p>Daily New Cases (per 100k)</p>
+            {/* Basic 'legend' to indicate line values */}
+            <div className={style.colors}>
+                <div>
+                    <div style={{backgroundColor: color.active_cases}}/>
+                    <p>Daily New Cases (per 100k)</p>
+                </div>
+
+                <div>
+                    <div style={{backgroundColor: color.first_dose}}/>
+                    <p>First Dose</p>
+                </div>
+
+                <div>
+                    <div style={{backgroundColor: color.final_dose}}/>
+                    <p>Second / Final Dose</p>
+                </div>
             </div>
 
-            <div>
-                <div style={{backgroundColor: color.first_dose}}/>
-                <p>First Dose</p>
-            </div>
+            <main className={style.main}>
 
-            <div>
-                <div style={{backgroundColor: color.final_dose}}/>
-                <p>Second / Final Dose</p>
-            </div>
+                {/* Canada Visualization / Graph */}
+                <h2>Canada</h2>
+                <hr />
+                <div className={style.canada}>
+                    {Object.entries(canadaCodes).map(x => <Chart country={Country.Canada} region={x[0]} display={x[1]}/>)}
+                </div>
+
+                <h2>United States</h2>
+                <hr />
+                <div className={style.america}>
+                    {Object.entries(americaCodes).map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
+                </div>
+
+            </main>
         </div>
-
-        <main className={style.main}>
-
-            {/* Canada Visualization / Graph */}
-            <h2>Canada</h2>
-            <hr />
-            <div className={style.canada}>
-                {Object.entries(canadaCodes).filter(x => x[1].code !== "RP").map(x => <Chart country={Country.Canada} region={x[1].code} display={x[1].display}/>)}
-            </div>
-
-            <h2>United States</h2>
-            <hr />
-            <div className={style.america}>
-                {Object.entries(americaCodes).filter(x => x[0] !== "RP").map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
-            </div>
-
-        </main>
-    </div>)
+    </>)
 }
 
 export default Home

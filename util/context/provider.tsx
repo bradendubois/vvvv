@@ -1,8 +1,4 @@
-
-// Default context with placeholder values
 import React, { createContext, ReactNode, useContext, useState } from "react";
-
-import { COVIDDaily } from "../types";
 import { dates } from "./dates";
 
 
@@ -13,10 +9,6 @@ type MapInterface = {
     setDateUpper(date: Date): void
     lowerValid: Date
     upperValid: Date
-}
-
-export type RegionEntry = {
-    [key: string]: COVIDDaily[]
 }
 
 

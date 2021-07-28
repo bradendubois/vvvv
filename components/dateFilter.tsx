@@ -1,7 +1,6 @@
 import { useMapContext } from "../util/context/provider";
 
 // @ts-ignore
-// TODO
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 

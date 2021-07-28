@@ -1,7 +1,5 @@
-
 // One daily summary for one region in Canada
 export type OpenCOVIDDaily = {
-
     active_cases: number
     active_cases_change: number
     date: String
@@ -24,7 +22,6 @@ export type OpenCOVIDDaily = {
     cumulative_recovered: number
     cumulative_testing: number
 }
-
 
 // Data from Socrata API on American vaccination data
 export type SocrataVaccinationDaily = {
@@ -133,4 +130,3 @@ export type COVIDDaily = {
     new_cases_normalized_100k: number
     new_cases_normalized_100k_average: number
 }
-
