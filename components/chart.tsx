@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
-import { COVIDDaily, OpenCOVIDDaily, SocrataVaccinationDaily } from "../util/types";
+import { COVIDDaily, OpenCOVIDDaily, SocrataCaseDaily, SocrataVaccinationDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
 
@@ -53,8 +53,9 @@ const cleanCanadaData = (covid: any, population: number) => {
 }
 
 
-const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) => {
+const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: SocrataCaseDaily[]) => {
 
+    let current: number[] = []
     let mapped = vaccination.map((x: SocrataVaccinationDaily) => {
 
         // The dates returned are initially a string
@@ -69,6 +70,16 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: any) =>
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
+
+        /*
+        if (current.push(x) > 7) {
+            current = current.splice(-7)
+        }
+
+        point.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
+
+        return point*/
+
     })
 
     cases.forEach((day: any) => {

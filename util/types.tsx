@@ -99,6 +99,16 @@ export type SocrataVaccinationDaily = {
     series_complete_yes: string
 }
 
+// Data from Socrata API on American case data
+export type SocrataCaseDaily = {
+    submission_date: string,
+    state: string,
+    new_case: string,
+    pnew_case: string,
+    new_death: string,
+    pnew_death: string
+}
+
 // Type that both Canada and US data will be converted to
 export type COVIDDaily = {
 

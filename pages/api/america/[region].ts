@@ -10,6 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=date,administered_dose1_recip,administered_dose1_pop_pct,series_complete_yes,series_complete_pop_pct&location=${region}`
     let vaccination = await fetch(vaccination_url).then(response => response.json())
 
+    console.log(cases)
     res.status(200).json({
         cases,
         vaccination
