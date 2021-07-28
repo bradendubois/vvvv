@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
-import { COVIDDaily, OpenCOVIDDaily, SocrataCaseDaily, SocrataVaccinationDaily } from "../util/types";
+import { COVIDDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
 
@@ -16,87 +16,10 @@ type ChartProps = {
     display?: string
 }
 
-const cleanCanadaData = (covid: any, population: number) => {
-
-    let current: number[] = []
-
-    let x: COVIDDaily[] = covid.map((x: OpenCOVIDDaily, i: number) => {
-
-        let s = x.date.split("-")
-
-        let date = new Date()
-        date.setDate(parseInt(s[0]))
-        date.setMonth(parseInt(s[1])-1)
-        date.setFullYear(parseInt(s[2]))
-        date.setHours(0, 0, 0, 0)
-
-        let point = {
-            date,
-            date_string: x.date,
-            active_cases: x.active_cases,
-            new_cases_normalized_100k: (x.cases / population) * 100000,
-            new_cases_normalized_100k_average: 0,
-            first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
-            final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
-        }
-
-        if (current.push(x.cases) > 7) {
-            current = current.splice(-7)
-        }
-
-        point.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
-
-        return point
+const dateRecreate = (data: COVIDDaily[]) => {
+    data.forEach((day) => {
+        day.date = new Date(day.date as unknown as string)
     })
-
-    return x
-}
-
-
-const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: SocrataCaseDaily[]) => {
-
-    let current: number[] = []
-    let mapped = vaccination.map((x: SocrataVaccinationDaily) => {
-
-        // The dates returned are initially a string
-        let date = new Date(x.date as unknown as string)
-
-        return {
-            date,
-            date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
-            active_cases: 0,
-            new_case: -1,
-            new_death: 0,
-            new_cases_normalized_100k_average: -1,
-            population: parseInt(x.administered_dose1_recip) / (parseInt(x.administered_dose1_pop_pct) / 100),
-            first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
-            final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
-        }
-    })
-
-    cases.forEach((day: any) => {
-
-        let d = new Date(day.submission_date as unknown as string)
-
-        let same = mapped.find(x => x.date_string ==`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`)
-        if (same) {
-            same.new_case = parseInt(day.new_case)
-            same.new_death = parseInt(day.new_death)
-        }
-    })
-
-    mapped.forEach((day, i) => {
-
-        if (day.new_case !== -1 && current.push(day.new_case) > 7) {
-            current = current.splice(-7)
-        }
-
-        day.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / day.population * 100000
-
-    })
-
-
-    return mapped
 }
 
 
@@ -116,14 +39,8 @@ const Chart = ({ country, region, display }: ChartProps) => {
 
         if (!data) return;
 
-        if (country == Country.Canada) {
-            setCleaned(cleanCanadaData(data.covid, data.population))
-        } else if (country == Country.America) {
-            // @ts-ignore
-            setCleaned(cleanAmericaData(data.vaccination as SocrataVaccinationDaily[], data.cases))
-        } else {
-            throw new Error(`Unsupported country: ${country}`)
-        }
+        dateRecreate(data)
+        setCleaned(data)
 
     }, [data])
 
@@ -135,7 +52,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
         <hr />
 
         {/* Snazzy ResponsiveContainer to make width responsive */}
-        <ResponsiveContainer  height={250} width={350}>
+        <ResponsiveContainer  height={225} width={325}>
             <LineChart className={region} data={cleaned.filter((point: COVIDDaily) => point.date <= context.dateUpper && point.date >= context.dateLower)}>
                 <Tooltip />
 
@@ -143,7 +60,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
                 <XAxis /* domain={["20-1-2021", "30-07-2021"]} */ fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
                 {/* Active Cases*/}
-                <YAxis fontSize={12} yAxisId={"L"} orientation={"left"}/>
+                <YAxis ticks={[0, 25, 50, 75, 100]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
 
                 {/* <Line
                     yAxisId={"L"}

@@ -143,7 +143,6 @@ export const americaCodes = {
     "MI": "Michigan",
     "MN": "Minnesota",
     "MO": "Missouri",
-    "MP": "Northern Mariana IS",
     "MS": "Mississippi",
     "MT": "Montana",
     "NC": "North Carolina",
