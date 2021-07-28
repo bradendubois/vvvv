@@ -39,14 +39,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             date,
             date_string: x.date,
             active_cases: x.active_cases,
-            new_cases_normalized_100k: (x.cases / population) * 100000,
             new_cases_normalized_100k_average: 0,
             first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
             final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
         }
 
         if (current.push(x.cases) > 7) {
-            current = current.splice(-7)
+            current = current.slice(-7)
         }
 
         point.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000

@@ -22,7 +22,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
             active_cases: 0,
             new_case: -1,
-            new_death: 0,
             new_cases_normalized_100k_average: -1,
             population: parseInt(x.administered_dose1_recip) / (parseInt(x.administered_dose1_pop_pct) / 100),
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
@@ -44,7 +43,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     mapped.forEach((day: any) => {
 
         if (day.new_case !== -1 && current.push(day.new_case) > 7) {
-            current = current.splice(-7)
+            current = current.slice(-7)
         }
 
         day.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / day.population * 100000

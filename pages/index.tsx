@@ -12,7 +12,6 @@ export const color = {
     final_dose: "#177ba3"
 }
 
-
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
  * to filter or otherwise alter visualized data
@@ -39,7 +38,7 @@ const Home = () => {
         <div className={style.colors}>
             <div>
                 <div style={{backgroundColor: color.active_cases}}/>
-                <p>Active Cases</p>
+                <p>Daily New Cases (per 100k)</p>
             </div>
 
             <div>
