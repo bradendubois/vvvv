@@ -65,32 +65,34 @@ const cleanAmericaData = (vaccination: SocrataVaccinationDaily[], cases: Socrata
             date,
             date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
             active_cases: 0,
-            new_case: 0,
+            new_case: -1,
             new_death: 0,
+            new_cases_normalized_100k_average: -1,
+            population: parseInt(x.administered_dose1_recip) / (parseInt(x.administered_dose1_pop_pct) / 100),
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
-
-        /*
-        if (current.push(x) > 7) {
-            current = current.splice(-7)
-        }
-
-        point.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
-
-        return point*/
-
     })
 
     cases.forEach((day: any) => {
 
         let d = new Date(day.submission_date as unknown as string)
-        console.log(d)
+
         let same = mapped.find(x => x.date_string ==`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`)
         if (same) {
             same.new_case = parseInt(day.new_case)
             same.new_death = parseInt(day.new_death)
         }
+    })
+
+    mapped.forEach((day, i) => {
+
+        if (day.new_case !== -1 && current.push(day.new_case) > 7) {
+            current = current.splice(-7)
+        }
+
+        day.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / day.population * 100000
+
     })
 
 
@@ -138,7 +140,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
                 <Tooltip />
 
                 <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
-                <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
+                <XAxis /* domain={["20-1-2021", "30-07-2021"]} */ fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
                 {/* Active Cases*/}
                 <YAxis fontSize={12} yAxisId={"L"} orientation={"left"}/>

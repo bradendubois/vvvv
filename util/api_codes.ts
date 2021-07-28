@@ -120,7 +120,6 @@ export const americaCodes = {
     "AL": "Alabama",
     "AK": "Alaska",
     "AR": "Arkansas",
-    "AS": "American Samoa",
     "AZ": "Arizona",
     "CA": "California",
     "CT": "Connecticut",
