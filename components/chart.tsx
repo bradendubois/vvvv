@@ -59,7 +59,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
             <XAxis /* domain={["20-1-2021", "30-07-2021"]} */ fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
             {/* Active Cases*/}
-            <YAxis ticks={[0, 25, 50, 75, 100]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
+            <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
 
             {/* <Line
                 yAxisId={"L"}
