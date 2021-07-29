@@ -33,31 +33,7 @@ const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
  * to filter or otherwise alter visualized data
  * @constructor
  */
-const Home = () => {
-
-    const context = useMapContext()
-
-    const [canada, setCanada] = useState(canadaCodes)
-
-    const [test, setTest] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
-
-    const onDragEnd = (result: any) => {
-        if (!result.destination) {
-            return
-        }
-
-        if (result.destination.index === result.source.index) {
-            return
-        }
-
-        const newOrder = reorder(
-            test,
-            result.source.index,
-            result.destination.index
-        )
-
-        setTest(newOrder)
-    }
+const App = () => {
 
     return (<>
 
@@ -106,30 +82,7 @@ const Home = () => {
                 <h2>Canada</h2>
                 <hr />
 
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId={"canada"}>
-                        {(provided: any) => (
-                            <div {...provided.droppableProps} ref={provided.innerRef} /*className={style.canada}*/ >
-                                {Object.values(canada).map((x, index) =>
-                                    <Draggable
-                                        key={x.code}
-                                        draggableId={x.code}
-                                        index={index}
-                                    >{(provided: any) => (
-                                        <Chart
-                                            ref={provided.innerRef}
-                                            {...provided}
-                                            country={Country.Canada}
-                                            {...x}
-                                        />
-                                    )}
-                                    </Draggable>
-                                )}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
 
                 {/*
                 <h2>United States</h2>
@@ -169,11 +122,20 @@ resetServerContext()
 
 //////////////////////////////////////////////////////
 
-function App() {
+type CountryProps = {
+    country: Country
+    initialOrdering: {
+        code: string
+        display: string
+    }[]
+}
 
-    const [state, setState] = useState(canadaCodes);
+const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
 
-    function onDragEnd(result) {
+    const [ordering, setOrdering] = useState(initialOrdering);
+
+    function onDragEnd(result: any) {
+
         if (!result.destination) {
             return;
         }
@@ -183,56 +145,44 @@ function App() {
         }
 
         const quotes = reorder(
-            state,
+            ordering,
             result.source.index,
             result.destination.index
         );
 
-        setState(quotes);
+        setOrdering(quotes);
     }
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="list">
-                {(provided: any) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
+        <div className={style.canada}>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="list" direction={"horizontal"}>
+                    {(provided: any) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps} style={{
+                            justifyContent: "space-between",
+                            display: "flex",
+                            flexWrap: "wrap"
+                        }}>
 
-                        {state.map((quote, index: number) => (
+                            {ordering.map((region, index) => (
 
-                            // <Quote quote={quote} index={index} key={quote.id} />
-                            <Draggable key={quote.code} draggableId={quote.code} index={index}>
-                                {(provided: any) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                    >
-                                        <Chart
-                                        {...quote}
-                                        country={Country.Canada}
-
-                                        />
-                                    </div>
-                                )}
-                            </Draggable>
-
-
-                        ))}
-
-
-
-
-                        {provided.placeholder}
-                    </div>
-                )}
-            </Droppable>
-        </DragDropContext>
+                                // <Quote quote={quote} index={index} key={quote.id} />
+                                <Draggable key={region.code} draggableId={region.code} index={index} >
+                                    {(provided: any) => (
+                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
+                                            <Chart {...region} country={country}/>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
+        </div>
     );
 }
 
 
 export default App;
-
-
-
-
