@@ -57,6 +57,11 @@ const Home = () => {
                 </div>
             </div>
 
+            <ul>
+                <li>Daily new cases are normalized to cases per 100,000.</li>
+                <li>Vaccine uptake is represented as a proportion of the <i>total</i> population.</li>
+            </ul>
+
             <main className={style.main}>
 
                 {/* Canada Visualization / Graph */}
@@ -73,6 +78,22 @@ const Home = () => {
                 </div>
 
             </main>
+
+            <hr/>
+
+            <div>
+                <h2>Sources</h2>
+                <ul>
+                    <li>Canadian data accessed from the <a href={"https://opencovid.ca/api/"}>OpenCOVID API</a>.</li>
+                    <li>Canadian dataset is the COVID-19 Open Data Working Group, available <a href={"https://opencovid.ca/work/dataset/"}>here</a>.</li>
+                    <li>American data accessed from the <a href={"https://www.tylertech.com/products/socrata"}>Socrata API</a>.</li>
+                    <li>American vaccination dataset available <a href={"https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc"}>here</a>.</li>
+                    <li>American case data available <a href={"https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36"}>here</a>.</li>
+                </ul>
+            </div>
+
+
+
         </div>
     </>)
 }

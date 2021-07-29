@@ -7,6 +7,13 @@
   min-height: 100vh;
 
   padding: 0 5vw;
+
+  ul {
+    li {
+      list-style: circle inside;
+      margin: 5px 0;
+    }
+  }
 }
 
 .colors {
