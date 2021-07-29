@@ -1,21 +1,24 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 // @ts-ignore TODO
-import { DragDropContext, Droppable } from "react-beautiful-dnd"
+import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
 import Chart from "../components/chart";
 
 import Filter from "../components/filter";
-import { americaCodes, canadaCodes, Country } from "../util/api_codes";
+import { canadaCodes, Country } from "../util/api_codes";
 
 import { useMapContext } from "../util/context/provider";
 import style from '../styles/Home.module.scss'
+
+resetServerContext()
 
 export const color = {
     active_cases: "#bd3253",
     first_dose: "#2ca757",
     final_dose: "#177ba3"
 }
+
 
 const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -36,6 +39,8 @@ const Home = () => {
 
     const [canada, setCanada] = useState(canadaCodes)
 
+    const [test, setTest] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
+
     const onDragEnd = (result: any) => {
         if (!result.destination) {
             return
@@ -46,12 +51,12 @@ const Home = () => {
         }
 
         const newOrder = reorder(
-            canada,
+            test,
             result.source.index,
             result.destination.index
         )
 
-        setCanada(newOrder)
+        setTest(newOrder)
     }
 
     return (<>
@@ -101,12 +106,28 @@ const Home = () => {
                 <h2>Canada</h2>
                 <hr />
 
-                <DragDropContext>
+                <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId={"canada"}>
-                        {(provided: any) => (<div ref={provided.innerRef} {...provided.droppableProps} className={style.canada}>
-                            {Object.values(canadaCodes).map(x => <Chart country={Country.Canada} {...x}/>)}
-                            {provided.placeholder}
-                        </div>)}
+                        {(provided: any) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef} /*className={style.canada}*/ >
+                                {Object.values(canada).map((x, index) =>
+                                    <Draggable
+                                        key={x.code}
+                                        draggableId={x.code}
+                                        index={index}
+                                    >{(provided: any) => (
+                                        <Chart
+                                            ref={provided.innerRef}
+                                            {...provided}
+                                            country={Country.Canada}
+                                            {...x}
+                                        />
+                                    )}
+                                    </Draggable>
+                                )}
+                                {provided.placeholder}
+                            </div>
+                        )}
                     </Droppable>
                 </DragDropContext>
 
@@ -143,5 +164,75 @@ const Home = () => {
         </div>
     </>)
 }
+// export default Home
+resetServerContext()
 
-export default Home
+//////////////////////////////////////////////////////
+
+function App() {
+
+    const [state, setState] = useState(canadaCodes);
+
+    function onDragEnd(result) {
+        if (!result.destination) {
+            return;
+        }
+
+        if (result.destination.index === result.source.index) {
+            return;
+        }
+
+        const quotes = reorder(
+            state,
+            result.source.index,
+            result.destination.index
+        );
+
+        setState(quotes);
+    }
+
+    return (
+        <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="list">
+                {(provided: any) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps}>
+
+                        {state.map((quote, index: number) => (
+
+                            // <Quote quote={quote} index={index} key={quote.id} />
+                            <Draggable key={quote.code} draggableId={quote.code} index={index}>
+                                {(provided: any) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                    >
+                                        <Chart
+                                        {...quote}
+                                        country={Country.Canada}
+
+                                        />
+                                    </div>
+                                )}
+                            </Draggable>
+
+
+                        ))}
+
+
+
+
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
+        </DragDropContext>
+    );
+}
+
+
+export default App;
+
+
+
+
