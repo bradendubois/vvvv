@@ -1,7 +1,7 @@
 // scss-lint:disable SelectorFormat
-.YK { grid-area: YK; }
+.YT { grid-area: YT; }
 .NT { grid-area: NT; }
-.NV { grid-area: NV; }
+.NU { grid-area: NU; }
 .BC { grid-area: BC; }
 .AB { grid-area: AB; }
 .SK { grid-area: SK; }
@@ -18,6 +18,9 @@
   display: flex;
   flex-direction: column;
 
+  border-radius: 5px;
+  padding: 5px;
+
   h4 {
     margin: 0;
     text-align: center;
@@ -26,4 +29,8 @@
   hr {
     margin: 3px 60px;
   }
+}
+
+.threshold {
+  background-color: #f6b4b4;
 }

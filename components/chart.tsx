@@ -45,8 +45,14 @@ const Chart = ({ country, region, display }: ChartProps) => {
         [].slice()
     }, [data])
 
+    const threshold = () => {
+        let x = cleaned[cleaned.length-1]?.new_cases_normalized_100k_average
+        if (x > context.threshold) {
+            return style.threshold
+        }
+    }
 
-    return (<div className={`${style.container} ${style[region]}`}>
+    return (<div className={`${style.container} ${style[region]} ${threshold()}`}>
 
         <h4>{display ?? region}</h4>
 
