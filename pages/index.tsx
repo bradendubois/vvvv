@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import Chart from "../components/chart";
 import DateFilter from "../components/dateFilter";
 
@@ -92,7 +93,12 @@ const Home = () => {
                 </ul>
             </div>
 
+            <hr/>
 
+            <footer>
+                <p>Developed by <Link href={"https://bradendubois.dev"}>Braden Dubois</Link>.</p>
+                <p><Link href={"https://github.com/bradendubois/vvvv"}>Source Code here.</Link></p>
+            </footer>
 
         </div>
     </>)
