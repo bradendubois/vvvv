@@ -9,6 +9,7 @@ type MapInterface = {
     setDateUpper(date: Date): void
     lowerValid: Date
     upperValid: Date
+    setThreshold(x: number): void
     threshold: number
 }
 
@@ -20,6 +21,7 @@ export const MapContext = createContext<MapInterface>({
     dateUpper: dates.upper.start,
     lowerValid: dates.lower.limit,
     upperValid: dates.upper.limit,
+    setThreshold: () => {},
     threshold: 15
 });
 
@@ -46,6 +48,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setDateUpper,
             lowerValid: dates.lower.limit,
             upperValid: dates.upper.limit,
+            setThreshold,
             threshold
         }}>{children}</MapContext.Provider>
     );
