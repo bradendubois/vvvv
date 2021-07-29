@@ -44,7 +44,7 @@ const Filter = () => {
             {/* Flag graphs above a certain threshold */}
             <div>
                 <div>
-                    <p>Case Medium Threshold</p>
+                    <p>Case Lower Threshold</p>
                     <input type={"number"} value={context.lowerThreshold} onChange={e => context.setLowerThreshold(parseInt(e.target.value))}/>
                 </div>
 
