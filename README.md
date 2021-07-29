@@ -1,6 +1,6 @@
 # VVVV
 
-A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
+**Vaccines Versus Variants, Visualized** - A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
 
 ## Usage
 
@@ -40,6 +40,12 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Contributions, Bug Reports, & Contact
+
+Any and all contributions, bug reports, and general feedback are welcome. 
+
+Email: `braden.dubois@usask.ca`
 
 ## Learn More
 
