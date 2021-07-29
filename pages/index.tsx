@@ -60,6 +60,7 @@ const Home = () => {
 
             <ul>
                 <li>Daily new cases are normalized to cases per 100,000.</li>
+                <li>Daily new cases are the total number of new cases, not the <i>net change</i> which would account for recoveries.</li>
                 <li>Vaccine uptake is represented as a proportion of the <i>total</i> population.</li>
             </ul>
 

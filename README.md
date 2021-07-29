@@ -16,6 +16,10 @@ This is built with:
 - [OpenCOVID API](https://opencovid.ca/) for Canadian data
 - [Socrata API](https://www.tylertech.com/products/socrata) for American data
 
+User-defined fields allow tweaking:
+- the date range data is displayed over (both lower and upper bounds)
+- a 'medium' and 'high' threshold for daily cases, above which graphs are highlighted accordingly
+
 ## Running Locally
 
 Clone:

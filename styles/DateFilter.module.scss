@@ -1,3 +1,4 @@
+// scss-lint:disable SelectorFormat
 .range {
 
   align-items: center;
@@ -30,4 +31,10 @@
       text-align: right;
     }
   }
+}
+
+.thresholdPicker {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
