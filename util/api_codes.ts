@@ -3,21 +3,21 @@ export enum Country {
     America = "america"
 }
 
-export const canadaCodes = {
-    "YT": "Yukon",
-    "NT": "Northwest Territories",
-    "NU": "Nunavut",
-    "BC": "British Columbia",
-    "AB": "Alberta",
-    "SK": "Saskatchewan",
-    "MB": "Manitoba",
-    "ON": "Ontario",
-    "QC": "Quebec",
-    "NL": "Newfoundland & Labrador",
-    "NS":" Nova Scotia",
-    "PE": "Prince Edward Island",
-    "NB": "New Brunswick"
-}
+export const canadaCodes = [
+    {code: "YT", display: "Yukon"},
+    {code: "NT", display: "Northwest Territories"},
+    {code: "NU", display: "Nunavut"},
+    {code: "BC", display: "British Columbia"},
+    {code: "AB", display: "Alberta"},
+    {code: "SK", display: "Saskatchewan"},
+    {code: "MB", display: "Manitoba"},
+    {code: "ON", display: "Ontario"},
+    {code: "QC", display: "Quebec"},
+    {code: "NL", display: "Newfoundland & Labrador"},
+    {code: "NS", display: "Nova Scotia"},
+    {code: "PE", display: "Prince Edward Island"},
+    {code: "NB", display: "New Brunswick"}
+]
 
 export const americaCodes = {
     "AL": "Alabama",

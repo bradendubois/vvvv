@@ -1,11 +1,14 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
+// @ts-ignore TODO
+import { DragDropContext, Droppable } from "react-beautiful-dnd"
 import Chart from "../components/chart";
+
 import Filter from "../components/filter";
-
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
-import { useMapContext } from "../util/context/provider";
 
+import { useMapContext } from "../util/context/provider";
 import style from '../styles/Home.module.scss'
 
 export const color = {
@@ -13,6 +16,14 @@ export const color = {
     first_dose: "#2ca757",
     final_dose: "#177ba3"
 }
+
+const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+};
 
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
@@ -22,6 +33,26 @@ export const color = {
 const Home = () => {
 
     const context = useMapContext()
+
+    const [canada, setCanada] = useState(canadaCodes)
+
+    const onDragEnd = (result: any) => {
+        if (!result.destination) {
+            return
+        }
+
+        if (result.destination.index === result.source.index) {
+            return
+        }
+
+        const newOrder = reorder(
+            canada,
+            result.source.index,
+            result.destination.index
+        )
+
+        setCanada(newOrder)
+    }
 
     return (<>
 
@@ -69,15 +100,23 @@ const Home = () => {
                 {/* Canada Visualization / Graph */}
                 <h2>Canada</h2>
                 <hr />
-                <div className={style.canada}>
-                    {Object.entries(canadaCodes).map(x => <Chart country={Country.Canada} region={x[0]} display={x[1]}/>)}
-                </div>
 
+                <DragDropContext>
+                    <Droppable droppableId={"canada"}>
+                        {(provided: any) => (<div ref={provided.innerRef} {...provided.droppableProps} className={style.canada}>
+                            {Object.values(canadaCodes).map(x => <Chart country={Country.Canada} {...x}/>)}
+                            {provided.placeholder}
+                        </div>)}
+                    </Droppable>
+                </DragDropContext>
+
+                {/*
                 <h2>United States</h2>
                 <hr />
                 <div className={style.america}>
                     {Object.entries(americaCodes).map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
                 </div>
+                */}
 
             </main>
 

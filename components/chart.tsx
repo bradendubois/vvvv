@@ -12,7 +12,7 @@ import style from "../styles/Chart.module.scss"
 
 type ChartProps = {
     country: Country
-    region: string
+    code: string
     display?: string
 }
 
@@ -27,13 +27,13 @@ const dateRecreate = (data: COVIDDaily[]) => {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, region, display }: ChartProps) => {
+const Chart = ({ country, code, display }: ChartProps) => {
 
     const context = useMapContext()
 
     const [cleaned, setCleaned] = useState<COVIDDaily[]>([])
 
-    const { data, error } = useSWR(`/api/${country}/${region}`)
+    const { data, error } = useSWR(`/api/${country}/${code}`)
 
     useEffect(() => {
 
@@ -54,13 +54,13 @@ const Chart = ({ country, region, display }: ChartProps) => {
         }
     }
 
-    return (<div className={`${style.container} ${style[region]} ${threshold()}`}>
+    return (<div className={`${style.container} ${style[code]} ${threshold()}`}>
 
-        <h4>{display ?? region}</h4>
+        <h4>{display ?? code}</h4>
 
         <hr />
 
-        <LineChart height={225} width={325} className={region} data={cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))}>
+        <LineChart height={225} width={325} className={code} data={cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))}>
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
