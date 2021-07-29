@@ -47,7 +47,7 @@ const Chart = ({ country, region, display }: ChartProps) => {
 
     const threshold = () => {
         let x = cleaned[cleaned.length-1]?.new_cases_normalized_100k_average
-        if (x > context.threshold) {
+        if (x > context.upperThreshold) {
             return style.threshold
         }
     }

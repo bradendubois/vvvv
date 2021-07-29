@@ -15,10 +15,11 @@
 
 .container {
 
+  border-radius: 5px;
+
   display: flex;
   flex-direction: column;
 
-  border-radius: 5px;
   padding: 5px;
 
   h4 {

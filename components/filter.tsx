@@ -44,7 +44,7 @@ const Filter = () => {
             {/* Flag graphs above a certain threshold */}
             <div>
                 <p>Case Threshold</p>
-                <input type={"number"} value={context.threshold} onChange={e => context.setThreshold(parseInt(e.target.value))}/>
+                <input type={"number"} value={context.upperThreshold} onChange={e => context.setThreshold(parseInt(e.target.value))}/>
             </div>
 
             {/* Upper-bound of date filtering */}

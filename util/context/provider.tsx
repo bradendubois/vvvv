@@ -9,8 +9,10 @@ type MapInterface = {
     setDateUpper(date: Date): void
     lowerValid: Date
     upperValid: Date
-    setThreshold(x: number): void
-    threshold: number
+    setUpperThreshold(x: number): void
+    upperThreshold: number
+    setLowerThreshold(x: number): void
+    lowerThreshold: number
 }
 
 
@@ -21,8 +23,10 @@ export const MapContext = createContext<MapInterface>({
     dateUpper: dates.upper.start,
     lowerValid: dates.lower.limit,
     upperValid: dates.upper.limit,
-    setThreshold: () => {},
-    threshold: 15
+    setUpperThreshold: () => {},
+    upperThreshold: 15,
+    setLowerThreshold: () => {},
+    lowerThreshold: 15
 });
 
 
@@ -38,7 +42,8 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [dateUpper, setDateUpper] = useState<Date>(dates.upper.start)
 
     // Threshold a graph's daily cases should flag
-    const [threshold, setThreshold] = useState(15)
+    const [lowerThreshold, setLowerThreshold] = useState(9)
+    const [upperThreshold, setUpperThreshold] = useState(18)
 
     return (
         <MapContext.Provider value={{
@@ -48,8 +53,10 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setDateUpper,
             lowerValid: dates.lower.limit,
             upperValid: dates.upper.limit,
-            setThreshold,
-            threshold
+            setUpperThreshold,
+            upperThreshold,
+            setLowerThreshold,
+            lowerThreshold
         }}>{children}</MapContext.Provider>
     );
 }
