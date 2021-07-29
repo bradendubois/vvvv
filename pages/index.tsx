@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import Chart from "../components/chart";
-import DateFilter from "../components/dateFilter";
+import Filter from "../components/filter";
 
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
@@ -36,7 +36,7 @@ const Home = () => {
             <hr/>
 
             {/* Selector for date range on data */}
-            <DateFilter/>
+            <Filter/>
 
             <hr/>
 
