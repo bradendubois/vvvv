@@ -1,0 +1,78 @@
+.container {
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  min-height: 100vh;
+
+  padding: 0 5vw;
+
+  ul {
+    li {
+      list-style: circle inside;
+      margin: 5px 0;
+    }
+  }
+}
+
+.colors {
+
+  display: flex;
+  flex-direction: row;
+
+  margin-bottom: 20px;
+
+  div {
+
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+
+    &:not(:last-of-type) {
+      margin-right: 50px;
+    }
+
+    div {
+      height: 10px;
+      margin: 10px;
+      width: 10px;
+    }
+
+    p {
+      margin: 0 auto;
+    }
+  }
+}
+
+.canada {
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  @media screen and (min-width: 2000px) {
+    display: grid;
+    grid-template: "YK NT NV . ."
+          "BC AB SK MB ONT"
+          "QC NL NS NB PE";
+  }
+
+  > div {
+    margin: 10px;
+  }
+}
+
+
+.america {
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  > div {
+    margin: 10px;
+  }
+}
