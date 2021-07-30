@@ -4,7 +4,7 @@ import React, { useState } from "react";
 // @ts-ignore TODO
 import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
 import Chart from "../components/chart";
-
+import { CountryGraph } from "../components/country";
 import Filter from "../components/filter";
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 
@@ -19,14 +19,6 @@ export const color = {
     final_dose: "#177ba3"
 }
 
-
-const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
-    return result;
-};
 
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
@@ -76,20 +68,10 @@ const App = () => {
                 <li>Vaccine uptake is represented as a proportion of the <i>total</i> population.</li>
             </ul>
 
+            {/* Visualization / Graphs */}
             <main className={style.main}>
-
-                {/* Canada Visualization / Graph */}
-                <h2>Canada</h2>
-                <hr />
-
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
-
-                <h2>United States</h2>
-                <hr />
-                <div className={style.america}>
-                    <CountryGraph country={Country.America} initialOrdering={americaCodes} />
-                </div>
-
+                <CountryGraph country={Country.America} initialOrdering={americaCodes} />
             </main>
 
             <hr/>
@@ -98,7 +80,7 @@ const App = () => {
                 <h2>Sources</h2>
                 <ul>
                     <li>Canadian data accessed from the <a href={"https://opencovid.ca/api/"}>OpenCOVID API</a>.</li>
-                    <li>Canadian dataset is the COVID-19 Open Data Working Group, available <a href={"https://opencovid.ca/work/dataset/"}>here</a>.</li>
+                    <li>Canadian dataset by the COVID-19 Open Data Working Group, available <a href={"https://opencovid.ca/work/dataset/"}>here</a>.</li>
                     <li>American data accessed from the <a href={"https://www.tylertech.com/products/socrata"}>Socrata API</a>.</li>
                     <li>American vaccination dataset available <a href={"https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc"}>here</a>.</li>
                     <li>American case data available <a href={"https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36"}>here</a>.</li>
@@ -119,67 +101,5 @@ const App = () => {
 resetServerContext()
 
 //////////////////////////////////////////////////////
-
-type CountryProps = {
-    country: Country
-    initialOrdering: {
-        code: string
-        display: string
-    }[]
-}
-
-const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
-
-    const [ordering, setOrdering] = useState(initialOrdering);
-
-    function onDragEnd(result: any) {
-
-        if (!result.destination) {
-            return;
-        }
-
-        if (result.destination.index === result.source.index) {
-            return;
-        }
-
-        const quotes = reorder(
-            ordering,
-            result.source.index,
-            result.destination.index
-        );
-
-        setOrdering(quotes);
-    }
-
-    return (
-        <div className={style.canada}>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="list" direction={"horizontal"}>
-                    {(provided: any) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps} style={{
-                            justifyContent: "space-between",
-                            display: "flex",
-                            flexWrap: "wrap"
-                        }}>
-
-                            {ordering.map((region, index) => (
-
-                                // <Quote quote={quote} index={index} key={quote.id} />
-                                <Draggable key={region.code} draggableId={region.code} index={index} >
-                                    {(provided: any) => (
-                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
-                                            <Chart {...region} country={country}/>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-        </div>
-    );
-}
 
 export default App;

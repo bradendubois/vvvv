@@ -54,11 +54,17 @@ const Chart = ({ country, code, display }: ChartProps) => {
         }
     }
 
-    return (<div className={`${style.container} ${style[code]} ${threshold()}`}>
+    const debug = false;
+
+    return (<div className={`${style.container} ${threshold()}`}>
 
         <h4>{display ?? code}</h4>
 
         <hr />
+
+        {debug && <div style={{ height: "225px", width: "325px"}}/>}
+
+        {!debug &&
 
         <LineChart height={225} width={325} className={code} data={cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))}>
             <Tooltip />
@@ -102,7 +108,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
                 dataKey={"final_dose_population_cumulative"}
                 stroke={color.final_dose}
             />
-        </LineChart>
+        </LineChart>}
     </div>)
 }
 
