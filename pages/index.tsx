@@ -6,7 +6,7 @@ import { DragDropContext, Draggable, Droppable, resetServerContext } from "react
 import Chart from "../components/chart";
 
 import Filter from "../components/filter";
-import { canadaCodes, Country } from "../util/api_codes";
+import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 
 import { useMapContext } from "../util/context/provider";
 import style from '../styles/Home.module.scss'
@@ -84,13 +84,11 @@ const App = () => {
 
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
 
-                {/*
                 <h2>United States</h2>
                 <hr />
                 <div className={style.america}>
-                    {Object.entries(americaCodes).map(x => <Chart country={Country.America} region={x[0]} display={x[1]} />)}
+                    <CountryGraph country={Country.America} initialOrdering={americaCodes} />
                 </div>
-                */}
 
             </main>
 
@@ -183,6 +181,5 @@ const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
         </div>
     );
 }
-
 
 export default App;
