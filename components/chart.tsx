@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import useSWR from "swr";
 
@@ -54,6 +54,10 @@ const Chart = ({ country, code, display }: ChartProps) => {
         }
     }
 
+    const filteredPoints = useMemo(() => {
+        return cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))
+    }, [context.dateLower, context.dateUpper, cleaned])
+
     const debug = false;
 
     return (<div className={`${style.container} ${threshold()}`}>
@@ -66,7 +70,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         {!debug &&
 
-        <LineChart height={225} width={325} className={code} data={cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))}>
+        <LineChart height={225} width={325} className={code} data={filteredPoints}>
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
