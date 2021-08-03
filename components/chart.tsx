@@ -81,24 +81,14 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
-            <XAxis /* domain={["20-1-2021", "30-07-2021"]} */ fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
+            <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
             {/* Active Cases*/}
             <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
 
-            {/* <Line
-                yAxisId={"L"}
-                dataKey={"active_cases"}
-                stroke={color.active_cases}
-            /> */}
-
-            {/* <Line
-                yAxisId={"L"}
-                dataKey={"new_cases_normalized_100k"}
-                stroke={color.active_cases}
-            /> */}
-
+            {/* Daily New Cases+Deaths / 7 Day Average, Normalized to 100k */}
             <Line
+                isAnimationActive={false}
                 yAxisId={"L"}
                 dataKey={"new_cases_deaths_normalized_100k_average"}
                 stroke={color.active_cases}
@@ -108,6 +98,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
             {/* Vaccine Administration - First Dose */}
             <YAxis fontSize={12} yAxisId={"R"} orientation={"right"} domain={[0, 1]}/>
             <Line
+                isAnimationActive={false}
                 yAxisId={"R"}
                 dataKey={"first_dose_population_cumulative"}
                 stroke={color.first_dose}
@@ -115,6 +106,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
 
             {/* Vaccine Administration - Second/Final Dose */}
             <Line
+                isAnimationActive={false}
                 yAxisId={"R"}
                 dataKey={"final_dose_population_cumulative"}
                 stroke={color.final_dose}
