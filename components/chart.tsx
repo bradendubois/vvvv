@@ -18,7 +18,6 @@ type ChartProps = {
 }
 
 const dateRecreate = (data: COVIDDaily[]) => {
-    console.log("Here")
     data.forEach((day) => {
         day.date = new Date(day.date as unknown as string)
     })
@@ -46,10 +45,6 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
 
         dateRecreate(data)
         setCleaned(data);
-
-        if (code === "YT") {
-            console.log(data)
-        }
 
         // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
 
