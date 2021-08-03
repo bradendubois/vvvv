@@ -9,6 +9,7 @@ import { COVIDDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
 
+const DEBUG = false
 
 type ChartProps = {
     country: Country
@@ -65,17 +66,16 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
         return cleaned.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
     }, [context.dateLower, context.dateUpper, cleaned])
 
-    const debug = false;
-
     return (<div className={`${style.container} ${threshold}`}>
 
         <h4>{display ?? code}</h4>
 
         <hr />
 
-        {debug && <div style={{ height: "225px", width: "325px"}}/>}
+        {/* During debugging, placeholder div to improve performance */}
+        {DEBUG && <div style={{ height: "225px", width: "325px"}}/>}
 
-        {!debug &&
+        {!DEBUG &&
 
         <LineChart height={225} width={325} className={code} data={filteredPoints}>
             <Tooltip />

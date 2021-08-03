@@ -84,13 +84,14 @@ const App = () => {
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
                 <CountryGraph country={Country.America} initialOrdering={americaCodes} />
 
-                <button onClick={() => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-                }}>Back to Top</button>
             </main>
+
+            <button onClick={() => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }}>Back to Top</button>
 
             <hr/>
 
