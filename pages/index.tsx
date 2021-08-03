@@ -30,12 +30,12 @@ const App = () => {
     return (<>
 
         <Head>
-            <title>Vaccines Versus Variants, Visualized</title>
+            <title>Visualizing Variants versus Vaccines</title>
         </Head>
 
         <div className={style.container}>
 
-            <h1>Vaccines Versus Variants, Visualized</h1>
+            <h1>Visualizing Variants versus Vaccines</h1>
 
             <hr/>
 
@@ -45,6 +45,8 @@ const App = () => {
             <hr/>
 
             {/* Basic 'legend' to indicate line values */}
+
+            {/*
             <div className={style.colors}>
                 <div>
                     <div style={{backgroundColor: color.active_cases}}/>
@@ -67,12 +69,29 @@ const App = () => {
                 <li>Daily new cases are the total number of new cases, not the <i>net change</i> which would account for recoveries.</li>
                 <li>Vaccine uptake is represented as a proportion of the <i>total</i> population.</li>
             </ul>
+            */ }
+
+            <div className={style.passage}>
+                <h3>Notes on the graphs</h3>
+                <p>The graphs present here snapshot comparisons of total vaccinations and daily new cases /hospitalizations/deaths (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
+                <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases-hospitalizations-deaths /100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
+                <p>Additionally, graphs are tinted according to case thresholds. A white background indicates 9 or less daily cases/100,000, the lighter shade of red indicates 10-18 cases/100,000 per day, and the darkest red indicates 19 or more cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
+                <p>Because some jurisdictions have stopped daily reporting, this visualization has been developed on the fly for those interested in continuously monitoring these numbers, which are presented without editorial comment. The 60+ graphs take some time to draw and the response time is slow in the edit boxes. The website will be tweaked to improve performance and presentation.</p>
+            </div>
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
                 <CountryGraph country={Country.America} initialOrdering={americaCodes} />
+
             </main>
+
+            <button onClick={() => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }}>Back to Top</button>
 
             <hr/>
 

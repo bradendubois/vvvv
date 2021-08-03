@@ -4,7 +4,7 @@ import { useMapContext } from "../util/context/provider";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import style from "../styles/DateFilter.module.scss"
+import style from "../styles/Filter.module.scss"
 
 
 /**

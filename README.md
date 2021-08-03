@@ -1,6 +1,6 @@
 # VVVV
 
-**Vaccines Versus Variants, Visualized** - A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
+**Visualizing Variants versus Vaccines** - A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
 
 ## Usage
 

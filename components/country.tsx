@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "./chart";
 import { Country } from "../util/api_codes";
 
@@ -26,6 +26,7 @@ type CountryProps = {
 export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
 
     const [ordering, setOrdering] = useState(initialOrdering);
+    const [scale, setScale] = useState(Object.fromEntries(initialOrdering.map(x => [x.code, 0])))
 
     /*
     function onDragEnd(result: any) {
@@ -49,6 +50,21 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
 
     const row = 4
      */
+
+    useEffect(() => {
+        let sorted = ordering.concat([]).sort((a, b) => {
+            return scale[b.code] - scale[a.code]
+        })
+
+        setOrdering(sorted)
+    }, [scale])
+
+    const recordValue = (region: string, value: number) => {
+        setScale({
+            ...scale,
+            [region]: value
+        })
+    }
 
     return (
         <div className={style.country}>
@@ -95,7 +111,7 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
                                         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
 
                                 */
-                                <Chart {...region} country={country}/>))}</div>
+                                <Chart {...region} country={country} callback={recordValue} />))}</div>
                             {/* }</div>
                                     )}
                                 </Draggable> */}
