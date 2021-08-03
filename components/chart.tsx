@@ -14,9 +14,11 @@ type ChartProps = {
     country: Country
     code: string
     display?: string
+    callback(region: string, value: number): void
 }
 
 const dateRecreate = (data: COVIDDaily[]) => {
+    console.log("Here")
     data.forEach((day) => {
         day.date = new Date(day.date as unknown as string)
     })
@@ -27,13 +29,16 @@ const dateRecreate = (data: COVIDDaily[]) => {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, code, display }: ChartProps) => {
+const Chart = ({ country, code, display, callback }: ChartProps) => {
 
     const context = useMapContext()
 
     const [cleaned, setCleaned] = useState<COVIDDaily[]>([])
+    const [mount, setMount] = useState(false)
 
-    const { data, error } = useSWR(`/api/${country}/${code}`)
+    const { data, error } = useSWR(mount ? `/api/${country}/${code}` : null)
+
+    useEffect(() => setMount(true), [])
 
     useEffect(() => {
 
@@ -42,25 +47,26 @@ const Chart = ({ country, code, display }: ChartProps) => {
         dateRecreate(data)
         setCleaned(data);
 
-        [].slice()
+        callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
+
     }, [data])
 
-    const threshold = () => {
+    const threshold = useMemo(() => {
         let x = cleaned[cleaned.length-1]?.new_cases_normalized_100k_average
         if (x > context.upperThreshold) {
             return style.upperThreshold
         } else if (x > context.lowerThreshold) {
             return style.lowerThreshold
         }
-    }
+    }, [cleaned])
 
     const filteredPoints = useMemo(() => {
         return cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))
     }, [context.dateLower, context.dateUpper, cleaned])
 
-    const debug = false;
+    const debug = true;
 
-    return (<div className={`${style.container} ${threshold()}`}>
+    return (<div className={`${style.container} ${threshold}`}>
 
         <h4>{display ?? code}</h4>
 
