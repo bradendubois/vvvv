@@ -24,7 +24,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
             active_cases: 0,
             new_case: -1,
-            new_cases_normalized_100k_average: -1,
+            new_death: -1,
+            new_cases_deaths_normalized_100k_average: -1,
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
@@ -35,16 +36,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`)
         if (same) {
             same.new_case = parseInt(day.new_case)
+            same.new_death = parseInt(day.new_death)
         }
     })
 
     mapped.forEach((day: any) => {
 
-        if (day.new_case !== -1 && current.push(day.new_case) > 7) {
+        let total = 0
+
+        if (day.new_case !== -1) { total += day.new_case }
+        if (day.new_death === -1) { total += day.new_death}
+
+        if (day.new_case !== -1 && day.new_death !== -1 && current.push(total) > 7) {
             current = current.slice(-7)
         }
 
-        day.new_cases_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
+        day.new_cases_deaths_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
 
     })
 

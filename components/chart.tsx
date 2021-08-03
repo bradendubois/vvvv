@@ -56,7 +56,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
     }, [data])
 
     const threshold = useMemo(() => {
-        let x = cleaned[cleaned.length-1]?.new_cases_normalized_100k_average
+        let x = cleaned[cleaned.length-1]?.new_cases_deaths_normalized_100k_average
         if (x >= context.upperThreshold) {
             return style.upperThreshold
         } else if (x >= context.lowerThreshold) {
@@ -70,7 +70,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
         return cleaned.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
     }, [context.dateLower, context.dateUpper, cleaned])
 
-    const debug = true;
+    const debug = false;
 
     return (<div className={`${style.container} ${threshold}`}>
 
@@ -105,7 +105,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
 
             <Line
                 yAxisId={"L"}
-                dataKey={"new_cases_normalized_100k_average"}
+                dataKey={"new_cases_deaths_normalized_100k_average"}
                 stroke={color.active_cases}
             />
 
