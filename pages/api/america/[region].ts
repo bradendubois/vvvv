@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         return {
             date,
-            date_string: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
+            date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
             active_cases: 0,
             new_case: -1,
             new_death: -1,
@@ -33,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     cases.forEach(day => {
         let d = new Date(day.submission_date as unknown as string)
-        let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`)
+        let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
         if (same) {
             same.new_case = parseInt(day.new_case)
             same.new_death = parseInt(day.new_death)
