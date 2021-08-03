@@ -83,6 +83,13 @@ const App = () => {
             <main className={style.main}>
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
                 <CountryGraph country={Country.America} initialOrdering={americaCodes} />
+
+                <button onClick={() => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+                }}>Back to Top</button>
             </main>
 
             <hr/>
