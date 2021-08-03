@@ -41,6 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         return {
             date,
+            cases: x.cases,
             date_string: x.date,
             active_cases: x.active_cases,
             new_cases_normalized_100k_average: current.reduce((a, b) => a + b, 0) / current.length / population * 100000,

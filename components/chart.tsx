@@ -47,7 +47,11 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
         dateRecreate(data)
         setCleaned(data);
 
-        callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
+        if (code === "YT") {
+            console.log(data)
+        }
+
+        // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
 
     }, [data])
 
@@ -61,10 +65,10 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
     }, [cleaned])
 
     const filteredPoints = useMemo(() => {
-        return cleaned.slice(cleaned.findIndex(point => point.date >= context.dateLower), cleaned.findIndex(point => point.date > context.dateUpper))
+        return cleaned.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
     }, [context.dateLower, context.dateUpper, cleaned])
 
-    const debug = true;
+    const debug = false;
 
     return (<div className={`${style.container} ${threshold}`}>
 
