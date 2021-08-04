@@ -59,7 +59,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [cleaned])
+    }, [cleaned, context.lowerThreshold, context.upperThreshold])
 
     const filteredPoints = useMemo(() => {
         return cleaned.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
