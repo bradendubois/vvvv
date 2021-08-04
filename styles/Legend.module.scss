@@ -1,0 +1,127 @@
+@mixin column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin row {
+  display: flex;
+  flex-direction: row;
+}
+
+.container {
+
+  @include column;
+
+  h1 {
+    padding-bottom: 5px;
+    border-bottom: 1px solid black;
+    margin: 0;
+    text-align: center;
+  }
+
+  > div {
+    @include row;
+
+    justify-content: space-around;
+
+    @media screen and (min-width: 1400px) {
+      justify-content: flex-start;
+    }
+  }
+}
+
+.keys {
+
+  @include column;
+  justify-content: space-around;
+
+  margin-right: 50px;
+
+  .lines { @include column; }
+  .cases { @include column; }
+
+}
+
+.line {
+
+  @include row;
+
+  align-items: center;
+  justify-content: flex-start;
+
+  > div {
+
+    margin: 3px;
+
+    min-height: 12px;
+    max-height: 12px;
+    min-width: 12px;
+    max-width: 12px;
+
+    border: 1px solid black;
+    border-radius: 50%;
+
+    &:last-of-type {
+      margin-right: 10px;
+    }
+  }
+
+  p {
+    margin: 5px;
+    white-space: nowrap;
+  }
+}
+
+.cases {
+
+  @include column;
+
+  .case {
+
+    @include row;
+    align-items: center;
+    justify-content: flex-start;
+
+    > div {
+
+      min-width: 25px;
+      max-width: 25px;
+
+      min-height: 13px;
+      max-height: 13px;
+
+      border: 1px solid black;
+      border-radius: 1px;
+    }
+
+    .low { background-color: white; }
+    .medium { background-color: #fff0f0; }
+    .high { background-color: #fcdcdc; }
+
+    p { margin: 10px; }
+  }
+}
+
+.graph {
+
+  @include row;
+  align-items: center;
+
+  > div {
+
+    @include column;
+
+    h3 {
+      text-align: center;
+    }
+  }
+
+  > p {
+    margin: 0;
+    font-size: 10pt;
+    font-weight: 300;
+
+    width: 80px;
+  }
+}
+

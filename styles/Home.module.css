@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 5vw;
+}
+.container ul li {
+  list-style: circle inside;
+  margin: 5px 0;
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (min-width: 1400px) {
+  .notes {
+    flex-direction: row;
+  }
+  .notes hr {
+    display: none;
+  }
+  .notes .passage {
+    margin-left: 50px;
+  }
+  .notes .passage h3 {
+    margin-top: 0;
+  }
+}
+
+/*# sourceMappingURL=Home.module.css.map */

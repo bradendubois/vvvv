@@ -16,35 +16,26 @@
   }
 }
 
-.colors {
+.notes {
 
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
-  margin-bottom: 20px;
+  @media screen and (min-width: 1400px) {
 
-  div {
-
-    align-items: center;
-    display: flex;
     flex-direction: row;
 
-    &:not(:last-of-type) {
-      margin-right: 50px;
+    hr {
+      display: none;
     }
 
-    div {
-      height: 10px;
-      margin: 10px;
-      width: 10px;
-    }
+    .passage {
 
-    p {
-      margin: 0 auto;
+      margin-left: 50px;
+
+      h3 {
+        margin-top: 0;
+      }
     }
   }
-}
-
-.passage h3 {
-  margin-top: 0;
 }

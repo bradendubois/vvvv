@@ -10,3 +10,5 @@ const App = ({ Component, pageProps }: AppProps) => {
 }
 
 export default App
+
+export const DEBUG = true;
