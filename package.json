@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "current-git-branch": "^1.1.0",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-beautiful-dnd": "^13.1.0",
