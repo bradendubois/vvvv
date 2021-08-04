@@ -1,0 +1,110 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+.container h1 {
+  padding-bottom: 5px;
+  border-bottom: 1px solid black;
+  margin: 0;
+  text-align: center;
+}
+.container > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+@media screen and (min-width: 1400px) {
+  .container > div {
+    justify-content: flex-start;
+  }
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-right: 50px;
+}
+.keys .lines {
+  display: flex;
+  flex-direction: column;
+}
+.keys .cases {
+  display: flex;
+  flex-direction: column;
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.line > div {
+  margin: 3px;
+  min-height: 12px;
+  max-height: 12px;
+  min-width: 12px;
+  max-width: 12px;
+  border: 1px solid black;
+  border-radius: 50%;
+}
+.line > div:last-of-type {
+  margin-right: 10px;
+}
+.line p {
+  margin: 5px;
+  white-space: nowrap;
+}
+
+.cases {
+  display: flex;
+  flex-direction: column;
+}
+.cases .case {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.cases .case > div {
+  min-width: 25px;
+  max-width: 25px;
+  min-height: 13px;
+  max-height: 13px;
+  border: 1px solid black;
+  border-radius: 1px;
+}
+.cases .case .low {
+  background-color: white;
+}
+.cases .case .medium {
+  background-color: #fff0f0;
+}
+.cases .case .high {
+  background-color: #fcdcdc;
+}
+.cases .case p {
+  margin: 10px;
+}
+
+.graph {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.graph > div {
+  display: flex;
+  flex-direction: column;
+}
+.graph > div h3 {
+  text-align: center;
+}
+.graph > p {
+  margin: 0;
+  font-size: 10pt;
+  font-weight: 300;
+  width: 80px;
+}
+
+/*# sourceMappingURL=Legend.module.css.map */

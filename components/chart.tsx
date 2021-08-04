@@ -8,8 +8,7 @@ import { useMapContext } from "../util/context/provider";
 import { COVIDDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
-
-const DEBUG = false
+import { DEBUG } from "../pages/_app";
 
 type ChartProps = {
     country: Country

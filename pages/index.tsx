@@ -1,14 +1,16 @@
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState } from "react";
+
 // @ts-ignore TODO
-import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
-import Chart from "../components/chart";
+import { resetServerContext } from "react-beautiful-dnd"
+
 import { CountryGraph } from "../components/country";
 import Filter from "../components/filter";
+import Legend from "../components/legend";
+
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 
-import { useMapContext } from "../util/context/provider";
 import style from '../styles/Home.module.scss'
 
 resetServerContext()
@@ -45,47 +47,30 @@ const App = () => {
             <hr/>
 
             {/* Basic 'legend' to indicate line values */}
+            <div className={style.notes}>
 
-            {/*
-            <div className={style.colors}>
-                <div>
-                    <div style={{backgroundColor: color.active_cases}}/>
-                    <p>Daily New Cases (per 100k)</p>
+                {/* Legend with example Graph */}
+                <Legend />
+
+                <hr />
+
+                {/* Notes on the graphs */}
+                <div className={style.passage}>
+                    <h3>Notes on the graphs</h3>
+                    <p>The graphs present snapshot comparisons of total vaccinations and daily new cases (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
+                    <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases/100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
+                    <p>Additionally, graphs are tinted according to case thresholds. A white background indicates fewer than 9 daily cases/100,000, the lighter shade of red indicates between 9 and 18 cases/100,000 per day, and the darkest red indicates more than 18 cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
+                    <p>Because some jurisdictions have stopped daily reporting, this visualization has been developed on the fly for those interested in continuously monitoring these numbers, which are presented without editorial comment. The 60+ graphs may take some time to draw and the response time is slow in the edit boxes. The website will be tweaked to improve performance and presentation.</p>
                 </div>
-
-                <div>
-                    <div style={{backgroundColor: color.first_dose}}/>
-                    <p>First Dose</p>
-                </div>
-
-                <div>
-                    <div style={{backgroundColor: color.final_dose}}/>
-                    <p>Second / Final Dose</p>
-                </div>
-            </div>
-
-            <ul>
-                <li>Daily new cases are normalized to cases per 100,000.</li>
-                <li>Daily new cases are the total number of new cases, not the <i>net change</i> which would account for recoveries.</li>
-                <li>Vaccine uptake is represented as a proportion of the <i>total</i> population.</li>
-            </ul>
-            */ }
-
-            <div className={style.passage}>
-                <h3>Notes on the graphs</h3>
-                <p>The graphs present snapshot comparisons of total vaccinations and daily new cases (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
-                <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases/100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
-                <p>Additionally, graphs are tinted according to case thresholds. A white background indicates fewer than 9 daily cases/100,000, the lighter shade of red indicates between 9 and 18 cases/100,000 per day, and the darkest red indicates more than 18 cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
-                <p>Because some jurisdictions have stopped daily reporting, this visualization has been developed on the fly for those interested in continuously monitoring these numbers, which are presented without editorial comment. The 60+ graphs may take some time to draw and the response time is slow in the edit boxes. The website will be tweaked to improve performance and presentation.</p>
             </div>
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
                 <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
                 <CountryGraph country={Country.America} initialOrdering={americaCodes} />
-
             </main>
 
+            {/* 'Scroll to Top' Button */}
             <button onClick={() => {
                 window.scrollTo({
                     top: 0,
