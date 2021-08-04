@@ -45,9 +45,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         let total = 0
 
         if (day.new_case !== -1) { total += day.new_case }
-        if (day.new_death === -1) { total += day.new_death}
+        // if (day.new_death === -1) { total += day.new_death}
 
-        if (day.new_case !== -1 && day.new_death !== -1 && current.push(total) > 7) {
+        if (day.new_case !== -1 /*&& day.new_death !== -1*/ && current.push(total) > 7) {
             current = current.slice(-7)
         }
 

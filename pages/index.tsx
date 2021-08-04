@@ -73,9 +73,9 @@ const App = () => {
 
             <div className={style.passage}>
                 <h3>Notes on the graphs</h3>
-                <p>The graphs present snapshot comparisons of total vaccinations and daily new cases /hospitalizations/deaths (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
-                <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases-hospitalizations-deaths /100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
-                <p>Additionally, graphs are tinted according to case thresholds. A white background indicates 9 or less daily cases/100,000, the lighter shade of red indicates 10-18 cases/100,000 per day, and the darkest red indicates 19 or more cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
+                <p>The graphs present snapshot comparisons of total vaccinations and daily new cases (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
+                <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases/100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
+                <p>Additionally, graphs are tinted according to case thresholds. A white background indicates fewer than 9 daily cases/100,000, the lighter shade of red indicates between 9 and 18 cases/100,000 per day, and the darkest red indicates more than 18 cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
                 <p>Because some jurisdictions have stopped daily reporting, this visualization has been developed on the fly for those interested in continuously monitoring these numbers, which are presented without editorial comment. The 60+ graphs may take some time to draw and the response time is slow in the edit boxes. The website will be tweaked to improve performance and presentation.</p>
             </div>
 

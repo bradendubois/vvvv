@@ -35,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         date.setFullYear(parseInt(s[2]))
         date.setHours(0, 0, 0, 0)
 
-        if (current.push(x.cases + x.deaths) > 7) {
+        if (current.push(x.cases/* + x.deaths*/) > 7) {
             current = current.slice(-7)
         }
 
