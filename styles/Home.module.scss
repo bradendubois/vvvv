@@ -45,34 +45,6 @@
   }
 }
 
-.canada {
-
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-
-  @media screen and (min-width: 2000px) {
-    display: grid;
-    grid-template: "YK NT NV . ."
-          "BC AB SK MB ONT"
-          "QC NL NS NB PE";
-  }
-
-  > div {
-    margin: 10px;
-  }
-}
-
-
-.america {
-
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-
-  > div {
-    margin: 10px;
-  }
+.passage h3 {
+  margin-top: 0;
 }

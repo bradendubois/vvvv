@@ -1,6 +1,6 @@
 # VVVV
 
-**Vaccines Versus Variants, Visualized** - A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
+**Visualizing Variants versus Vaccines** - A visualization of Canadian and American COVID-19 data; daily new cases, and first & final dose vaccination uptake.
 
 ## Usage
 
@@ -15,6 +15,10 @@ This is built with:
 - [Next.js](https://nextjs.org/)
 - [OpenCOVID API](https://opencovid.ca/) for Canadian data
 - [Socrata API](https://www.tylertech.com/products/socrata) for American data
+
+User-defined fields allow tweaking:
+- the date range data is displayed over (both lower and upper bounds)
+- a 'medium' and 'high' threshold for daily cases, above which graphs are highlighted accordingly
 
 ## Running Locally
 

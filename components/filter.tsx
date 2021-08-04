@@ -4,7 +4,7 @@ import { useMapContext } from "../util/context/provider";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import style from "../styles/DateFilter.module.scss"
+import style from "../styles/Filter.module.scss"
 
 
 /**
@@ -27,7 +27,7 @@ const DatePicker = ({...params}) => {
  * dates with which to filter shown / displayed data
  * @constructor
  */
-const DateFilter = () => {
+const Filter = () => {
 
     const context = useMapContext()
 
@@ -41,8 +41,16 @@ const DateFilter = () => {
                 <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
             </div>
 
-            {/* Magic number 14: There are 10 provinces + 3 territories + 1 repatriated category comprising the data */}
-            {/* context.dateLower?.getTime() !== context.dateUpper?.getTime() && <p>Range Size: <span>{context.COVIDData.length / 14} day(s)</span></p> */}
+            {/* Flag graphs above a certain threshold */}
+            <div>
+                <p>Case Lower Threshold</p>
+                <input type={"number"} value={context.lowerThreshold} onChange={e => context.setLowerThreshold(parseInt(e.target.value))}/>
+            </div>
+
+            <div>
+                <p>Case Upper Threshold</p>
+                <input type={"number"} value={context.upperThreshold} onChange={e => context.setUpperThreshold(parseInt(e.target.value))}/>
+            </div>
 
             {/* Upper-bound of date filtering */}
             <div>
@@ -53,4 +61,4 @@ const DateFilter = () => {
     </>)
 }
 
-export default DateFilter
+export default Filter

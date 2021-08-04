@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400&display=swap');
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Montserrat', Segoe UI, Roboto, Oxygen,
@@ -9,18 +13,36 @@ body {
   padding: 0;
 }
 
+hr {
+  margin: 30px 0;
+}
+
 a {
   color: #0670c1;
   text-decoration: none;
   font-weight: 600;
 }
 
-* {
-  box-sizing: border-box;
-}
+button {
 
-hr {
-  margin: 30px 0;
+  width: 100%;
+
+  margin: 20px auto;
+  padding: 10px;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12pt;
+  text-align: center;
+
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: #f0fffd;
+
+  transition: 0.3s;
+
+  &:hover {
+    background-color: #d9ece9;
+  }
 }
 
 footer {

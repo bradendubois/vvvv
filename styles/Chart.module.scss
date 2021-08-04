@@ -1,22 +1,12 @@
-// scss-lint:disable SelectorFormat
-.YK { grid-area: YK; }
-.NT { grid-area: NT; }
-.NV { grid-area: NV; }
-.BC { grid-area: BC; }
-.AB { grid-area: AB; }
-.SK { grid-area: SK; }
-.MB { grid-area: MB; }
-.ON { grid-area: ONT; }
-.QC { grid-area: QC; }
-.NL { grid-area: NL; }
-.NS { grid-area: NS; }
-.NB { grid-area: NB; }
-.PE { grid-area: PE; }
-
 .container {
+
+  border-radius: 5px;
 
   display: flex;
   flex-direction: column;
+
+  margin: 10px;
+  padding: 5px;
 
   h4 {
     margin: 0;
@@ -26,4 +16,16 @@
   hr {
     margin: 3px 60px;
   }
+}
+
+.upperThreshold {
+  background-color: #fcdcdc;
+}
+
+.middleThreshold {
+  background-color: #fff0f0;
+}
+
+.lowerThreshold {
+
 }
