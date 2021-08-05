@@ -35,7 +35,7 @@ const App = () => {
             <title>Visualizing Variants versus Vaccines</title>
         </Head>
 
-        {(!process.env.production) && <div className={style.development}>
+        {(!process.env.PRODUCTION) && <div className={style.development}>
             <p>This is a <strong>development</strong> build! Stability, performance, feature availability, and correctness are not guaranteed!</p>
             <p>Click <Link href={"https://vvvv-main.vercel.app"}>here</Link> to go to the latest production build.</p>
         </div>}
