@@ -10,6 +10,14 @@
   margin: 5px 0;
 }
 
+.development {
+  width: 100%;
+  padding: 10px;
+  background-color: #eeda29;
+  text-align: center;
+  min-height: unset;
+}
+
 .notes {
   display: flex;
   flex-direction: column;
