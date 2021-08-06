@@ -38,14 +38,32 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
 
     const { data, error } = useSWR(mount ? `/api/${country}/${code}` : null)
 
+    // const [saved, setSaved] = useState(false)
+
     useEffect(() => setMount(true), [])
 
     useEffect(() => {
 
         if (!data) return;
 
+        /*
+        if (!saved) {
+
+            const fileData = JSON.stringify(data)
+            const blob = new Blob([fileData], {type: "text/plain"});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `${country}-${code}.json`;
+            link.href = url;
+            link.click();
+            
+            setSaved(true)
+        }
+        */
+
         dateRecreate(data)
         setCleaned(data);
+        
 
         // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
 

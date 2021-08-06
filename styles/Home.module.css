@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 5vw;
+}
+.container ul li {
+  list-style: circle inside;
+  margin: 5px 0;
+}
+
+.colors {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+.colors div {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+.colors div:not(:last-of-type) {
+  margin-right: 50px;
+}
+.colors div div {
+  height: 10px;
+  margin: 10px;
+  width: 10px;
+}
+.colors div p {
+  margin: 0 auto;
+}
+
+.passage h3 {
+  margin-top: 0;
+}
+
+/*# sourceMappingURL=Home.module.css.map */
