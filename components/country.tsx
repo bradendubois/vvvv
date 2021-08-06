@@ -111,7 +111,7 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
                                         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
 
                                 */
-                                <Chart {...region} country={country} callback={recordValue} />))}</div>
+                                <Chart key={index} {...region} country={country} callback={recordValue} />))}</div>
                             {/* }</div>
                                     )}
                                 </Draggable> */}

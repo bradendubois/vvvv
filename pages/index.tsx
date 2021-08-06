@@ -53,7 +53,7 @@ const App = () => {
 
             <meta charSet="UTF-8" />
             <meta name="description" content="Visualization of COVID cases and vaccination data in Canada and the United States." />
-            <meta name="keywords" content="COVID,covid-19,vaccination,cases,visualization,canada,america" />
+            <meta name="keywords" content="COVID,covid-19,vaccination,cases,variants,visualization,canada,america" />
             <meta name="author" content="Dr. Eric Neufeld & Braden Dubois" />
         </Head>
 
