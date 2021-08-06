@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
 import React, { useState } from "react";
+import firebase from 'firebase';
+
 // @ts-ignore TODO
 import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
 import Chart from "../components/chart";
@@ -19,6 +21,25 @@ export const color = {
     final_dose: "#177ba3"
 }
 
+
+const firebaseConfig = {
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID,
+    appId: process.env.APP_ID,
+    measurementId: process.env.MEASUREMENT_ID
+};
+  
+console.log(firebaseConfig)
+  
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch (err) {
+    if (!/already exists/.test(err.message))
+      console.error("Firebase initialization error", err.stack)
+}
 
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
