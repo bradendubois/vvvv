@@ -22,7 +22,6 @@ export const color = {
     final_dose: "#177ba3"
 }
 
-
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
     authDomain: process.env.AUTH_DOMAIN,
@@ -32,8 +31,6 @@ const firebaseConfig = {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID
 };
-  
-console.log(firebaseConfig)
   
 try {
     firebase.initializeApp(firebaseConfig);
@@ -53,6 +50,11 @@ const App = () => {
 
         <Head>
             <title>Visualizing Variants versus Vaccines</title>
+
+            <meta charSet="UTF-8" />
+            <meta name="description" content="Visualization of COVID cases and vaccination data in Canada and the United States." />
+            <meta name="keywords" content="COVID,covid-19,vaccination,cases,visualization,canada,america" />
+            <meta name="author" content="Dr. Eric Neufeld & Braden Dubois" />
         </Head>
 
         {/* (process.env.BUILD !== "PRODUCTION") && <div className={style.development}>
@@ -126,8 +128,6 @@ const App = () => {
         </div>
     </>)
 }
-// export default Home
-resetServerContext()
 
 //////////////////////////////////////////////////////
 
