@@ -10,30 +10,31 @@
   margin: 5px 0;
 }
 
-.colors {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 20px;
-}
-.colors div {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-}
-.colors div:not(:last-of-type) {
-  margin-right: 50px;
-}
-.colors div div {
-  height: 10px;
-  margin: 10px;
-  width: 10px;
-}
-.colors div p {
-  margin: 0 auto;
+.development {
+  width: 100%;
+  padding: 10px;
+  background-color: #eeda29;
+  text-align: center;
+  min-height: unset;
 }
 
-.passage h3 {
-  margin-top: 0;
+.notes {
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (min-width: 1400px) {
+  .notes {
+    flex-direction: row;
+  }
+  .notes hr {
+    display: none;
+  }
+  .notes .passage {
+    margin-left: 50px;
+  }
+  .notes .passage h3 {
+    margin-top: 0;
+  }
 }
 
 /*# sourceMappingURL=Home.module.css.map */
