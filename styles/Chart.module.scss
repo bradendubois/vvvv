@@ -29,3 +29,12 @@
 .lowerThreshold {
 
 }
+
+.loader {
+
+  > span { 
+    position: relative; 
+    top: 40%;
+    left: 45%;
+  };
+}

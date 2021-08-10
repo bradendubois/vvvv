@@ -66,6 +66,30 @@ const App = () => {
         }
     })
 
+    const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
+        
+        if (source.length !== target.length) {
+            throw new Error("Non-matching lengths across given parameters")
+        }
+    
+        let total = 0
+    
+        source.forEach((point, index) => {
+            
+            let a = point.new_cases_deaths_normalized_100k_average
+            let b = target[index].new_cases_deaths_normalized_100k_average
+    
+            if (a !== undefined && b !== undefined) {
+                total += (a - b) ** 2
+            } else {
+                return -1
+            }
+        })
+    
+        return Math.sqrt(total)
+    }
+    
+
     useEffect(() => { 
 
         let canada = canadaCodes.map(region => {
@@ -104,11 +128,6 @@ const App = () => {
         })
 
      }, [])
-
-
-    useEffect(() => {
-        console.log(canadaData)
-    }, [canadaData])
 
     return (<>
 

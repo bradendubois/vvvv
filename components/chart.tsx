@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
-import useSWR from "swr";
+import { ScaleLoader } from "react-spinners";
 
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
@@ -26,14 +26,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
     const context = useMapContext()
 
-    const [cleaned, setCleaned] = useState<COVIDDaily[]>([])
-    const [mount, setMount] = useState(false)
-
-    // const [saved, setSaved] = useState(false)
-
     const [lastMatch, setLastMatch] = useState()
-
-    useEffect(() => setMount(true), [])
 
     useEffect(() => {
         
@@ -65,30 +58,6 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
     }, [data])
 
-
-    const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
-        
-        if (source.length !== target.length) {
-            throw new Error("Non-matching lengths across given parameters")
-        }
-    
-        let total = 0
-    
-        source.forEach((point, index) => {
-            
-            let a = point.new_cases_deaths_normalized_100k_average
-            let b = target[index].new_cases_deaths_normalized_100k_average
-    
-            if (a !== undefined && b !== undefined) {
-                total += (a - b) ** 2
-            } else {
-                return -1
-            }
-        })
-    
-        return Math.sqrt(total)
-    }
-    
 
     useEffect(() => {
         return
@@ -153,10 +122,6 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         }
     }, [data, context.lowerThreshold, context.upperThreshold])
 
-    const filteredPoints = useMemo(() => {
-        return data?.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
-    }, [context.dateLower, context.dateUpper, data])
-
     return (<div className={`${style.container} ${threshold}`}>
 
         <h4>{display ?? code}</h4>
@@ -164,7 +129,12 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         <hr />
 
         {/* During debugging, placeholder div to improve performance */}
-        {(DEBUG || !data) && <div style={{ height: "225px", width: "325px"}}/>}
+        {(DEBUG || !data) && <div className={style.loader} style={{ 
+            height: "225px", 
+            width: "325px"
+        }}>
+            <ScaleLoader color={'#36D7B7'} />
+        </div>}
 
         {!DEBUG && data &&
 
