@@ -102,8 +102,10 @@ const App = () => {
         })
 
         Promise.all(canada).then(result => {
-        
-            Object.values(result).forEach((region) => {
+
+            result.forEach((region) => {
+                console.log(region)
+                // @ts-ignore
                 region[1].data.forEach((day: any) => 
                     day.date = new Date(day.date as unknown as string)
                 )
@@ -114,7 +116,8 @@ const App = () => {
 
 
         Promise.all(america).then(result => {
-            Object.values(result).forEach((region) => {
+            result.forEach((region) => {
+                // @ts-ignore
                 region[1].data.forEach((day: any) => 
                     day.date = new Date(day.date as unknown as string)
                 )
