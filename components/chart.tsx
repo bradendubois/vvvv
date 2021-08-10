@@ -48,6 +48,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         }
         */
 
+        /*
         setCleaned(data);
         
         if (!context.match && country === Country.Canada && code == "SK") {
@@ -55,12 +56,14 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         }
 
         // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
+        */
 
     }, [data])
 
 
     useEffect(() => {
         return
+        /*
         if (!context.match || !data) return
 
         if (country === context.match.country && code === context.match.region) return
@@ -99,14 +102,8 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         //     region: context.match.region,
         //     date: context.match.date
         // })
-
+        */
     }, [context.match, data])
-
-    useEffect(() => {
-
-        console.log("Chart Data", data)
-
-    }, [data])
 
     const threshold = useMemo(() => {
 
