@@ -119,7 +119,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
         if (!data) return style.lowerThreshold
 
-        let x = data[data.length-1]?.new_cases_deaths_normalized_100k_average
+        let x = data.data[data.data.length-1]?.new_cases_deaths_normalized_100k_average
         if (x >= context.upperThreshold) {
             return style.upperThreshold
         } else if (x >= context.lowerThreshold) {
