@@ -1,11 +1,12 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 
-import { Country } from "../api_codes";
+import { canadaCodes, Country } from "../api_codes";
 import { dates } from "./dates";
 import { COVIDDaily } from "../types";
 
 type Match = {
     country: Country
+    date: Date
     region: string
     points: COVIDDaily[]
 }
@@ -23,7 +24,7 @@ type MapInterface = {
     setLowerThreshold(x: number): void
     lowerThreshold: number
     match?: Match
-    searchMatch(country: Country, region: string, points: COVIDDaily[]): void
+    searchMatch(country: Country, region: string, date: Date, points: COVIDDaily[]): void
     best?: {
         [region: string]: {
             date: Date
@@ -68,8 +69,9 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [match, setMatch] = useState<Match>()
     const [best, setBest] = useState<{[region: string]: { date: Date, rmse: number}}>()
 
-    const searchMatch = (country: Country, region: string, points: COVIDDaily[]) => setMatch({
+    const searchMatch = (country: Country, region: string, date: Date, points: COVIDDaily[]) => setMatch({
         country,
+        date,
         region,
         points
     })
@@ -81,8 +83,6 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             rmse
         }
     })
-
-    useEffect(() => { console.log(best) }, [best])
 
     return (
         <MapContext.Provider value={{

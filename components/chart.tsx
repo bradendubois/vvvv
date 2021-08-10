@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import useSWR from "swr";
 
@@ -14,12 +14,7 @@ type ChartProps = {
     country: Country
     code: string
     display?: string
-}
-
-const dateRecreate = (data: COVIDDaily[]) => {
-    data.forEach((day) => {
-        day.date = new Date(day.date as unknown as string)
-    })
+    data: COVIDDaily[]
 }
 
 
@@ -27,22 +22,22 @@ const dateRecreate = (data: COVIDDaily[]) => {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, code, display }: ChartProps) => {
+const Chart = ({ country, code, display, data }: ChartProps) => {
 
     const context = useMapContext()
 
     const [cleaned, setCleaned] = useState<COVIDDaily[]>([])
     const [mount, setMount] = useState(false)
 
-    const { data, error } = useSWR(mount ? `/api/${country}/${code}` : null)
-
     // const [saved, setSaved] = useState(false)
+
+    const [lastMatch, setLastMatch] = useState()
 
     useEffect(() => setMount(true), [])
 
     useEffect(() => {
         
-
+        return
         if (!data) return;
 
         /*
@@ -60,11 +55,10 @@ const Chart = ({ country, code, display }: ChartProps) => {
         }
         */
 
-        dateRecreate(data)
         setCleaned(data);
         
-        if (country === Country.Canada && code == "SK") {
-            context.searchMatch(Country.Canada, code, data.slice(-20))
+        if (!context.match && country === Country.Canada && code == "SK") {
+            context.searchMatch(Country.Canada, code, data.slice(-20)[0].date, data.slice(-20))
         }
 
         // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
@@ -72,10 +66,8 @@ const Chart = ({ country, code, display }: ChartProps) => {
     }, [data])
 
 
-
-
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
-
+        
         if (source.length !== target.length) {
             throw new Error("Non-matching lengths across given parameters")
         }
@@ -99,10 +91,12 @@ const Chart = ({ country, code, display }: ChartProps) => {
     
 
     useEffect(() => {
-
+        return
         if (!context.match || !data) return
 
         if (country === context.match.country && code === context.match.region) return
+    
+        if (lastMatch !== undefined && lastMatch.country === context.match.country && lastMatch.region === context.match.region && lastMatch.date === context.match.date) return
 
         let target = context.match.points
         let range = target.length
@@ -129,13 +123,27 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
             i += 1
         }
-
-        console.log(country, code, best.date, best.result)
+        
+        // context.reportBest(country, code, best.date, best.result)
+        // setLastMatch({
+        //     country: context.match.country,
+        //     region: context.match.region,
+        //     date: context.match.date
+        // })
 
     }, [context.match, data])
 
+    useEffect(() => {
+
+        console.log("Chart Data", data)
+
+    }, [data])
+
     const threshold = useMemo(() => {
-        let x = cleaned[cleaned.length-1]?.new_cases_deaths_normalized_100k_average
+
+        if (!data) return style.lowerThreshold
+
+        let x = data[data.length-1]?.new_cases_deaths_normalized_100k_average
         if (x >= context.upperThreshold) {
             return style.upperThreshold
         } else if (x >= context.lowerThreshold) {
@@ -143,11 +151,11 @@ const Chart = ({ country, code, display }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [cleaned, context.lowerThreshold, context.upperThreshold])
+    }, [data, context.lowerThreshold, context.upperThreshold])
 
     const filteredPoints = useMemo(() => {
-        return cleaned.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
-    }, [context.dateLower, context.dateUpper, cleaned])
+        return data?.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
+    }, [context.dateLower, context.dateUpper, data])
 
     return (<div className={`${style.container} ${threshold}`}>
 
@@ -156,11 +164,11 @@ const Chart = ({ country, code, display }: ChartProps) => {
         <hr />
 
         {/* During debugging, placeholder div to improve performance */}
-        {DEBUG && <div style={{ height: "225px", width: "325px"}}/>}
+        {(DEBUG || !data) && <div style={{ height: "225px", width: "325px"}}/>}
 
-        {!DEBUG &&
+        {!DEBUG && data &&
 
-        <LineChart height={225} width={325} className={code} data={filteredPoints}>
+        <LineChart height={225} width={325} className={code} data={data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}>
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 

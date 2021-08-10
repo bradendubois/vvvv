@@ -29,6 +29,15 @@ type Match = {
     points: COVIDDaily[]
 }
 
+const initial = {
+    canada: Object.fromEntries(canadaCodes.map(entry => [entry.code, undefined])),
+    america: Object.fromEntries(americaCodes.map(entry => [entry.code, undefined]))
+}
+
+
+type CountryData = {
+    [region: string]: COVIDDaily[]
+}
 
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
@@ -39,7 +48,10 @@ const App = () => {
 
     const [match, setMatch] = useState<Match>()
     const [best, setBest] = useState<{}>()
-    
+  
+    const [canadaData, setCanadaData] = useState<CountryData>({})
+    const [americaData, setAmericaData] = useState<CountryData>({})
+
     const searchMatch = (country: Country, region: string, points: COVIDDaily[]) => setMatch({
         country,
         region,
@@ -53,6 +65,50 @@ const App = () => {
             rmse
         }
     })
+
+    useEffect(() => { 
+
+        let canada = canadaCodes.map(region => {
+
+            return fetch(`/api/canada/${region.code}`)
+                .then(data => data.json())
+                .then(json => [region.code, json])
+        })
+
+        let america = americaCodes.map(region => {
+
+            return fetch(`/api/america/${region.code}`)
+                .then(data => data.json())
+                .then(json => [region.code, json])
+        })
+
+        Promise.all(canada).then(result => {
+            Object.values(result).forEach((region) => {
+                region[1].forEach((day: any) => 
+                    day.date = new Date(day.date as unknown as string)
+                )
+            })
+
+            setCanadaData(Object.fromEntries(result))
+        })
+
+
+        Promise.all(america).then(result => {
+            Object.values(result).forEach((region) => {
+                region[1].forEach((day: any) => 
+                    day.date = new Date(day.date as unknown as string)
+                )
+            })
+
+            setAmericaData(Object.fromEntries(result))
+        })
+
+     }, [])
+
+
+    useEffect(() => {
+        console.log(canadaData)
+    }, [canadaData])
 
     return (<>
 
@@ -101,9 +157,9 @@ const App = () => {
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
-                <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} searchMatch={searchMatch} />
-                <CountryGraph country={Country.America} initialOrdering={americaCodes} searchMatch={searchMatch} />
-            </main>searchMatch
+                <CountryGraph country={Country.Canada} ordering={canadaCodes} data={canadaData} />
+                <CountryGraph country={Country.America} ordering={americaCodes} data={americaData} />
+            </main>
 
             {/* 'Scroll to Top' Button */}
             <button onClick={() => {
