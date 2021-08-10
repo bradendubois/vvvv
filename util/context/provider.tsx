@@ -1,5 +1,14 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+
+import { Country } from "../api_codes";
 import { dates } from "./dates";
+import { COVIDDaily } from "../types";
+
+type Match = {
+    country: Country
+    region: string
+    points: COVIDDaily[]
+}
 
 
 type MapInterface = {
@@ -13,6 +22,15 @@ type MapInterface = {
     upperThreshold: number
     setLowerThreshold(x: number): void
     lowerThreshold: number
+    match?: Match
+    searchMatch(country: Country, region: string, points: COVIDDaily[]): void
+    best?: {
+        [region: string]: {
+            date: Date
+            rmse: number
+        }
+    }
+    reportBest(country: Country, region: string, date: Date, rmse: number): void
 }
 
 
@@ -26,7 +44,9 @@ export const MapContext = createContext<MapInterface>({
     setUpperThreshold: () => {},
     upperThreshold: 15,
     setLowerThreshold: () => {},
-    lowerThreshold: 15
+    lowerThreshold: 15,
+    searchMatch: () => {},
+    reportBest: () => {}
 });
 
 
@@ -45,6 +65,25 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [lowerThreshold, setLowerThreshold] = useState(9)
     const [upperThreshold, setUpperThreshold] = useState(18)
 
+    const [match, setMatch] = useState<Match>()
+    const [best, setBest] = useState<{[region: string]: { date: Date, rmse: number}}>()
+
+    const searchMatch = (country: Country, region: string, points: COVIDDaily[]) => setMatch({
+        country,
+        region,
+        points
+    })
+
+    const reportBest = (country: Country, region: string, date: Date, rmse: number) => setBest({
+        ...best,
+        [`${country}-${region}`]: {
+            date,
+            rmse
+        }
+    })
+
+    useEffect(() => { console.log(best) }, [best])
+
     return (
         <MapContext.Provider value={{
             dateLower,
@@ -56,7 +95,11 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setUpperThreshold,
             upperThreshold,
             setLowerThreshold,
-            lowerThreshold
+            lowerThreshold,
+            match,
+            searchMatch,
+            best,
+            reportBest
         }}>{children}</MapContext.Provider>
     );
 }

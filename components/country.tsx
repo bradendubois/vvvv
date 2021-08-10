@@ -6,6 +6,7 @@ import { Country } from "../util/api_codes";
 import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
 
 import style from "../styles/Country.module.scss";
+import { COVIDDaily } from "../util/types";
 
 const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -21,9 +22,10 @@ type CountryProps = {
         code: string
         display: string
     }[]
+    searchMatch(country: Country, region: string, points: COVIDDaily[]): void
 }
 
-export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
+export const CountryGraph = ({ country, initialOrdering, searchMatch }: CountryProps) => {
 
     const [ordering, setOrdering] = useState(initialOrdering);
     const [scale, setScale] = useState(Object.fromEntries(initialOrdering.map(x => [x.code, 0])))
@@ -111,7 +113,7 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
                                         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
 
                                 */
-                                <Chart key={index} {...region} country={country} callback={recordValue} />))}</div>
+                                <Chart key={index} {...region} country={country} />))}</div>
                             {/* }</div>
                                     )}
                                 </Draggable> */}

@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -12,6 +12,7 @@ import Legend from "../components/legend";
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 
 import style from '../styles/Home.module.scss'
+import { COVIDDaily } from "../util/types";
 
 resetServerContext()
 
@@ -22,12 +23,36 @@ export const color = {
 }
 
 
+type Match = {
+    country: Country
+    region: string
+    points: COVIDDaily[]
+}
+
+
 /**
  * 'Main' app for the page; includes visualization, as well as user-selectable components
  * to filter or otherwise alter visualized data
  * @constructor
  */
 const App = () => {
+
+    const [match, setMatch] = useState<Match>()
+    const [best, setBest] = useState<{}>()
+    
+    const searchMatch = (country: Country, region: string, points: COVIDDaily[]) => setMatch({
+        country,
+        region,
+        points
+    })
+
+    const reportBest = (country: Country, region: string, date: Date, rmse: number) => setBest({
+        ...best,
+        [`${country}-${region}`]: {
+            date,
+            rmse
+        }
+    })
 
     return (<>
 
@@ -76,9 +101,9 @@ const App = () => {
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
-                <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
-                <CountryGraph country={Country.America} initialOrdering={americaCodes} />
-            </main>
+                <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} searchMatch={searchMatch} />
+                <CountryGraph country={Country.America} initialOrdering={americaCodes} searchMatch={searchMatch} />
+            </main>searchMatch
 
             {/* 'Scroll to Top' Button */}
             <button onClick={() => {

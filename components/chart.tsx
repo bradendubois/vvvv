@@ -14,7 +14,6 @@ type ChartProps = {
     country: Country
     code: string
     display?: string
-    callback(region: string, value: number): void
 }
 
 const dateRecreate = (data: COVIDDaily[]) => {
@@ -28,7 +27,7 @@ const dateRecreate = (data: COVIDDaily[]) => {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, code, display, callback }: ChartProps) => {
+const Chart = ({ country, code, display }: ChartProps) => {
 
     const context = useMapContext()
 
@@ -42,6 +41,7 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
     useEffect(() => setMount(true), [])
 
     useEffect(() => {
+        
 
         if (!data) return;
 
@@ -63,10 +63,76 @@ const Chart = ({ country, code, display, callback }: ChartProps) => {
         dateRecreate(data)
         setCleaned(data);
         
+        if (country === Country.Canada && code == "SK") {
+            context.searchMatch(Country.Canada, code, data.slice(-20))
+        }
 
         // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
 
     }, [data])
+
+
+
+
+    const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
+
+        if (source.length !== target.length) {
+            throw new Error("Non-matching lengths across given parameters")
+        }
+    
+        let total = 0
+    
+        source.forEach((point, index) => {
+            
+            let a = point.new_cases_deaths_normalized_100k_average
+            let b = target[index].new_cases_deaths_normalized_100k_average
+    
+            if (a !== undefined && b !== undefined) {
+                total += (a - b) ** 2
+            } else {
+                return -1
+            }
+        })
+    
+        return Math.sqrt(total)
+    }
+    
+
+    useEffect(() => {
+
+        if (!context.match || !data) return
+
+        if (country === context.match.country && code === context.match.region) return
+
+        let target = context.match.points
+        let range = target.length
+
+        let i = 0
+        let best
+
+        while (true) {
+
+            let dataSlice = data.slice(i, i+range)
+
+            if (dataSlice.length < range) {
+                break
+            }
+
+            let result = rmse(target, dataSlice)
+
+            if (result !== -1 && (!best || result < best.result)) {
+                best = {
+                    date: dataSlice[0].date,
+                    result
+                }
+            }
+
+            i += 1
+        }
+
+        console.log(country, code, best.date, best.result)
+
+    }, [context.match, data])
 
     const threshold = useMemo(() => {
         let x = cleaned[cleaned.length-1]?.new_cases_deaths_normalized_100k_average
