@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 
-import { canadaCodes, Country } from "../api_codes";
+import { Country } from "../api_codes";
 import { dates } from "./dates";
 import { COVIDDaily } from "../types";
 
@@ -8,7 +8,7 @@ type Match = {
     country: Country
     date: Date
     region: string
-    points: COVIDDaily[]
+    points: number
 }
 
 
@@ -24,14 +24,7 @@ type MapInterface = {
     setLowerThreshold(x: number): void
     lowerThreshold: number
     match?: Match
-    searchMatch(country: Country, region: string, date: Date, points: COVIDDaily[]): void
-    best?: {
-        [region: string]: {
-            date: Date
-            rmse: number
-        }
-    }
-    reportBest(country: Country, region: string, date: Date, rmse: number): void
+    searchMatch(country: Country, region: string, date: Date, points: number): void
 }
 
 
@@ -47,7 +40,6 @@ export const MapContext = createContext<MapInterface>({
     setLowerThreshold: () => {},
     lowerThreshold: 15,
     searchMatch: () => {},
-    reportBest: () => {}
 });
 
 
@@ -67,21 +59,12 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [upperThreshold, setUpperThreshold] = useState(18)
 
     const [match, setMatch] = useState<Match>()
-    const [best, setBest] = useState<{[region: string]: { date: Date, rmse: number}}>()
 
-    const searchMatch = (country: Country, region: string, date: Date, points: COVIDDaily[]) => setMatch({
+    const searchMatch = (country: Country, region: string, date: Date, points: number) => setMatch({
         country,
         date,
         region,
         points
-    })
-
-    const reportBest = (country: Country, region: string, date: Date, rmse: number) => setBest({
-        ...best,
-        [`${country}-${region}`]: {
-            date,
-            rmse
-        }
     })
 
     return (
@@ -97,9 +80,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setLowerThreshold,
             lowerThreshold,
             match,
-            searchMatch,
-            best,
-            reportBest
+            searchMatch
         }}>{children}</MapContext.Provider>
     );
 }

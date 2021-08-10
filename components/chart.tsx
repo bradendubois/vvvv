@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, ReferenceArea, Tooltip, XAxis, YAxis } from "recharts";
 import { ScaleLoader } from "react-spinners";
 
 import { color } from "../pages";
@@ -14,7 +14,13 @@ type ChartProps = {
     country: Country
     code: string
     display?: string
-    data: COVIDDaily[]
+    data: {
+        match?: {
+            startDate: Date
+            points: number
+        }
+        data: COVIDDaily[]
+    }
 }
 
 
@@ -27,6 +33,10 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
     const context = useMapContext()
 
     const [lastMatch, setLastMatch] = useState()
+    const [refAreaLeft, setRefAreaLeft] = useState()
+    const [refAreaRight, setRefAreaRight] = useState()
+
+    const [searching, setSearching] = useState(false)
 
     useEffect(() => {
         
@@ -119,6 +129,32 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         }
     }, [data, context.lowerThreshold, context.upperThreshold])
 
+    const search = () => {
+
+        setSearching(false)
+
+        if (refAreaLeft === refAreaRight || !refAreaRight) {
+            setRefAreaLeft(undefined)
+            setRefAreaRight(undefined)
+            return
+        }
+
+        let l = refAreaLeft.split("-")
+        let r = refAreaRight.split("-")
+
+        l = new Date(l[2], l[1]-1, l[0], 0, 0, 0, 0)
+        r = new Date(r[2], r[1]-1, r[0], 0, 0, 0, 0)
+
+        if (l > r) {
+            let temp = l
+            l = r;
+            r = temp
+        }
+
+        context.searchMatch(country, code, l, (24 * 60 * 60 * 1000) + 1)
+    }
+
+
     return (<div className={`${style.container} ${threshold}`}>
 
         <h4>{display ?? code}</h4>
@@ -135,7 +171,21 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
         {!DEBUG && data &&
 
-        <LineChart height={225} width={325} className={code} data={data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}>
+        <LineChart height={225} width={325} className={code} 
+            data={data.data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
+            
+            // Reference selection parameters
+            onMouseDown={(e: any) => {
+                setSearching(true)
+                setRefAreaLeft(e.activeLabel)
+                setRefAreaRight(undefined)
+            }}
+
+            onMouseMove={(e: any) => searching && refAreaLeft && setRefAreaRight(e.activeLabel)}
+            onMouseUp={() => search()}
+        >
+
+            
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
@@ -169,6 +219,17 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
                 dataKey={"final_dose_population_cumulative"}
                 stroke={color.final_dose}
             />
+
+            {/* Reference Area selected by the user */}]
+            {refAreaLeft && refAreaRight && (
+                <ReferenceArea
+                    yAxisId={"L"}
+                    x1={refAreaLeft}
+                    x2={refAreaRight}
+                    strokeOpacity={0.3}
+                />
+            )}
+
         </LineChart>}
     </div>)
 }

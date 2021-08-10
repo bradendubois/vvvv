@@ -36,7 +36,13 @@ const initial = {
 
 
 type CountryData = {
-    [region: string]: COVIDDaily[]
+    [region: string]: {
+        match?: {
+            startDate: Date
+            points: number
+        }
+        data: COVIDDaily[]
+    }
 }
 
 /**
@@ -46,25 +52,8 @@ type CountryData = {
  */
 const App = () => {
 
-    const [match, setMatch] = useState<Match>()
-    const [best, setBest] = useState<{}>()
-  
     const [canadaData, setCanadaData] = useState<CountryData>({})
     const [americaData, setAmericaData] = useState<CountryData>({})
-
-    const searchMatch = (country: Country, region: string, points: COVIDDaily[]) => setMatch({
-        country,
-        region,
-        points
-    })
-
-    const reportBest = (country: Country, region: string, date: Date, rmse: number) => setBest({
-        ...best,
-        [`${country}-${region}`]: {
-            date,
-            rmse
-        }
-    })
 
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
         
@@ -96,19 +85,26 @@ const App = () => {
 
             return fetch(`/api/canada/${region.code}`)
                 .then(data => data.json())
-                .then(json => [region.code, json])
+                .then(json => [region.code, {
+                    match: undefined,
+                    data: json
+                }])
         })
 
         let america = americaCodes.map(region => {
 
             return fetch(`/api/america/${region.code}`)
                 .then(data => data.json())
-                .then(json => [region.code, json])
+                .then(json => [region.code, {
+                    match: undefined,
+                    data: json
+                }])
         })
 
         Promise.all(canada).then(result => {
+        
             Object.values(result).forEach((region) => {
-                region[1].forEach((day: any) => 
+                region[1].data.forEach((day: any) => 
                     day.date = new Date(day.date as unknown as string)
                 )
             })
@@ -119,7 +115,7 @@ const App = () => {
 
         Promise.all(america).then(result => {
             Object.values(result).forEach((region) => {
-                region[1].forEach((day: any) => 
+                region[1].data.forEach((day: any) => 
                     day.date = new Date(day.date as unknown as string)
                 )
             })

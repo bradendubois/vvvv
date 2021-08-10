@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { MapProvider } from "../util/context/provider";
 
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import "firebase/analytics"
 
 import '../styles/globals.scss'

@@ -23,7 +23,13 @@ type CountryProps = {
         display: string
     }[]
     data: {
-        [region: string]: COVIDDaily[]
+        [region: string]: {
+            match?: {
+                startDate: Date
+                points: number
+            }
+            data: COVIDDaily[]
+        }
     }
 }
 
