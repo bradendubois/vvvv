@@ -139,7 +139,10 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             return
         }
 
+        // @ts-ignore
         let l = refAreaLeft.split("-")
+        
+        // @ts-ignore
         let r = refAreaRight.split("-")
 
         l = new Date(l[2], l[1]-1, l[0], 0, 0, 0, 0)
