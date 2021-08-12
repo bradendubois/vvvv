@@ -1,0 +1,31 @@
+.container {
+  user-select: none;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 5px;
+}
+.container h4 {
+  margin: 0;
+  text-align: center;
+}
+.container hr {
+  margin: 3px 60px;
+}
+
+.upperThreshold {
+  background-color: #fcdcdc;
+}
+
+.middleThreshold {
+  background-color: #fff0f0;
+}
+
+.loader > span {
+  position: relative;
+  top: 40%;
+  left: 45%;
+}
+
+/*# sourceMappingURL=Chart.module.css.map */

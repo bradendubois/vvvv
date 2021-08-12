@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             active_cases: 0,
             new_case: -1,
             new_death: -1,
-            new_cases_deaths_normalized_100k_average: -1,
+            "Daily New Cases (Normalized-100k)": -1,
             first_dose_population_cumulative: parseInt(x.administered_dose1_pop_pct) / 100,
             final_dose_population_cumulative: parseInt(x.series_complete_pop_pct) / 100,
         }
@@ -51,7 +51,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             current = current.slice(-7)
         }
 
-        day.new_cases_deaths_normalized_100k_average = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
+        day["Daily New Cases (Normalized-100k)"] = current.reduce((a, b) => a + b, 0) / current.length / population * 100000
 
     })
 

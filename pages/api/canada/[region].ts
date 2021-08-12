@@ -1,12 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { COVIDDaily, OpenCOVIDDaily } from "../../../util/types";
 
-type Population = {
-    pop: number,
-    province: string,
-    province_full: string,
-    province_short: string
-}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
@@ -44,7 +38,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             cases: x.cases,
             date_string: x.date,
             active_cases: x.active_cases,
-            new_cases_deaths_normalized_100k_average: current.reduce((a, b) => a + b, 0) / current.length / population * 100000,
+            "Daily New Cases (Normalized-100k)": current.reduce((a, b) => a + b, 0) / current.length / population * 100000,
             first_dose_population_cumulative: ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
             final_dose_population_cumulative: (x.cumulative_cvaccine / population).toFixed(2),
         }

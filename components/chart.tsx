@@ -24,6 +24,33 @@ type ChartProps = {
 }
 
 
+const FancyNumber = (x: number) => {
+
+    return (
+        <div>
+            <p>Fancy Number: {x}</p>
+        </div>
+    )
+}
+
+let one = FancyNumber(3)
+
+type Example = {
+    x: string
+    y: number
+}
+
+const MultipleProps = ({ x, y }: Example) => {
+
+    return <div>
+        <p>{x}</p>
+        <p>{y}</p>
+    </div>
+}
+
+let two = <MultipleProps x={"Hello"} y={5} />
+
+
 /**
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
@@ -194,14 +221,14 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
             <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
-            {/* Active Cases*/}
+            {/* Daily Cases*/}
             <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
 
             {/* Daily New Cases+Deaths / 7 Day Average, Normalized to 100k */}
             <Line
                 isAnimationActive={false}
                 yAxisId={"L"}
-                dataKey={"new_cases_deaths_normalized_100k_average"}
+                dataKey={"Daily New Cases (Normalized-100k)"}
                 stroke={color.active_cases}
             />
 
