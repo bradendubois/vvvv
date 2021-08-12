@@ -24,33 +24,6 @@ type ChartProps = {
 }
 
 
-const FancyNumber = (x: number) => {
-
-    return (
-        <div>
-            <p>Fancy Number: {x}</p>
-        </div>
-    )
-}
-
-let one = FancyNumber(3)
-
-type Example = {
-    x: string
-    y: number
-}
-
-const MultipleProps = ({ x, y }: Example) => {
-
-    return <div>
-        <p>{x}</p>
-        <p>{y}</p>
-    </div>
-}
-
-let two = <MultipleProps x={"Hello"} y={5} />
-
-
 /**
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
@@ -59,94 +32,17 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
     const context = useMapContext()
 
-    const [lastMatch, setLastMatch] = useState()
     const [refAreaLeft, setRefAreaLeft] = useState()
     const [refAreaRight, setRefAreaRight] = useState()
 
     const [searching, setSearching] = useState(false)
 
-    useEffect(() => {
-        
-        return
-        if (!data) return;
-
-        /*
-        if (!saved) {
-
-            const fileData = JSON.stringify(data)
-            const blob = new Blob([fileData], {type: "text/plain"});
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = `${country}-${code}.json`;
-            link.href = url;
-            link.click();
-            
-            setSaved(true)
-        }
-        */
-
-        /*
-        setCleaned(data);
-        
-        if (!context.match && country === Country.Canada && code == "SK") {
-            context.searchMatch(Country.Canada, code, data.slice(-20)[0].date, data.slice(-20))
-        }
-
-        // callback(code, cleaned[cleaned.length-1]?.new_cases_normalized_100k_average)
-        */
-
-    }, [data])
-
-
-    useEffect(() => {
-        return
-        /*
-        if (!context.match || !data) return
-
-        if (country === context.match.country && code === context.match.region) return
-    
-        if (lastMatch !== undefined && lastMatch.country === context.match.country && lastMatch.region === context.match.region && lastMatch.date === context.match.date) return
-
-        let target = context.match.points
-        let range = target.length
-
-        let i = 0
-        let best
-
-        while (true) {
-
-            let dataSlice = data.slice(i, i+range)
-
-            if (dataSlice.length < range) {
-                break
-            }
-
-            let result = rmse(target, dataSlice)
-
-            if (result !== -1 && (!best || result < best.result)) {
-                best = {
-                    date: dataSlice[0].date,
-                    result
-                }
-            }
-
-            i += 1
-        }
-        
-        // context.reportBest(country, code, best.date, best.result)
-        // setLastMatch({
-        //     country: context.match.country,
-        //     region: context.match.region,
-        //     date: context.match.date
-        // })
-        */
-    }, [context.match, data])
-
     const threshold = useMemo(() => {
 
         if (!data) return style.lowerThreshold
 
-        let x = data.data[data.data.length-1]?.new_cases_deaths_normalized_100k_average
+        let x = data.data[data.data.length-1]["Average Daily Case (Normalized)"]
+
         if (x >= context.upperThreshold) {
             return style.upperThreshold
         } else if (x >= context.lowerThreshold) {

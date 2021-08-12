@@ -22,9 +22,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return {
             date,
             date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
-            active_cases: 0,
+            // active_cases: 0,
             new_case: -1,
-            new_death: -1,
+            // new_death: -1,
             "Daily New Cases (Normalized-100k)": -1,
             "First Dose Pop.": parseInt(x.administered_dose1_pop_pct) / 100,
             "Final Dose Pop.": parseInt(x.series_complete_pop_pct) / 100,
@@ -36,7 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
         if (same) {
             same.new_case = parseInt(day.new_case)
-            same.new_death = parseInt(day.new_death)
+            // same.new_death = parseInt(day.new_death)
         }
     })
 

@@ -5,20 +5,20 @@ import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
 import style from "../styles/Legend.module.scss"
 
 const example = [{
-    new_cases_deaths_normalized_100k_average: 15,
-    first_dose_population_cumulative: 0.55,
-    final_dose_population_cumulative: 0.20,
-    date: "Lower Date"
+    "Average Daily Case (Normalized)": 15,
+    "First Dose Pop.": 0.55,
+    "Final Dose Pop.": 0.20,
+    date: "Lower"
 }, {
-    new_cases_deaths_normalized_100k_average: 13,
-    first_dose_population_cumulative: 0.65,
-    final_dose_population_cumulative: 0.45,
-    date: "Intermediary Date"
+    "Average Daily Case (Normalized)": 13,
+    "First Dose Pop.": 0.65,
+    "Final Dose Pop.": 0.45,
+    date: "Intermediary"
 }, {
-    new_cases_deaths_normalized_100k_average: 7,
-    first_dose_population_cumulative: 0.75,
-    final_dose_population_cumulative: 0.50,
-    date: "Upper Date"
+    "Average Daily Case (Normalized)": 7,
+    "First Dose Pop.": 0.75,
+    "Final Dose Pop.": 0.50,
+    date: "Upper"
 }]
 
 const LegendLine = ({ color, label}: { color: string, label: string }) => (
@@ -80,7 +80,7 @@ const Legend = () => {
                             <Line
                                 isAnimationActive={false}
                                 yAxisId={"L"}
-                                dataKey={"new_cases_deaths_normalized_100k_average"}
+                                dataKey={"Average Daily Case (Normalized)"}
                                 stroke={color.active_cases}
                             />
 
@@ -90,7 +90,7 @@ const Legend = () => {
                             <Line
                                 isAnimationActive={false}
                                 yAxisId={"R"}
-                                dataKey={"first_dose_population_cumulative"}
+                                dataKey={"First Dose Pop."}
                                 stroke={color.first_dose}
                             />
 
@@ -98,7 +98,7 @@ const Legend = () => {
                             <Line
                                 isAnimationActive={false}
                                 yAxisId={"R"}
-                                dataKey={"final_dose_population_cumulative"}
+                                dataKey={"Final Dose Pop."}
                                 stroke={color.final_dose}
                             />
                         </LineChart>

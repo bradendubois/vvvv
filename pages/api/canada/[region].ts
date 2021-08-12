@@ -23,11 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         let s = x.date.split("-")
 
-        let date = new Date()
-        date.setDate(parseInt(s[0]))
-        date.setMonth(parseInt(s[1])-1)
-        date.setFullYear(parseInt(s[2]))
-        date.setHours(0, 0, 0, 0)
+        let date = new Date(parseInt(s[2]), parseInt(s[1])-1, parseInt(s[0]), 0, 0, 0, 0)
 
         if (current.push(x.cases/* + x.deaths*/) > 7) {
             current = current.slice(-7)
