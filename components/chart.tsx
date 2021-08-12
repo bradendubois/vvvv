@@ -228,17 +228,16 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             <Line
                 isAnimationActive={false}
                 yAxisId={"L"}
-                dataKey={"Daily New Cases (Normalized-100k)"}
+                dataKey={"Average Daily Case (Normalized)"}
                 stroke={color.active_cases}
             />
-
 
             {/* Vaccine Administration - First Dose */}
             <YAxis fontSize={12} yAxisId={"R"} orientation={"right"} domain={[0, 1]}/>
             <Line
                 isAnimationActive={false}
                 yAxisId={"R"}
-                dataKey={"first_dose_population_cumulative"}
+                dataKey={"First Dose Pop."}
                 stroke={color.first_dose}
             />
 
@@ -246,7 +245,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             <Line
                 isAnimationActive={false}
                 yAxisId={"R"}
-                dataKey={"final_dose_population_cumulative"}
+                dataKey={"Final Dose Pop."}
                 stroke={color.final_dose}
             />
 
