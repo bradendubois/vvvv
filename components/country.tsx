@@ -26,7 +26,7 @@ type CountryProps = {
         [region: string]: {
             match?: {
                 startDate: Date
-                points: number
+                rmse: number
             }
             data: COVIDDaily[]
         }

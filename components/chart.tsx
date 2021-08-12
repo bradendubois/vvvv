@@ -17,7 +17,7 @@ type ChartProps = {
     data: {
         match?: {
             startDate: Date
-            points: number
+            rmse: number
         }
         data: COVIDDaily[]
     }
@@ -41,7 +41,12 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
         if (!data) return style.lowerThreshold
 
-        let x = data.data[data.data.length-1]["Average Daily Case (Normalized)"]
+        let index = data.data.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
+        if (index == -1) {
+            index = data.data.length - 1
+        }
+
+        let x = data.data[index]["Average Daily Case (Normalized)"]
 
         if (x >= context.upperThreshold) {
             return style.upperThreshold
@@ -50,7 +55,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [data, context.lowerThreshold, context.upperThreshold])
+    }, [data, context.dateUpper, context.lowerThreshold, context.upperThreshold])
 
     const search = () => {
 
@@ -77,9 +82,37 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             r = temp
         }
 
-        context.searchMatch(country, code, l, (24 * 60 * 60 * 1000) + 1)
+        context.searchMatch(country, code, l, (r - l) / (24 * 60 * 60 * 1000) + 1)
     }
 
+    useEffect(() => {
+
+        if (!data || !data.match) return
+
+        const str = (date: Date): string => {
+
+            let day = date.getDate().toString()
+            if (day.length < 2) day = "0" + day
+
+            let month = (date.getMonth() + 1).toString()
+            if (month.length < 2) month = "0" + month
+
+            return `${day}-${month}-${date.getFullYear()}`
+        }
+
+        let upper = new Date(data.match.startDate.getTime())
+        upper.setDate(data.match.startDate.getDate() + (context.match?.points ?? 0))
+
+        // @ts-ignore
+        setRefAreaLeft(str(data.match.startDate))
+        // @ts-ignore
+        setRefAreaRight(str(upper))
+
+    }, [data?.match])
+
+    useEffect(() => {
+        console.log(code, refAreaLeft, refAreaRight)
+    }, [refAreaRight])
 
     return (<div className={`${style.container} ${threshold}`}>
 
@@ -146,14 +179,21 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             />
 
             {/* Reference Area selected by the user */}]
-            {refAreaLeft && refAreaRight && (
+            {(refAreaLeft && refAreaRight) &&
                 <ReferenceArea
                     yAxisId={"L"}
                     x1={refAreaLeft}
                     x2={refAreaRight}
                     strokeOpacity={0.3}
                 />
-            )}
+            }
+
+            <ReferenceArea
+                yAxisId={"R"}
+                x1={"29-01-2020"}
+                x2={"31-01-2020"}
+                strokeOpacity={0.3}
+            />
 
         </LineChart>}
     </div>)

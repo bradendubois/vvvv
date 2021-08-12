@@ -13,6 +13,7 @@ import { americaCodes, canadaCodes, Country } from "../util/api_codes";
 
 import style from '../styles/Home.module.scss'
 import { COVIDDaily } from "../util/types";
+import { useMapContext } from "../util/context/provider";
 
 resetServerContext()
 
@@ -39,7 +40,7 @@ type CountryData = {
     [region: string]: {
         match?: {
             startDate: Date
-            points: number
+            rmse: number
         }
         data: COVIDDaily[]
     }
@@ -51,6 +52,8 @@ type CountryData = {
  * @constructor
  */
 const App = () => {
+
+    const context = useMapContext()
 
     const [canadaData, setCanadaData] = useState<CountryData>({})
     const [americaData, setAmericaData] = useState<CountryData>({})
@@ -65,8 +68,8 @@ const App = () => {
     
         source.forEach((point, index) => {
             
-            let a = point.new_cases_deaths_normalized_100k_average
-            let b = target[index].new_cases_deaths_normalized_100k_average
+            let a = point["Average Daily Case (Normalized)"]
+            let b = target[index]["Average Daily Case (Normalized)"]
     
             if (a !== undefined && b !== undefined) {
                 total += (a - b) ** 2
@@ -77,7 +80,6 @@ const App = () => {
     
         return Math.sqrt(total)
     }
-    
 
     useEffect(() => { 
 
@@ -104,7 +106,6 @@ const App = () => {
         Promise.all(canada).then(result => {
 
             result.forEach((region) => {
-                console.log(region)
                 // @ts-ignore
                 region[1].data.forEach((day: any) => 
                     day.date = new Date(day.date as unknown as string)
@@ -127,6 +128,59 @@ const App = () => {
         })
 
      }, [])
+
+    useEffect(() => {
+
+        if (context.match === undefined) return
+
+        let target = canadaData[context.match.region].data
+        let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
+        target = target.slice(idx,  idx+context.match?.points)
+
+        const countryUpdate = (dataset: CountryData) => {
+
+            let data = Object.fromEntries(Object.entries(dataset).map(([k, v]) => {
+
+                let data = v.data
+                let i = 0
+                let best
+
+                while (true) {
+
+                    // @ts-ignore
+                    let slice = data.slice(i, i + context.match?.points)
+                    // @ts-ignore
+                    if (slice.length < context.match?.points) {
+                        break
+                    }
+
+                    let result = rmse(slice, target)
+                    if (result != -1 && (!best || result < best.rmse)) {
+                        best = {
+                            rmse: result,
+                            startDate: slice[0].date
+                        }
+                    }
+
+                    i += 1
+                }
+
+                return [k, { match: {
+                    ...best
+                }}]
+            }))
+
+            return Object.fromEntries(Object.entries(canadaData).map(([k, v]) => [k, {...v, ...data[k]}]))
+        }
+
+
+        setCanadaData(countryUpdate(canadaData))
+        setAmericaData(countryUpdate(americaData))
+
+
+        // countryUpdate(americaData)
+
+    }, [context.match])
 
     return (<>
 
