@@ -33,7 +33,7 @@ type CountryProps = {
     }
 }
 
-export const CountryGraph = ({ country, ordering, data }: CountryProps) => {
+export const CountryGraph = ({ country, ordering }: CountryProps) => {
 
     return (
         <div className={style.country}>
@@ -41,10 +41,9 @@ export const CountryGraph = ({ country, ordering, data }: CountryProps) => {
             <hr />
 
             <div className={style.regions}>
-                {ordering.map((region, index) => <Chart 
-                    key={index} 
+                {ordering.map((region, index) => <Chart
+                    key={index}
                     country={country}
-                    data={data[region.code]} 
                     {...region} />)}
             </div>
 

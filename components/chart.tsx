@@ -14,13 +14,6 @@ type ChartProps = {
     country: Country
     code: string
     display?: string
-    data: {
-        match?: {
-            startDate: Date
-            rmse: number
-        }
-        data: COVIDDaily[]
-    }
 }
 
 
@@ -28,7 +21,7 @@ type ChartProps = {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, code, display, data }: ChartProps) => {
+const Chart = ({ country, code, display }: ChartProps) => {
 
     const context = useMapContext()
 
@@ -39,14 +32,16 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
     const threshold = useMemo(() => {
 
+        let data = (country === Country.Canada ? context.canadaData[code] : context.americaData[code])
+
         if (!data) return style.lowerThreshold
 
-        let index = data.data.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
+        let index = data.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
         if (index == -1) {
-            index = data.data.length - 1
+            index = data.length - 1
         }
 
-        let x = data.data[index]["Average Daily Case (Normalized)"]
+        let x = data[index]["Average Daily Case (Normalized)"]
 
         if (x >= context.upperThreshold) {
             return style.upperThreshold
@@ -55,7 +50,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [data, context.dateUpper, context.lowerThreshold, context.upperThreshold])
+    }, [(country === Country.Canada ? context.canadaData : context.americaData), context.dateUpper, context.lowerThreshold, context.upperThreshold])
 
     const search = () => {
 
@@ -69,7 +64,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
         // @ts-ignore
         let l = refAreaLeft.split("-")
-        
+
         // @ts-ignore
         let r = refAreaRight.split("-")
 
@@ -87,7 +82,13 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
     useEffect(() => {
 
-        if (!data || !data.match) return
+        let match = context.matches[`${country}-${code}`]
+
+        if (match === undefined) {
+            setRefAreaLeft(undefined)
+            setRefAreaRight(undefined)
+            return
+        }
 
         const str = (date: Date): string => {
 
@@ -100,15 +101,15 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             return `${day}-${month}-${date.getFullYear()}`
         }
 
-        let upper = new Date(data.match.startDate.getTime())
-        upper.setDate(data.match.startDate.getDate() + (context.match?.points ?? 0))
+        let upper = new Date(match.startDate.getTime())
+        upper.setDate(match.startDate.getDate() + (match?.points ?? 0))
 
         // @ts-ignore
-        setRefAreaLeft(str(data.match.startDate))
+        setRefAreaLeft(str(match.startDate))
         // @ts-ignore
         setRefAreaRight(str(upper))
 
-    }, [data?.match])
+    }, [context.matches])
 
     useEffect(() => {
         console.log(code, refAreaLeft, refAreaRight)
@@ -121,8 +122,8 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         <hr />
 
         {/* During debugging, placeholder div to improve performance */}
-        {(DEBUG || !data) && <div className={style.loader} style={{ 
-            height: "225px", 
+        {(DEBUG || !data) && <div className={style.loader} style={{
+            height: "225px",
             width: "325px"
         }}>
             <ScaleLoader color={'#36D7B7'} />
@@ -130,9 +131,9 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
 
         {!DEBUG && data &&
 
-        <LineChart height={225} width={325} className={code} 
+        <LineChart height={225} width={325} className={code}
             data={data.data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
-            
+
             // Reference selection parameters
             onMouseDown={(e: any) => {
                 setSearching(true)
@@ -144,7 +145,7 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             onMouseUp={() => search()}
         >
 
-            
+
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 

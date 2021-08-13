@@ -36,14 +36,15 @@ const initial = {
 }
 
 
-type CountryData = {
+export type SearchMatch = {
     [region: string]: {
-        match?: {
-            startDate: Date
-            rmse: number
-        }
-        data: COVIDDaily[]
+        startDate: Date
+        rmse: number
     }
+}
+
+export type CountryData = {
+    [region: string]: COVIDDaily[]
 }
 
 /**
@@ -55,85 +56,37 @@ const App = () => {
 
     const context = useMapContext()
 
-    const [canadaData, setCanadaData] = useState<CountryData>({})
-    const [americaData, setAmericaData] = useState<CountryData>({})
-
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
-        
+
         if (source.length !== target.length) {
             throw new Error("Non-matching lengths across given parameters")
         }
-    
+
         let total = 0
-    
+
         source.forEach((point, index) => {
-            
+
             let a = point["Average Daily Case (Normalized)"]
             let b = target[index]["Average Daily Case (Normalized)"]
-    
+
             if (a !== undefined && b !== undefined) {
                 total += (a - b) ** 2
             } else {
                 return -1
             }
         })
-    
+
         return Math.sqrt(total)
     }
 
-    useEffect(() => { 
-
-        let canada = canadaCodes.map(region => {
-
-            return fetch(`/api/canada/${region.code}`)
-                .then(data => data.json())
-                .then(json => [region.code, {
-                    match: undefined,
-                    data: json
-                }])
-        })
-
-        let america = americaCodes.map(region => {
-
-            return fetch(`/api/america/${region.code}`)
-                .then(data => data.json())
-                .then(json => [region.code, {
-                    match: undefined,
-                    data: json
-                }])
-        })
-
-        Promise.all(canada).then(result => {
-
-            result.forEach((region) => {
-                // @ts-ignore
-                region[1].data.forEach((day: any) => 
-                    day.date = new Date(day.date as unknown as string)
-                )
-            })
-
-            setCanadaData(Object.fromEntries(result))
-        })
-
-
-        Promise.all(america).then(result => {
-            result.forEach((region) => {
-                // @ts-ignore
-                region[1].data.forEach((day: any) => 
-                    day.date = new Date(day.date as unknown as string)
-                )
-            })
-
-            setAmericaData(Object.fromEntries(result))
-        })
-
-     }, [])
 
     useEffect(() => {
 
         if (context.match === undefined) return
 
-        let target = canadaData[context.match.region].data
+        let source = (context.match.country === Country.Canada ? context.canadaData : context.americaData)
+
+        let target = source[context.match.region]
         let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
         target = target.slice(idx,  idx+context.match?.points)
 
@@ -141,7 +94,7 @@ const App = () => {
 
             let data = Object.fromEntries(Object.entries(dataset).map(([k, v]) => {
 
-                let data = v.data
+                let data = v
                 let i = 0
                 let best
 
@@ -165,19 +118,16 @@ const App = () => {
                     i += 1
                 }
 
-                return [k, { match: {
-                    ...best
-                }}]
+                return [k, best]
             }))
 
-            return Object.fromEntries(Object.entries(canadaData).map(([k, v]) => [k, {...v, ...data[k]}]))
+            return data
         }
 
         // @ts-ignore
-        setCanadaData(countryUpdate(canadaData))
+        // setCanadaData(countryUpdate(canadaData))
         // @ts-ignore
-        setAmericaData(countryUpdate(americaData))
-
+        // setAmericaData(countryUpdate(americaData))
 
         // countryUpdate(americaData)
 

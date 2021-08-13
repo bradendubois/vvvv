@@ -1,8 +1,9 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 
-import { Country } from "../api_codes";
+import { americaCodes, canadaCodes, Country } from "../api_codes";
 import { dates } from "./dates";
 import { COVIDDaily } from "../types";
+import { CountryData } from "../../pages";
 
 type Match = {
     country: Country
@@ -25,6 +26,10 @@ type MapInterface = {
     lowerThreshold: number
     match?: Match
     searchMatch(country: Country, region: string, date: Date, points: number): void
+
+
+    canadaData: CountryData
+    americaData: CountryData
 }
 
 
@@ -40,6 +45,8 @@ export const MapContext = createContext<MapInterface>({
     setLowerThreshold: () => {},
     lowerThreshold: 15,
     searchMatch: () => {},
+    canadaData: {},
+    americaData: {}
 });
 
 
@@ -60,10 +67,55 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     const [match, setMatch] = useState<Match>()
 
+    const [canadaData, setCanadaData] = useState<CountryData>({})
+    const [americaData, setAmericaData] = useState<CountryData>({})
+
+    useEffect(() => {
+
+        let canada = canadaCodes.map(region => {
+
+            return fetch(`/api/canada/${region.code}`)
+                .then(data => data.json())
+                .then(json => [region.code, json])
+        })
+
+        let america = americaCodes.map(region => {
+
+            return fetch(`/api/america/${region.code}`)
+                .then(data => data.json())
+                .then(json => [region.code, json])
+        })
+
+        Promise.all(canada).then(result => {
+
+            result.forEach((region) => {
+                // @ts-ignore
+                region[1].forEach((day: any) =>
+                    day.date = new Date(day.date as unknown as string)
+                )
+            })
+
+            setCanadaData(Object.fromEntries(result))
+        })
+
+
+        Promise.all(america).then(result => {
+            result.forEach((region) => {
+                // @ts-ignore
+                region[1].forEach((day: any) =>
+                    day.date = new Date(day.date as unknown as string)
+                )
+            })
+
+            setAmericaData(Object.fromEntries(result))
+        })
+
+     }, [])
+
     const searchMatch = (country: Country, region: string, date: Date, points: number) => setMatch({
         country,
-        date,
         region,
+        date,
         points
     })
 
@@ -80,7 +132,10 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             setLowerThreshold,
             lowerThreshold,
             match,
-            searchMatch
+            searchMatch,
+
+            canadaData,
+            americaData
         }}>{children}</MapContext.Provider>
     );
 }
