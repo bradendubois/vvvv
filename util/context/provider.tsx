@@ -3,7 +3,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useMemo, useSta
 import { americaCodes, canadaCodes, Country } from "../api_codes";
 import { dates } from "./dates";
 import { COVIDDaily } from "../types";
-import { CountryData } from "../../pages";
+import { CountryData, SearchMatch } from "../../pages";
 
 type Match = {
     country: Country
@@ -30,6 +30,10 @@ type MapInterface = {
 
     canadaData: CountryData
     americaData: CountryData
+    canadaMatches: SearchMatch
+    americaMatches: SearchMatch
+
+    updateMatches(country: Country, data: SearchMatch): void
 }
 
 
@@ -46,7 +50,10 @@ export const MapContext = createContext<MapInterface>({
     lowerThreshold: 15,
     searchMatch: () => {},
     canadaData: {},
-    americaData: {}
+    americaData: {},
+    canadaMatches: {},
+    americaMatches: {}
+    updateMatches: () => {}
 });
 
 
@@ -67,8 +74,14 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     const [match, setMatch] = useState<Match>()
 
+    // COVID Data
     const [canadaData, setCanadaData] = useState<CountryData>({})
     const [americaData, setAmericaData] = useState<CountryData>({})
+
+    // Search Matches
+    const [canadaMatches, setCanadaMatches] = useState<SearchMatch>({})
+    const [americaMatches, setAmericaMatches] = useState<SearchMatch>({})
+
 
     useEffect(() => {
 
@@ -119,6 +132,20 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
         points
     })
 
+    const updateMatches = (country: Country, data: SearchMatch) => {
+
+        switch (country) {
+            case Country.Canada:
+                setCanadaMatches(data)
+                break
+            case Country.America:
+                setAmericaMatches(data)
+                break
+            default:
+                throw Error
+        }
+    }
+
     return (
         <MapContext.Provider value={{
             dateLower,
@@ -135,7 +162,10 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             searchMatch,
 
             canadaData,
-            americaData
+            americaData,
+            canadaMatches,
+            americaMatches,
+            updateMatches
         }}>{children}</MapContext.Provider>
     );
 }
