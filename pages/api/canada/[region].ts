@@ -32,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return {
             date,
             cases: x.cases,
-            date_string: x.date,
+            date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
             active_cases: x.active_cases,
             "Average Daily Case (Normalized)": (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2),
             "First Dose Pop.": ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),

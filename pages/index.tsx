@@ -170,11 +170,12 @@ const App = () => {
                 }}]
             }))
 
-            return Object.fromEntries(Object.entries(canadaData).map(([k, v]) => [k, {...v, ...data[k]}]))
+            return Object.fromEntries(Object.entries(dataset).map(([k, v]) => [k, {...v, ...data[k]}]))
         }
 
         // @ts-ignore
         setCanadaData(countryUpdate(canadaData))
+
         // @ts-ignore
         setAmericaData(countryUpdate(americaData))
 
