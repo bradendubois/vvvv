@@ -87,7 +87,12 @@ const App = () => {
 
         let source = (context.match.country === Country.Canada ? context.canadaData : context.americaData)
 
-        let target = source[context.match.region]
+        let target = source?.[context.match.region]
+
+        if (target === undefined) {
+            return
+        }
+
         let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
         target = target.slice(idx,  idx+context.match?.points)
 
@@ -108,6 +113,7 @@ const App = () => {
                         break
                     }
 
+                    // @ts-ignore
                     let result = rmse(slice, target)
                     if (result != -1 && (!best || result < best.rmse)) {
                         best = {
