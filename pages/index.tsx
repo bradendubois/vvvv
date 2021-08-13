@@ -40,6 +40,7 @@ export type SearchMatch = {
     [region: string]: {
         startDate: Date
         rmse: number
+        points: number
     }
 }
 

@@ -2,7 +2,6 @@ import React, { createContext, ReactNode, useContext, useEffect, useMemo, useSta
 
 import { americaCodes, canadaCodes, Country } from "../api_codes";
 import { dates } from "./dates";
-import { COVIDDaily } from "../types";
 import { CountryData, SearchMatch } from "../../pages";
 
 type Match = {
@@ -52,7 +51,7 @@ export const MapContext = createContext<MapInterface>({
     canadaData: {},
     americaData: {},
     canadaMatches: {},
-    americaMatches: {}
+    americaMatches: {},
     updateMatches: () => {}
 });
 

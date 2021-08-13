@@ -5,7 +5,6 @@ import { ScaleLoader } from "react-spinners";
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
-import { COVIDDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
 import { DEBUG } from "../pages/_app";
@@ -82,7 +81,9 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     useEffect(() => {
 
-        let match = context.matches[`${country}-${code}`]
+        let dataset = (country === Country.Canada ? context.canadaMatches : context.americaMatches)
+
+        let match = dataset[code]
 
         if (match === undefined) {
             setRefAreaLeft(undefined)
@@ -102,7 +103,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
         }
 
         let upper = new Date(match.startDate.getTime())
-        upper.setDate(match.startDate.getDate() + (match?.points ?? 0))
+        upper.setDate(match.startDate.getDate() + match.points)
 
         // @ts-ignore
         setRefAreaLeft(str(match.startDate))
