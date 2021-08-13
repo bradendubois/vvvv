@@ -133,7 +133,14 @@ const App = () => {
 
         if (context.match === undefined) return
 
-        let target = canadaData[context.match.region].data
+        let target: COVIDDaily[]
+
+        if (Object.keys(canadaData).indexOf(context.match.region) !== -1) {
+            target = canadaData[context.match.region].data
+        } else {
+            target = americaData[context.match.region].data
+        }
+
         let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
         target = target.slice(idx,  idx+context.match?.points)
 
