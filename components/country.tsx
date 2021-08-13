@@ -22,15 +22,6 @@ type CountryProps = {
         code: string
         display: string
     }[]
-    data: {
-        [region: string]: {
-            match?: {
-                startDate: Date
-                rmse: number
-            }
-            data: COVIDDaily[]
-        }
-    }
 }
 
 export const CountryGraph = ({ country, ordering }: CountryProps) => {

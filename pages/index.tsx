@@ -181,8 +181,8 @@ const App = () => {
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
-                <CountryGraph country={Country.Canada} ordering={canadaCodes} data={canadaData} />
-                <CountryGraph country={Country.America} ordering={americaCodes} data={americaData} />
+                <CountryGraph country={Country.Canada} ordering={canadaCodes} />
+                <CountryGraph country={Country.America} ordering={americaCodes} />
             </main>
 
             {/* 'Scroll to Top' Button */}

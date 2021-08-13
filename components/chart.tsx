@@ -31,7 +31,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     const threshold = useMemo(() => {
 
-        let data = (country === Country.Canada ? context.canadaData[code] : context.americaData[code])
+        let data = (country === Country.Canada ? context.canadaData : context.americaData)?.[code]
 
         if (!data) return style.lowerThreshold
 
@@ -83,7 +83,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         let dataset = (country === Country.Canada ? context.canadaMatches : context.americaMatches)
 
-        let match = dataset[code]
+        let match = dataset?.[code]
 
         if (match === undefined) {
             setRefAreaLeft(undefined)
@@ -110,30 +110,23 @@ const Chart = ({ country, code, display }: ChartProps) => {
         // @ts-ignore
         setRefAreaRight(str(upper))
 
-    }, [context.matches])
+    }, [country === Country.Canada ? context.canadaMatches : context.americaMatches])
 
-    useEffect(() => {
-        console.log(code, refAreaLeft, refAreaRight)
-    }, [refAreaRight])
 
-    return (<div className={`${style.container} ${threshold}`}>
+    const Graph = useMemo(() => {
 
-        <h4>{display ?? code}</h4>
+        let data = (country === Country.Canada ? context.canadaData : context.americaData)?.[code]
 
-        <hr />
-
-        {/* During debugging, placeholder div to improve performance */}
-        {(DEBUG || !data) && <div className={style.loader} style={{
+        if (!data || data.length === 0) return <div className={style.loader} style={{
             height: "225px",
             width: "325px"
         }}>
             <ScaleLoader color={'#36D7B7'} />
-        </div>}
+        </div>
 
-        {!DEBUG && data &&
+        return <LineChart height={225} width={325} className={code}
 
-        <LineChart height={225} width={325} className={code}
-            data={data.data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
+            data={data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
 
             // Reference selection parameters
             onMouseDown={(e: any) => {
@@ -145,7 +138,6 @@ const Chart = ({ country, code, display }: ChartProps) => {
             onMouseMove={(e: any) => searching && refAreaLeft && setRefAreaRight(e.activeLabel)}
             onMouseUp={() => search()}
         >
-
 
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
@@ -189,15 +181,18 @@ const Chart = ({ country, code, display }: ChartProps) => {
                     strokeOpacity={0.3}
                 />
             }
+        </LineChart>
 
-            <ReferenceArea
-                yAxisId={"R"}
-                x1={"29-01-2020"}
-                x2={"31-01-2020"}
-                strokeOpacity={0.3}
-            />
+    }, [context.dateLower, context.dateUpper, (country === Country.Canada ? context.canadaData : context.americaData)])
 
-        </LineChart>}
+
+    return (<div className={`${style.container} ${threshold}`}>
+
+        <h4>{display ?? code}</h4>
+
+        <hr />
+
+        {!DEBUG && (country === Country.Canada ? context.canadaData : context.americaData) && Graph}
     </div>)
 }
 

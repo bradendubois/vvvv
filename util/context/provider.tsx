@@ -27,10 +27,10 @@ type MapInterface = {
     searchMatch(country: Country, region: string, date: Date, points: number): void
 
 
-    canadaData: CountryData
-    americaData: CountryData
-    canadaMatches: SearchMatch
-    americaMatches: SearchMatch
+    canadaData?: CountryData
+    americaData?: CountryData
+    canadaMatches?: SearchMatch
+    americaMatches?: SearchMatch
 
     updateMatches(country: Country, data: SearchMatch): void
 }
@@ -74,12 +74,12 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [match, setMatch] = useState<Match>()
 
     // COVID Data
-    const [canadaData, setCanadaData] = useState<CountryData>({})
-    const [americaData, setAmericaData] = useState<CountryData>({})
+    const [canadaData, setCanadaData] = useState<CountryData>()
+    const [americaData, setAmericaData] = useState<CountryData>()
 
     // Search Matches
-    const [canadaMatches, setCanadaMatches] = useState<SearchMatch>({})
-    const [americaMatches, setAmericaMatches] = useState<SearchMatch>({})
+    const [canadaMatches, setCanadaMatches] = useState<SearchMatch>()
+    const [americaMatches, setAmericaMatches] = useState<SearchMatch>()
 
 
     useEffect(() => {
