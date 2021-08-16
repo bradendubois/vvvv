@@ -66,7 +66,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         let c = cases.filter(x => x.state === region.code)
         let v = vaccination.filter(x => x.location === region.code)
-        console.log(region, c.length, v.length)
 
         return [region.code, handleRegion(c, v)]
     }))

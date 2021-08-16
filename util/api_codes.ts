@@ -5,17 +5,17 @@ export enum Country {
 
 export const canadaCodes = [
     {code: "YT", display: "Yukon"},
-    {code: "NT", display: "Northwest Territories"},
+    {code: "NT", display: "Northwest Territories", dataset: "NWT"},
     {code: "NU", display: "Nunavut"},
-    {code: "BC", display: "British Columbia"},
+    {code: "BC", display: "British Columbia", dataset: "BC"},
     {code: "AB", display: "Alberta"},
     {code: "SK", display: "Saskatchewan"},
     {code: "MB", display: "Manitoba"},
     {code: "ON", display: "Ontario"},
     {code: "QC", display: "Quebec"},
-    {code: "NL", display: "Newfoundland & Labrador"},
+    {code: "NL", display: "Newfoundland & Labrador", dataset: "NL"},
     {code: "NS", display: "Nova Scotia"},
-    {code: "PE", display: "Prince Edward Island"},
+    {code: "PE", display: "Prince Edward Island", dataset: "PEI"},
     {code: "NB", display: "New Brunswick"}
 ]
 

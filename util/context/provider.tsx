@@ -84,24 +84,17 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     useEffect(() => {
 
-        let canada = canadaCodes.map(region => {
+        fetch('/api/canada').then(result => result.json())
+            .then(result => {
+                Object.values(result).forEach((region) => {
+                    // @ts-ignore
+                    region.forEach((day: any) =>
+                        day.date = new Date(day.date as unknown as string)
+                    )
+                })
 
-            return fetch(`/api/canada/${region.code}`)
-                .then(data => data.json())
-                .then(json => [region.code, json])
-        })
-
-        Promise.all(canada).then(result => {
-
-            result.forEach((region) => {
-                // @ts-ignore
-                region[1].forEach((day: any) =>
-                    day.date = new Date(day.date as unknown as string)
-                )
+                setCanadaData(result)
             })
-
-            setCanadaData(Object.fromEntries(result))
-        })
 
 
         fetch('/api/america').then(result => result.json())
