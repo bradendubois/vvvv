@@ -34,10 +34,25 @@ type MapInterface = {
 
     updateMatches(country: Country, data: SearchMatch): void
 
-    mini: boolean
+    size: {
+        height: number
+        width: number
+    }
     toggleMini(): void
 }
 
+
+const sizes = {
+    mini: {
+        height: 150,
+        width: 250
+    },
+
+    default: {
+        height: 225,
+        width: 325
+    }
+}
 
 export const MapContext = createContext<MapInterface>({
     setDateLower: () => {},
@@ -56,7 +71,10 @@ export const MapContext = createContext<MapInterface>({
     canadaMatches: {},
     americaMatches: {},
     updateMatches: () => {},
-    mini: false,
+    size: {
+        height: 100,
+        width: 100
+    },
     toggleMini: () =>  {}
 });
 
@@ -86,7 +104,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [canadaMatches, setCanadaMatches] = useState<SearchMatch>()
     const [americaMatches, setAmericaMatches] = useState<SearchMatch>()
 
-    const [mini, setMini] = useState(false)
+    const [size, setSize] = useState(sizes.default)
 
     useEffect(() => {
 
@@ -117,7 +135,15 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
      }, [])
 
-    const toggleMini = () => { setMini(!mini) }
+    const toggleMini = () => {
+
+        if (size === sizes.default) {
+            setSize(sizes.mini)
+        } else {
+            setSize(sizes.default)
+        }
+
+    }
 
     const searchMatch = (country: Country, region: string, date: Date, points: number) => setMatch({
         country,
@@ -163,7 +189,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             americaMatches,
             updateMatches,
 
-            mini,
+            size,
             toggleMini
         }}>{children}</MapContext.Provider>
     );

@@ -16,6 +16,8 @@ type ChartProps = {
 }
 
 
+
+
 /**
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
@@ -145,14 +147,16 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         let data = (country === Country.Canada ? context.canadaData : context.americaData)?.[code]
 
-        if (!data || data.length === 0) return <div className={style.loader} style={{
-            height: "225px",
-            width: "325px"
+        console.log(data)
+
+        if (data === undefined || data.length === 0) return <div className={style.loader} style={{
+            height: `${context.size.height}px`,
+            width: `${context.size.width}px`
         }}>
             <ScaleLoader color={'#36D7B7'} />
         </div>
 
-        return <LineChart height={225} width={325} className={code}
+        return <LineChart height={context.size.height} width={context.size.width} className={code}
 
             data={data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
 
@@ -209,7 +213,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             />}
         </LineChart>
 
-    }, [context.dateLower, context.dateUpper, (country === Country.Canada ? context.canadaData : context.americaData), refAreaLeft, refAreaRight])
+    }, [context.dateLower, context.dateUpper, (country === Country.Canada ? context.canadaData : context.americaData), refAreaLeft, refAreaRight, context.size])
 
     return (<div className={`${style.container} ${threshold}`}>
 
@@ -217,7 +221,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         <hr />
 
-        {!DEBUG && (country === Country.Canada ? context.canadaData : context.americaData) && Graph}
+        {!DEBUG && Graph}
     </div>)
 }
 
