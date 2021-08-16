@@ -60,7 +60,8 @@ const App = () => {
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
 
         if (source.length !== target.length) {
-            throw new Error("Non-matching lengths across given parameters")
+            return -1
+            // throw new Error("Non-matching lengths across given parameters")
         }
 
         let total = 0
