@@ -32,13 +32,19 @@ const Filter = () => {
     const context = useMapContext()
 
     return (<>
+
+        <button className={style.button} onClick={() => context.toggleMini()}>Toggle Graph Size</button>
+
         {/* Date-filtering Module */}
         <div className={style.range}>
 
             {/* Lower-bound of date filtering */}
             <div>
-                <p>Range Begin</p>
-                <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
+                <div>
+                    <p>Range Begin</p>
+                    <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
+                </div>
+
             </div>
 
             {/* Flag graphs above a certain threshold */}
@@ -58,6 +64,7 @@ const Filter = () => {
                 <DatePicker minDate={context.dateLower ?? context.lowerValid} maxDate={context.upperValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
             </div>
         </div>
+
     </>)
 }
 

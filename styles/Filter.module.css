@@ -1,0 +1,36 @@
+.range {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.range p {
+  font-size: 12pt;
+}
+.range > p {
+  font-size: 16pt;
+}
+.range > div p {
+  font-size: 14pt;
+  font-weight: 600;
+}
+.range > div:first-of-type {
+  text-align: left;
+}
+.range > div:last-of-type {
+  text-align: right;
+}
+
+.thresholdPicker {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.button {
+  margin-top: 0;
+  font-size: 9pt;
+  padding: 5px;
+}
+
+/*# sourceMappingURL=Filter.module.css.map */

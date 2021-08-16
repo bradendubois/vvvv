@@ -137,8 +137,6 @@ const App = () => {
         // @ts-ignore
         context.updateMatches(Country.America, countryUpdate(context.americaData))
 
-        // countryUpdate(americaData)
-
     }, [context.match])
 
     return (<>

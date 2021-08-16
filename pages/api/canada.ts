@@ -50,8 +50,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         let p = population.prov.find((x: any) => x.province_short === region.code).pop
 
-        console.log(region, c.length, p)
-
         return [region.code, handleRegion(c, p)]
     }))
 
