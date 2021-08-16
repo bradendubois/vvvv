@@ -184,7 +184,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
                 isAnimationActive={false}
                 yAxisId={"L"}
                 dataKey={"Average Daily Case (Normalized)"}
-                stroke={color.active_cases}
+                stroke={color.new_cases}
             />
 
             {/* Vaccine Administration - First Dose */}

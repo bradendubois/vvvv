@@ -2,40 +2,24 @@ import { useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-// @ts-ignore TODO
-import { resetServerContext } from "react-beautiful-dnd"
-
 import { CountryGraph } from "../components/country";
 import Filter from "../components/filter";
 import Legend from "../components/legend";
 
+import { useMapContext } from "../util/context/provider";
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
+import { COVIDDaily } from "../util/types";
 
 import style from '../styles/Home.module.scss'
-import { COVIDDaily } from "../util/types";
-import { useMapContext } from "../util/context/provider";
 
-resetServerContext()
-
+/// Colors used in a few areas for consistency
 export const color = {
-    active_cases: "#bd3253",
-    first_dose: "#2ca757",
-    final_dose: "#177ba3"
+    new_cases: "#bd3253",       // Color for the 'new cases' lines
+    first_dose: "#2ca757",      // Color for the first-dose (of a multi-dose) vaccine uptake
+    final_dose: "#177ba3"       // Color for the final-dose vaccine uptake
 }
 
-
-type Match = {
-    country: Country
-    region: string
-    points: COVIDDaily[]
-}
-
-const initial = {
-    canada: Object.fromEntries(canadaCodes.map(entry => [entry.code, undefined])),
-    america: Object.fromEntries(americaCodes.map(entry => [entry.code, undefined]))
-}
-
-
+/// A 'result' computed for one region when searching for a range that best fits a source/selected range
 export type SearchMatch = {
     [region: string]: {
         startDate: Date
@@ -44,6 +28,8 @@ export type SearchMatch = {
     }
 }
 
+/// General representation of a country's data; a unique (per country) code representing one region maps to a
+// list of daily data points for that region
 export type CountryData = {
     [region: string]: COVIDDaily[]
 }
@@ -57,6 +43,11 @@ const App = () => {
 
     const context = useMapContext()
 
+    /**
+     * Computes a basic RMSE between the two sets of daily COVID data
+     * @param source One set of data points - usually the one that initiated the search
+     * @param target A second set of data points
+     */
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
 
         if (source.length !== target.length) {
@@ -71,17 +62,22 @@ const App = () => {
             let a = point["Average Daily Case (Normalized)"]
             let b = target[index]["Average Daily Case (Normalized)"]
 
-            if (a !== undefined && b !== undefined) {
-                total += (a - b) ** 2
-            } else {
+            // -1 is used as an error value if a range cannot be properly computed
+            if (a === undefined || b === undefined) {
                 return -1
             }
+
+            total += (a - b) ** 2
         })
 
         return Math.sqrt(total)
     }
 
 
+    /**
+     * Hook to compute all 'closest' ranges for each dataset; this is used when the user has selected a range on one
+     * graph with the intention of finding the best match on all other graphs.
+     */
     useEffect(() => {
 
         if (context.match === undefined) return
@@ -89,14 +85,15 @@ const App = () => {
         let source = (context.match.country === Country.Canada ? context.canadaData : context.americaData)
 
         let target = source?.[context.match.region]
-
         if (target === undefined) {
             return
         }
 
+        // Slice desired window from source
         let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
         target = target.slice(idx,  idx+context.match?.points)
 
+        // Helper - computes all updates on one dataset (one country)
         const countryUpdate = (dataset: CountryData) => {
 
             let data = Object.fromEntries(Object.entries(dataset).map(([k, v]) => {
@@ -107,15 +104,14 @@ const App = () => {
 
                 while (true) {
 
-                    // @ts-ignore
-                    let slice = data.slice(i, i + context.match?.points)
-                    // @ts-ignore
-                    if (slice.length < context.match?.points) {
+                    // Slice a window - if it's too small, we've hit passed the end / newest window
+                    let slice = data.slice(i, i + (context.match?.points ?? 0))
+                    if (slice.length < (context.match?.points ?? 1)) {
                         break
                     }
 
-                    // @ts-ignore
-                    let result = rmse(slice, target)
+                    // Compute RMSE - Update 'best' if better
+                    let result = rmse(slice, target ?? [])
                     if (result != -1 && (!best || result < best.rmse)) {
                         best = {
                             rmse: result,
@@ -134,14 +130,18 @@ const App = () => {
         }
 
         // @ts-ignore
+        // Canadian data
         context.updateMatches(Country.Canada, countryUpdate(context.canadaData))
+
         // @ts-ignore
+        // American data
         context.updateMatches(Country.America, countryUpdate(context.americaData))
 
     }, [context.match])
 
     return (<>
 
+        {/* Head component with any metadata for SEO / etc. */}
         <Head>
             <title>Visualizing Variants versus Vaccines</title>
 
@@ -150,11 +150,6 @@ const App = () => {
             <meta name="keywords" content="COVID,covid-19,vaccination,cases,variants,visualization,canada,america" />
             <meta name="author" content="Dr. Eric Neufeld & Braden Dubois" />
         </Head>
-
-        {/* (process.env.BUILD !== "PRODUCTION") && <div className={style.development}>
-            <p>This is a <strong>development</strong> build! Stability, performance, feature availability, and correctness are not guaranteed!</p>
-            <p>Click <Link href={"https://vvvv-main.vercel.app"}>here</Link> to go to the latest production build.</p>
-        </div>*/}
 
         <div className={style.container}>
 
@@ -201,6 +196,7 @@ const App = () => {
 
             <hr/>
 
+            {/* All sources for APIs / data */}
             <div>
                 <h2>Sources</h2>
                 <ul>
@@ -214,6 +210,7 @@ const App = () => {
 
             <hr/>
 
+            {/* Footer for page */}
             <footer>
                 <p>Developed by <Link href={"mailto:emn075@usask.ca"}>Dr. Eric Neufeld</Link> and <Link href={"https://bradendubois.dev"}>Braden Dubois</Link>.</p>
                 <p>source code <Link href={"https://github.com/bradendubois/vvvv"}>here</Link>.</p>

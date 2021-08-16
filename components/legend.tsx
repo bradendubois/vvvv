@@ -52,7 +52,7 @@ const Legend = () => {
                     <div className={style.lines}>
                         <LegendLine color={color.first_dose} label={"One Dose"} />
                         <LegendLine color={color.final_dose} label={"Fully Vaccinated"} />
-                        <LegendLine color={color.active_cases} label={"Daily New Cases"} />
+                        <LegendLine color={color.new_cases} label={"Daily New Cases"} />
                     </div>
 
                     {/* Case Shades */}
@@ -81,7 +81,7 @@ const Legend = () => {
                                 isAnimationActive={false}
                                 yAxisId={"L"}
                                 dataKey={"Average Daily Case (Normalized)"}
-                                stroke={color.active_cases}
+                                stroke={color.new_cases}
                             />
 
 
