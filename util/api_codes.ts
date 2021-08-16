@@ -3,6 +3,8 @@ export enum Country {
     America = "america"
 }
 
+// Fallback values provided for 4 regions as their Display values do not match their key in the returned
+// data from the OpenCOVID API
 export const canadaCodes = [
     {code: "YT", display: "Yukon"},
     {code: "NT", display: "Northwest Territories", dataset: "NWT"},
