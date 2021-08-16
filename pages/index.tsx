@@ -19,14 +19,7 @@ export const color = {
     final_dose: "#177ba3"       // Color for the final-dose vaccine uptake
 }
 
-/// A 'result' computed for one region when searching for a range that best fits a source/selected range
-export type SearchMatch = {
-    [region: string]: {
-        startDate: Date
-        rmse: number
-        points: number
-    }
-}
+
 
 /// General representation of a country's data; a unique (per country) code representing one region maps to a
 // list of daily data points for that region

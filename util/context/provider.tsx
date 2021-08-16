@@ -1,8 +1,8 @@
-import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-import { americaCodes, canadaCodes, Country } from "../api_codes";
+import { Country } from "../api_codes";
 import { dates } from "./dates";
-import { CountryData, SearchMatch } from "../../pages";
+import { CountryData } from "../../pages";
 
 type Match = {
     country: Country
@@ -11,6 +11,14 @@ type Match = {
     points: number
 }
 
+/// A 'result' computed for one region when searching for a range that best fits a source/selected range
+type SearchMatch = {
+    [region: string]: {
+        startDate: Date
+        rmse: number
+        points: number
+    }
+}
 
 type MapInterface = {
     dateLower: Date
@@ -31,7 +39,7 @@ type MapInterface = {
     americaData?: CountryData
     canadaMatches?: SearchMatch
     americaMatches?: SearchMatch
-
+    clearMatches(): void
     updateMatches(country: Country, data: SearchMatch): void
 
     size: {
@@ -71,6 +79,7 @@ export const MapContext = createContext<MapInterface>({
     canadaMatches: {},
     americaMatches: {},
     updateMatches: () => {},
+    clearMatches: () => {},
     size: {
         height: 100,
         width: 100
@@ -145,6 +154,11 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     }
 
+    const clearMatches = () =>  {
+        setCanadaMatches({})
+        setAmericaMatches({})
+    }
+
     const searchMatch = (country: Country, region: string, date: Date, points: number) => setMatch({
         country,
         region,
@@ -153,8 +167,6 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     })
 
     const updateMatches = (country: Country, data: SearchMatch) => {
-
-        console.log(data)
 
         switch (country) {
             case Country.Canada:
@@ -187,6 +199,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             americaData,
             canadaMatches,
             americaMatches,
+            clearMatches,
             updateMatches,
 
             size,
