@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from "react";
 import Chart from "./chart";
 import { Country } from "../util/api_codes";
 
-// @ts-ignore
-import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
-
 import style from "../styles/Country.module.scss";
-import { COVIDDaily } from "../util/types";
 
-const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
 
-    return result;
-};
-
+/// Props for one Country
 type CountryProps = {
-    country: Country
-    ordering: {
-        code: string
-        display: string
+    country: Country        // The Country (Canada, America)
+    ordering: {             // Array to determine ordering of the Charts
+        code: string        // Unique identifier of a region within the Country
+        display: string     // Value to display above the graph
     }[]
 }
 
