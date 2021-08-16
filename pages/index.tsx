@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -118,7 +118,8 @@ const App = () => {
                     if (result != -1 && (!best || result < best.rmse)) {
                         best = {
                             rmse: result,
-                            startDate: slice[0].date
+                            startDate: slice[0].date,
+                            points: slice.length
                         }
                     }
 
@@ -132,9 +133,9 @@ const App = () => {
         }
 
         // @ts-ignore
-        // setCanadaData(countryUpdate(canadaData))
+        context.updateMatches(Country.Canada, countryUpdate(context.canadaData))
         // @ts-ignore
-        // setAmericaData(countryUpdate(americaData))
+        context.updateMatches(Country.America, countryUpdate(context.americaData))
 
         // countryUpdate(americaData)
 

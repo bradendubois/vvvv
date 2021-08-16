@@ -24,8 +24,8 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     const context = useMapContext()
 
-    const [refAreaLeft, setRefAreaLeft] = useState()
-    const [refAreaRight, setRefAreaRight] = useState()
+    const [refAreaLeft, setRefAreaLeft] = useState<string>()
+    const [refAreaRight, setRefAreaRight] = useState<string>()
 
     const [searching, setSearching] = useState(false)
 
@@ -67,16 +67,16 @@ const Chart = ({ country, code, display }: ChartProps) => {
         // @ts-ignore
         let r = refAreaRight.split("-")
 
-        l = new Date(l[2], l[1]-1, l[0], 0, 0, 0, 0)
-        r = new Date(r[2], r[1]-1, r[0], 0, 0, 0, 0)
+        let l_date = new Date(parseInt(l[2]), parseInt(l[1])-1, parseInt(l[0]), 0, 0, 0, 0)
+        let r_date = new Date(parseInt(r[2]), parseInt(r[1])-1, parseInt(r[0]), 0, 0, 0, 0)
 
-        if (l > r) {
-            let temp = l
-            l = r;
-            r = temp
+        if (l_date > r_date) {
+            let temp = l_date
+            l_date = r_date;
+            r_date = temp
         }
 
-        context.searchMatch(country, code, l, (r - l) / (24 * 60 * 60 * 1000) + 1)
+        context.searchMatch(country, code, l_date, (r_date.getTime() - l_date.getTime()) / (24 * 60 * 60 * 1000) + 1)
     }
 
     useEffect(() => {
@@ -112,6 +112,34 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     }, [country === Country.Canada ? context.canadaMatches : context.americaMatches])
 
+    useEffect(() => {
+
+        let matches = (country === Country.Canada ? context.canadaMatches : context.americaMatches)
+
+        let match = matches?.[code]
+
+        console.log(matches, match)
+
+        if (!match) {
+            setRefAreaLeft(undefined)
+            setRefAreaRight(undefined)
+            return
+        }
+
+        let lower = match.startDate
+
+        let upper = new Date(lower.getTime())
+        upper.setDate(upper.getDate() + match.points + 1)
+
+        let l_str = `${lower.getDate()}-${lower.getMonth()+1}-${lower.getFullYear()}`
+        let r_str = `${upper.getDate()}-${upper.getMonth()+1}-${upper.getFullYear()}`
+
+        console.log(l_str, r_str, match.points)
+
+        setRefAreaLeft(l_str)
+        setRefAreaRight(r_str)
+
+    }, [(country === Country.Canada ? context.canadaMatches : context.americaMatches)])
 
     const Graph = useMemo(() => {
 
@@ -173,18 +201,15 @@ const Chart = ({ country, code, display }: ChartProps) => {
             />
 
             {/* Reference Area selected by the user */}]
-            {(refAreaLeft && refAreaRight) &&
-                <ReferenceArea
-                    yAxisId={"L"}
-                    x1={refAreaLeft}
-                    x2={refAreaRight}
-                    strokeOpacity={0.3}
-                />
-            }
+            {refAreaLeft && refAreaRight && <ReferenceArea
+                yAxisId={"L"}
+                x1={refAreaLeft}
+                x2={refAreaRight}
+                strokeOpacity={0.3}
+            />}
         </LineChart>
 
-    }, [context.dateLower, context.dateUpper, (country === Country.Canada ? context.canadaData : context.americaData)])
-
+    }, [context.dateLower, context.dateUpper, (country === Country.Canada ? context.canadaData : context.americaData), refAreaLeft, refAreaRight])
 
     return (<div className={`${style.container} ${threshold}`}>
 

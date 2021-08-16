@@ -120,6 +120,8 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
     const updateMatches = (country: Country, data: SearchMatch) => {
 
+        console.log(data)
+
         switch (country) {
             case Country.Canada:
                 setCanadaMatches(data)
