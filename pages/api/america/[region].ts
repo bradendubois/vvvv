@@ -1,15 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { SocrataCaseDaily, SocrataVaccinationDaily } from "../../../util/types";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    let { region } = req.query;
-
-    let case_url = `https://data.cdc.gov/resource/9mfq-cb36.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=submission_date&$select=submission_date,state,new_case,pnew_case,new_death,pnew_death&state=${region}`
-    let cases: SocrataCaseDaily[] = await fetch(case_url).then(response => response.json())
-
-    let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=date,administered_dose1_recip,administered_dose1_pop_pct,series_complete_yes,series_complete_pop_pct&location=${region}`
-    let vaccination: SocrataVaccinationDaily[] = await fetch(vaccination_url).then(response => response.json())
+const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccinationDaily[]) => {
 
     let population = parseInt(vaccination[vaccination.length-1].administered_dose1_recip) / (parseInt(vaccination[vaccination.length-1].administered_dose1_pop_pct) / 100)
 
@@ -54,6 +47,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         day["Average Daily Case (Normalized)"] = (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2)
 
     })
+
+    return mapped
+}
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+
+    let { region } = req.query;
+
+    let case_url = `https://data.cdc.gov/resource/9mfq-cb36.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=submission_date&$select=submission_date,state,new_case,pnew_case,new_death,pnew_death&state=${region}`
+    let cases: SocrataCaseDaily[] = await fetch(case_url).then(response => response.json())
+
+    let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=date,administered_dose1_recip,administered_dose1_pop_pct,series_complete_yes,series_complete_pop_pct&location=${region}`
+    let vaccination: SocrataVaccinationDaily[] = await fetch(vaccination_url).then(response => response.json())
+
+    let mapped = handleRegion(cases, vaccination)
 
     res.status(200).json(mapped)
 }
