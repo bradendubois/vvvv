@@ -1,11 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { COVIDDaily, OpenCOVIDDaily } from "../../util/types";
+import { OpenCOVIDDaily } from "../../util/types";
 import { canadaCodes } from "../../util/api_codes";
 
+
+/**
+ * Sorts / cleans up data for one region (Province / Territory)
+ * @param covid All covid data (vaccinations + cases) from the OpenCOVID API
+ * @param population The population of the region
+ */
 const handleRegion = (covid: OpenCOVIDDaily[], population: number) => {
 
     let current: number[] = []
-    let x = covid.map((x: OpenCOVIDDaily, i: number) => {
+    let x = covid.map(x => {
 
         let s = x.date.split("-")
 
@@ -33,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     let today = new Date()
 
-    // COVID Case Data
+    // COVID Case Data - Must include 'before' parameter to get 'all' the data
     let covid = await fetch(`https://api.opencovid.ca/summary?after=1-1-2020&before=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`)
         .then(response => response.json())
         .then(json => json.summary)

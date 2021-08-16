@@ -3,6 +3,11 @@ import { SocrataCaseDaily, SocrataVaccinationDaily } from "../../util/types";
 import { americaCodes } from "../../util/api_codes";
 
 
+/**
+ * Sorts / Cleans up the data for one 'region' (state) of American data
+ * @param cases All case data from the Socrata API
+ * @param vaccination All Vaccination data from the Socrata API
+ */
 const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccinationDaily[]) => {
 
     let population = parseInt(vaccination[vaccination.length-1].administered_dose1_recip) / (parseInt(vaccination[vaccination.length-1].administered_dose1_pop_pct) / 100)
@@ -16,7 +21,6 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
         return {
             date,
             date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
-            // active_cases: 0,
             new_case: -1,
             // new_death: -1,
             "Daily New Cases (Normalized-100k)": -1,
@@ -25,6 +29,7 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
         }
     })
 
+    // Add all case data along the vaccination data
     cases.forEach(day => {
         let d = new Date(day.submission_date as unknown as string)
         let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
@@ -34,6 +39,7 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
         }
     })
 
+    // Compute normalized 7 day averages
     mapped.forEach((day: any) => {
 
         let total = 0
@@ -46,15 +52,12 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
         }
 
         day["Average Daily Case (Normalized)"] = (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2)
-
     })
 
     return mapped
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-
-    let { region } = req.query;
 
     let case_url = `https://data.cdc.gov/resource/9mfq-cb36.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=submission_date&$select=submission_date,state,new_case,pnew_case,new_death,pnew_death`
     let cases: SocrataCaseDaily[] = await fetch(case_url).then(response => response.json())
