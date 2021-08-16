@@ -86,7 +86,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
     /// Filter data points to the selected range
     const Data = useMemo(() => {
         return data?.[code]?.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
-    }, [data, context.dateLower, context.dateUpper])
+    }, [data, code, context.dateLower, context.dateUpper])
 
     /// Compute what style / color of threshold should be provided based on available / selected data
     const Threshold = useMemo(() => {
@@ -109,7 +109,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [data, context.dateUpper, context.lowerThreshold, context.upperThreshold])
+    }, [data, code, context.dateUpper, context.lowerThreshold, context.upperThreshold])
 
     /// The Graph / visualization, with a Loader as a fallback if data is not yet ready
     const Graph = useMemo(() => {
@@ -182,7 +182,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             />}
         </LineChart>
 
-    }, [data, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
+    }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
 
     return (<div className={`${style.container} ${Threshold}`}>
 
