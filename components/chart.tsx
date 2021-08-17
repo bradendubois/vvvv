@@ -95,12 +95,8 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         if (!points) return style.lowerThreshold
 
-        let index = points.findIndex(x => {
-            console.log(x.date, context.dateUpper, x.date.getTime(), context.dateUpper.getTime(), x.date.getTime() == context.dateUpper.getTime(), x.date.getTime() == context.dateUpper.getTime(), x.date.getTime() > context.dateUpper.getTime())
-            return x.date.getTime() == context.dateUpper.getTime()
-        })
+        let index = points.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
         if (index === -1) {
-            console.error(context.dateUpper)
             index = points.length - 1
         }
 
