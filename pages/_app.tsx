@@ -20,6 +20,7 @@ const firebaseConfig = {
 
 const analytics = firebase.analytics
 
+// Firebase Connection
 try {
   firebase.initializeApp(firebaseConfig);
 } catch (err) {
@@ -29,9 +30,8 @@ try {
 
 const App = ({ Component, pageProps }: AppProps) => {
 
-  useEffect(() => {
-    analytics().logEvent("screen_view")
-  }, [])
+  // Log screen views on Google Analytics
+  useEffect(() => analytics().logEvent("screen_view"), [])
 
   return <MapProvider>
     <Component {...pageProps} />
@@ -39,5 +39,3 @@ const App = ({ Component, pageProps }: AppProps) => {
 }
 
 export default App
-
-export const DEBUG = false

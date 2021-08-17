@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { SocrataCaseDaily, SocrataVaccinationDaily } from "../../../util/types";
+import { SocrataCaseDaily, SocrataVaccinationDaily } from "../../util/types";
+import { americaCodes } from "../../util/api_codes";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    let { region } = req.query;
-
-    let case_url = `https://data.cdc.gov/resource/9mfq-cb36.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=submission_date&$select=submission_date,state,new_case,pnew_case,new_death,pnew_death&state=${region}`
-    let cases: SocrataCaseDaily[] = await fetch(case_url).then(response => response.json())
-
-    let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=date,administered_dose1_recip,administered_dose1_pop_pct,series_complete_yes,series_complete_pop_pct&location=${region}`
-    let vaccination: SocrataVaccinationDaily[] = await fetch(vaccination_url).then(response => response.json())
+/**
+ * Sorts / Cleans up the data for one 'region' (state) of American data
+ * @param cases All case data from the Socrata API
+ * @param vaccination All Vaccination data from the Socrata API
+ */
+const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccinationDaily[]) => {
 
     let population = parseInt(vaccination[vaccination.length-1].administered_dose1_recip) / (parseInt(vaccination[vaccination.length-1].administered_dose1_pop_pct) / 100)
 
@@ -22,7 +21,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return {
             date,
             date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
-            // active_cases: 0,
             new_case: -1,
             // new_death: -1,
             "Daily New Cases (Normalized-100k)": -1,
@@ -31,6 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })
 
+    // Add all case data along the vaccination data
     cases.forEach(day => {
         let d = new Date(day.submission_date as unknown as string)
         let same = mapped.find((x: any) => x.date_string ==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
@@ -40,6 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })
 
+    // Compute normalized 7 day averages
     mapped.forEach((day: any) => {
 
         let total = 0
@@ -52,8 +52,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         day["Average Daily Case (Normalized)"] = (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2)
-
     })
 
-    res.status(200).json(mapped)
+    return mapped
+}
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+
+    let case_url = `https://data.cdc.gov/resource/9mfq-cb36.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=submission_date&$select=submission_date,state,new_case,pnew_case,new_death,pnew_death`
+    let cases: SocrataCaseDaily[] = await fetch(case_url).then(response => response.json())
+
+    let vaccination_url = `https://data.cdc.gov/resource/unsk-b7fc.json?$$app_token=${process.env.SOCRATA_TOKEN}&$limit=999999999&$order=date%20ASC&$select=location,date,administered_dose1_recip,administered_dose1_pop_pct,series_complete_yes,series_complete_pop_pct`
+    let vaccination: SocrataVaccinationDaily[] = await fetch(vaccination_url).then(response => response.json())
+
+    let m = Object.fromEntries(americaCodes.map(region => {
+
+        let c = cases.filter(x => x.state === region.code)
+        let v = vaccination.filter(x => x.location === region.code)
+
+        return [region.code, handleRegion(c, v)]
+    }))
+
+    res.status(200).json(m)
 }

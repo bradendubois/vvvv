@@ -1,49 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
-
-// @ts-ignore TODO
-import { resetServerContext } from "react-beautiful-dnd"
 
 import { CountryGraph } from "../components/country";
 import Filter from "../components/filter";
 import Legend from "../components/legend";
 
+import { useMapContext } from "../util/context/provider";
 import { americaCodes, canadaCodes, Country } from "../util/api_codes";
+import { COVIDDaily } from "../util/types";
 
 import style from '../styles/Home.module.scss'
-import { COVIDDaily } from "../util/types";
-import { useMapContext } from "../util/context/provider";
 
-resetServerContext()
-
+/// Colors used in a few areas for consistency
 export const color = {
-    active_cases: "#bd3253",
-    first_dose: "#2ca757",
-    final_dose: "#177ba3"
+    new_cases: "#bd3253",       // Color for the 'new cases' lines
+    first_dose: "#2ca757",      // Color for the first-dose (of a multi-dose) vaccine uptake
+    final_dose: "#177ba3"       // Color for the final-dose vaccine uptake
 }
 
 
-type Match = {
-    country: Country
-    region: string
-    points: COVIDDaily[]
-}
 
-const initial = {
-    canada: Object.fromEntries(canadaCodes.map(entry => [entry.code, undefined])),
-    america: Object.fromEntries(americaCodes.map(entry => [entry.code, undefined]))
-}
-
-
-type CountryData = {
-    [region: string]: {
-        match?: {
-            startDate: Date
-            rmse: number
-        }
-        data: COVIDDaily[]
-    }
+/// General representation of a country's data; a unique (per country) code representing one region maps to a
+// list of daily data points for that region
+export type CountryData = {
+    [region: string]: COVIDDaily[]
 }
 
 /**
@@ -55,144 +36,105 @@ const App = () => {
 
     const context = useMapContext()
 
-    const [canadaData, setCanadaData] = useState<CountryData>({})
-    const [americaData, setAmericaData] = useState<CountryData>({})
-
+    /**
+     * Computes a basic RMSE between the two sets of daily COVID data
+     * @param source One set of data points - usually the one that initiated the search
+     * @param target A second set of data points
+     */
     const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
-        
+
         if (source.length !== target.length) {
-            throw new Error("Non-matching lengths across given parameters")
+            return -1
+            // throw new Error("Non-matching lengths across given parameters")
         }
-    
+
         let total = 0
-    
+
         source.forEach((point, index) => {
-            
+
             let a = point["Average Daily Case (Normalized)"]
             let b = target[index]["Average Daily Case (Normalized)"]
-    
-            if (a !== undefined && b !== undefined) {
-                total += (a - b) ** 2
-            } else {
+
+            // -1 is used as an error value if a range cannot be properly computed
+            if (a === undefined || b === undefined) {
                 return -1
             }
+
+            total += (a - b) ** 2
         })
-    
+
         return Math.sqrt(total)
     }
 
-    useEffect(() => { 
 
-        let canada = canadaCodes.map(region => {
-
-            return fetch(`/api/canada/${region.code}`)
-                .then(data => data.json())
-                .then(json => [region.code, {
-                    match: undefined,
-                    data: json
-                }])
-        })
-
-        let america = americaCodes.map(region => {
-
-            return fetch(`/api/america/${region.code}`)
-                .then(data => data.json())
-                .then(json => [region.code, {
-                    match: undefined,
-                    data: json
-                }])
-        })
-
-        Promise.all(canada).then(result => {
-
-            result.forEach((region) => {
-                // @ts-ignore
-                region[1].data.forEach((day: any) => 
-                    day.date = new Date(day.date as unknown as string)
-                )
-            })
-
-            setCanadaData(Object.fromEntries(result))
-        })
-
-
-        Promise.all(america).then(result => {
-            result.forEach((region) => {
-                // @ts-ignore
-                region[1].data.forEach((day: any) => 
-                    day.date = new Date(day.date as unknown as string)
-                )
-            })
-
-            setAmericaData(Object.fromEntries(result))
-        })
-
-     }, [])
-
+    /**
+     * Hook to compute all 'closest' ranges for each dataset; this is used when the user has selected a range on one
+     * graph with the intention of finding the best match on all other graphs.
+     */
     useEffect(() => {
 
         if (context.match === undefined) return
 
-        let target: COVIDDaily[]
+        let source = (context.match.country === Country.Canada ? context.canadaData : context.americaData)
 
-        if (Object.keys(canadaData).indexOf(context.match.region) !== -1) {
-            target = canadaData[context.match.region].data
-        } else {
-            target = americaData[context.match.region].data
+        let target = source?.[context.match.region]
+        if (target === undefined) {
+            return
         }
 
+        // Slice desired window from source
         let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
         target = target.slice(idx,  idx+context.match?.points)
 
+        // Helper - computes all updates on one dataset (one country)
         const countryUpdate = (dataset: CountryData) => {
 
             let data = Object.fromEntries(Object.entries(dataset).map(([k, v]) => {
 
-                let data = v.data
+                let data = v
                 let i = 0
                 let best
 
                 while (true) {
 
-                    // @ts-ignore
-                    let slice = data.slice(i, i + context.match?.points)
-                    // @ts-ignore
-                    if (slice.length < context.match?.points) {
+                    // Slice a window - if it's too small, we've hit passed the end / newest window
+                    let slice = data.slice(i, i + (context.match?.points ?? 0))
+                    if (slice.length < (context.match?.points ?? 1)) {
                         break
                     }
 
-                    let result = rmse(slice, target)
+                    // Compute RMSE - Update 'best' if better
+                    let result = rmse(slice, target ?? [])
                     if (result != -1 && (!best || result < best.rmse)) {
                         best = {
                             rmse: result,
-                            startDate: slice[0].date
+                            startDate: slice[0].date,
+                            points: slice.length
                         }
                     }
 
                     i += 1
                 }
 
-                return [k, { match: {
-                    ...best
-                }}]
+                return [k, best]
             }))
 
-            return Object.fromEntries(Object.entries(dataset).map(([k, v]) => [k, {...v, ...data[k]}]))
+            return data
         }
 
         // @ts-ignore
-        setCanadaData(countryUpdate(canadaData))
+        // Canadian data
+        context.updateMatches(Country.Canada, countryUpdate(context.canadaData))
 
         // @ts-ignore
-        setAmericaData(countryUpdate(americaData))
-
-
-        // countryUpdate(americaData)
+        // American data
+        context.updateMatches(Country.America, countryUpdate(context.americaData))
 
     }, [context.match])
 
     return (<>
 
+        {/* Head component with any metadata for SEO / etc. */}
         <Head>
             <title>Visualizing Variants versus Vaccines</title>
 
@@ -201,11 +143,6 @@ const App = () => {
             <meta name="keywords" content="COVID,covid-19,vaccination,cases,variants,visualization,canada,america" />
             <meta name="author" content="Dr. Eric Neufeld & Braden Dubois" />
         </Head>
-
-        {/* (process.env.BUILD !== "PRODUCTION") && <div className={style.development}>
-            <p>This is a <strong>development</strong> build! Stability, performance, feature availability, and correctness are not guaranteed!</p>
-            <p>Click <Link href={"https://vvvv-main.vercel.app"}>here</Link> to go to the latest production build.</p>
-        </div>*/}
 
         <div className={style.container}>
 
@@ -238,8 +175,8 @@ const App = () => {
 
             {/* Visualization / Graphs */}
             <main className={style.main}>
-                <CountryGraph country={Country.Canada} ordering={canadaCodes} data={canadaData} />
-                <CountryGraph country={Country.America} ordering={americaCodes} data={americaData} />
+                <CountryGraph country={Country.Canada} initialOrdering={canadaCodes} />
+                <CountryGraph country={Country.America} initialOrdering={americaCodes} />
             </main>
 
             {/* 'Scroll to Top' Button */}
@@ -252,6 +189,7 @@ const App = () => {
 
             <hr/>
 
+            {/* All sources for APIs / data */}
             <div>
                 <h2>Sources</h2>
                 <ul>
@@ -265,6 +203,7 @@ const App = () => {
 
             <hr/>
 
+            {/* Footer for page */}
             <footer>
                 <p>Developed by <Link href={"mailto:emn075@usask.ca"}>Dr. Eric Neufeld</Link> and <Link href={"https://bradendubois.dev"}>Braden Dubois</Link>.</p>
                 <p>source code <Link href={"https://github.com/bradendubois/vvvv"}>here</Link>.</p>

@@ -4,6 +4,7 @@ import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
 
 import style from "../styles/Legend.module.scss"
 
+/// Example data for the Graph used in the Legend
 const example = [{
     "Average Daily Case (Normalized)": 15,
     "First Dose Pop.": 0.55,
@@ -21,6 +22,8 @@ const example = [{
     date: "Upper"
 }]
 
+
+/// Style dots to represent Line coloring
 const LegendLine = ({ color, label}: { color: string, label: string }) => (
     <div className={style.line}>
         {Array.from(Array(4).keys()).map(i => <div key={i} style={{
@@ -30,6 +33,7 @@ const LegendLine = ({ color, label}: { color: string, label: string }) => (
     </div>
 )
 
+/// Styled block to represent the Case shading
 const LegendCase = ({ level, label }: { label: string, level: string }) => (
     <div className={style.case}>
         <div className={style[level]}/>
@@ -52,7 +56,7 @@ const Legend = () => {
                     <div className={style.lines}>
                         <LegendLine color={color.first_dose} label={"One Dose"} />
                         <LegendLine color={color.final_dose} label={"Fully Vaccinated"} />
-                        <LegendLine color={color.active_cases} label={"Daily New Cases"} />
+                        <LegendLine color={color.new_cases} label={"Daily New Cases"} />
                     </div>
 
                     {/* Case Shades */}
@@ -63,6 +67,7 @@ const Legend = () => {
                     </div>
                 </div>
 
+                {/* Dummy / Example Graph */}
                 <div className={style.graph}>
                     <p>Daily Cases / 100,000</p>
                     <div>
@@ -81,7 +86,7 @@ const Legend = () => {
                                 isAnimationActive={false}
                                 yAxisId={"L"}
                                 dataKey={"Average Daily Case (Normalized)"}
-                                stroke={color.active_cases}
+                                stroke={color.new_cases}
                             />
 
 

@@ -1,51 +1,54 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+
 import Chart from "./chart";
 import { Country } from "../util/api_codes";
-
-// @ts-ignore
-import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd"
+import { useMapContext } from "../util/context/provider";
 
 import style from "../styles/Country.module.scss";
-import { COVIDDaily } from "../util/types";
 
-const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
 
-    return result;
-};
-
+/// Props for one Country
 type CountryProps = {
-    country: Country
-    ordering: {
-        code: string
-        display: string
+    country: Country        // The Country (Canada, America)
+    initialOrdering: {             // Array to determine ordering of the Charts
+        code: string        // Unique identifier of a region within the Country
+        display: string     // Value to display above the graph
     }[]
-    data: {
-        [region: string]: {
-            match?: {
-                startDate: Date
-                rmse: number
-            }
-            data: COVIDDaily[]
-        }
-    }
 }
 
-export const CountryGraph = ({ country, ordering, data }: CountryProps) => {
+export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
+
+    const context = useMapContext()
+
+    const [ordering, setOrdering] = useState(initialOrdering)
+
+    const data = country == Country.Canada ? context.canadaData : context.americaData
 
     return (
         <div className={style.country}>
             <h2>{country.charAt(0).toUpperCase() + country.slice(1)}</h2>
             <hr />
 
+            {data && <button onClick={() => {
+
+                let x = initialOrdering.sort((a, b) => {
+
+                    let a_data = data[a.code][data[a.code].length-1]["Average Daily Case (Normalized)"]
+                    let b_data = data[b.code][data[b.code].length-1]["Average Daily Case (Normalized)"]
+
+                    return parseFloat(b_data as unknown as string) - parseFloat(a_data as unknown as string)
+                })
+
+                setOrdering(x)
+
+            }}>Sort by Cases</button>}
+
             <div className={style.regions}>
-                {ordering.map((region, index) => <Chart 
-                    key={index} 
+                {ordering.map((region, index) => <Chart
+                    key={index}
                     country={country}
-                    data={data[region.code]} 
-                    {...region} />)}
+                    {...region}
+                />)}
             </div>
 
         </div>

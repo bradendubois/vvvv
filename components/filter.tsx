@@ -1,8 +1,10 @@
-import { useMapContext } from "../util/context/provider";
+import { Fragment } from "react";
 
 // @ts-ignore
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+import { useMapContext } from "../util/context/provider";
 
 import style from "../styles/Filter.module.scss"
 
@@ -13,7 +15,6 @@ import style from "../styles/Filter.module.scss"
  * @constructor
  */
 const DatePicker = ({...params}) => {
-
     return (
         <ReactDatePicker
             {...params}
@@ -31,14 +32,21 @@ const Filter = () => {
 
     const context = useMapContext()
 
-    return (<>
+    return (<Fragment>
+
+        {/* Change Size of the graphs */}
+        <button className={style.button} onClick={() => context.toggleMini()}>Toggle Graph Size</button>
+
         {/* Date-filtering Module */}
         <div className={style.range}>
 
             {/* Lower-bound of date filtering */}
             <div>
-                <p>Range Begin</p>
-                <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
+                <div>
+                    <p>Range Begin</p>
+                    <DatePicker minDate={context.lowerValid} maxDate={context.dateUpper ?? context.upperValid} selected={context.dateLower} onChange={(date: Date) => context.setDateLower(date)} />
+                </div>
+
             </div>
 
             {/* Flag graphs above a certain threshold */}
@@ -46,7 +54,6 @@ const Filter = () => {
                 <p>Case Lower Threshold</p>
                 <input type={"number"} value={context.lowerThreshold} onChange={e => context.setLowerThreshold(parseInt(e.target.value))}/>
             </div>
-
             <div>
                 <p>Case Upper Threshold</p>
                 <input type={"number"} value={context.upperThreshold} onChange={e => context.setUpperThreshold(parseInt(e.target.value))}/>
@@ -58,7 +65,8 @@ const Filter = () => {
                 <DatePicker minDate={context.dateLower ?? context.lowerValid} maxDate={context.upperValid} selected={context.dateUpper} onChange={(date: Date) => context.setDateUpper(date)} />
             </div>
         </div>
-    </>)
+
+    </Fragment>)
 }
 
 export default Filter

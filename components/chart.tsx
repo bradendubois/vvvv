@@ -5,22 +5,14 @@ import { ScaleLoader } from "react-spinners";
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
 import { useMapContext } from "../util/context/provider";
-import { COVIDDaily } from "../util/types";
 
 import style from "../styles/Chart.module.scss"
-import { DEBUG } from "../pages/_app";
 
+/// Props for one Chart
 type ChartProps = {
-    country: Country
-    code: string
-    display?: string
-    data: {
-        match?: {
-            startDate: Date
-            rmse: number
-        }
-        data: COVIDDaily[]
-    }
+    country: Country    // Canada/America
+    code: string        // Unique code identifying the region in the dataset
+    display?: string    // Optional display value to place above the graph
 }
 
 
@@ -28,25 +20,87 @@ type ChartProps = {
  * A Chart built with 'recharts' LineChart component to visualize COVID information
  * @constructor
  */
-const Chart = ({ country, code, display, data }: ChartProps) => {
+const Chart = ({ country, code, display }: ChartProps) => {
 
     const context = useMapContext()
 
-    const [refAreaLeft, setRefAreaLeft] = useState()
-    const [refAreaRight, setRefAreaRight] = useState()
+    // Data sources for the lines and highlighted region of the graph
+    const data = country === Country.Canada ? context.canadaData : context.americaData
+    const matches = country === Country.Canada ? context.canadaMatches : context.americaMatches
 
-    const [searching, setSearching] = useState(false)
+    // Selected left / right regions for the graph
+    const [refAreaLeft, setRefAreaLeft] = useState<string>()
+    const [refAreaRight, setRefAreaRight] = useState<string>()
 
-    const threshold = useMemo(() => {
+    // Whether or not mouse movement over a graph 'sets' an edge to select a region
+    const [scanning, setScanning] = useState(false)
 
-        if (!data) return style.lowerThreshold
+    /// Hook to update the left/right selected region of the graph
+    useEffect(() => {
 
-        let index = data.data.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
-        if (index == -1) {
-            index = data.data.length - 1
+        let match = matches?.[code]
+
+        // No match ; clear
+        if (match === undefined) {
+            setRefAreaLeft(undefined)
+            setRefAreaRight(undefined)
+            return
         }
 
-        let x = data.data[index]["Average Daily Case (Normalized)"]
+        let lower = match.startDate
+
+        let upper = new Date(lower.getTime())
+        upper.setDate(upper.getDate() + match.points + 1)
+
+        setRefAreaLeft(`${lower.getDate()}-${lower.getMonth()+1}-${lower.getFullYear()}`)
+        setRefAreaRight(`${upper.getDate()}-${upper.getMonth()+1}-${upper.getFullYear()}`)
+
+    }, [matches])
+
+    /// Initiate a search for the selected region
+    const search = () => {
+
+        setScanning(false)
+
+        // A 'click' can reset / clear
+        if (refAreaLeft === refAreaRight || refAreaLeft === undefined || refAreaRight === undefined) {
+            context.clearMatches()
+            return
+        }
+
+        let l = refAreaLeft.split("-")
+        let r = refAreaRight.split("-")
+
+        let l_date = new Date(parseInt(l[2]), parseInt(l[1])-1, parseInt(l[0]), 0, 0, 0, 0)
+        let r_date = new Date(parseInt(r[2]), parseInt(r[1])-1, parseInt(r[0]), 0, 0, 0, 0)
+
+        if (l_date > r_date) {
+            let temp = l_date
+            l_date = r_date;
+            r_date = temp
+        }
+
+        context.searchMatch(country, code, l_date, (r_date.getTime() - l_date.getTime()) / (24 * 60 * 60 * 1000) + 1)
+    }
+
+    /// Filter data points to the selected range
+    const Data = useMemo(() => {
+        return data?.[code]?.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)
+    }, [data, code, context.dateLower, context.dateUpper])
+
+    /// Compute what style / color of threshold should be provided based on available / selected data
+    const Threshold = useMemo(() => {
+
+        let points = data?.[code]
+
+        if (!points) return style.lowerThreshold
+
+        let index = points.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
+        if (index == -1) {
+            index = points.length - 1
+        }
+
+        let x = points[index]["Average Daily Case (Normalized)"]
 
         if (x >= context.upperThreshold) {
             return style.upperThreshold
@@ -55,110 +109,51 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
         } else {
             return style.lowerThreshold
         }
-    }, [data, context.dateUpper, context.lowerThreshold, context.upperThreshold])
+    }, [data, code, context.dateUpper, context.lowerThreshold, context.upperThreshold])
 
-    const search = () => {
+    /// The Graph / visualization, with a Loader as a fallback if data is not yet ready
+    const Graph = useMemo(() => {
 
-        setSearching(false)
+        let points = data?.[code]
 
-        if (refAreaLeft === refAreaRight || !refAreaRight) {
-            setRefAreaLeft(undefined)
-            setRefAreaRight(undefined)
-            return
-        }
-
-        // @ts-ignore
-        let l = refAreaLeft.split("-")
-        
-        // @ts-ignore
-        let r = refAreaRight.split("-")
-
-        l = new Date(l[2], l[1]-1, l[0], 0, 0, 0, 0)
-        r = new Date(r[2], r[1]-1, r[0], 0, 0, 0, 0)
-
-        if (l > r) {
-            let temp = l
-            l = r;
-            r = temp
-        }
-
-        context.searchMatch(country, code, l, (r - l) / (24 * 60 * 60 * 1000) + 1)
-    }
-
-    useEffect(() => {
-
-        if (!data || !data.match) return
-
-        const str = (date: Date): string => {
-
-            let day = date.getDate().toString()
-            // if (day.length < 2) day = "0" + day
-
-            let month = (date.getMonth() + 1).toString()
-            // if (month.length < 2) month = "0" + month
-
-            return `${day}-${month}-${date.getFullYear()}`
-        }
-
-        let upper = new Date(data.match.startDate.getTime())
-        upper.setDate(data.match.startDate.getDate() + (context.match?.points ?? 0))
-
-        // @ts-ignore
-        setRefAreaLeft(str(data.match.startDate))
-        // @ts-ignore
-        setRefAreaRight(str(upper))
-
-    }, [data?.match])
-
-    useEffect(() => {
-        console.log(code, refAreaLeft, refAreaRight)
-    }, [refAreaRight])
-
-    return (<div className={`${style.container} ${threshold}`}>
-
-        <h4>{display ?? code}</h4>
-
-        <hr />
-
-        {/* During debugging, placeholder div to improve performance */}
-        {(DEBUG || !data) && <div className={style.loader} style={{ 
-            height: "225px", 
-            width: "325px"
+        // Fallback to a Loader if no data is found
+        if (points === undefined || points.length === 0) return <div className={style.loader} style={{
+            height: `${context.size.height}px`,
+            width: `${context.size.width}px`
         }}>
             <ScaleLoader color={'#36D7B7'} />
-        </div>}
+        </div>
 
-        {!DEBUG && data &&
+        return <LineChart className={code}
 
-        <LineChart height={225} width={325} className={code} 
-            data={data.data.filter(point => point.date >= context.dateLower && point.date <= context.dateUpper)}
-            
+            // Size of graph - can be larger / smaller based on a toggle
+            height={context.size.height}
+            width={context.size.width}
+
+            data={Data} // Data the graph will use to draw lines
+
             // Reference selection parameters
             onMouseDown={(e: any) => {
-                setSearching(true)
+                setScanning(true)
                 setRefAreaLeft(e.activeLabel)
                 setRefAreaRight(undefined)
             }}
-
-            onMouseMove={(e: any) => searching && refAreaLeft && setRefAreaRight(e.activeLabel)}
+            onMouseMove={(e: any) => scanning && refAreaLeft && setRefAreaRight(e.activeLabel)}
             onMouseUp={() => search()}
         >
 
-            
             <Tooltip />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
             <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
-            {/* Daily Cases*/}
+            {/* Daily New Cases / 7 Day Average, Normalized to 100k */}
             <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
-
-            {/* Daily New Cases+Deaths / 7 Day Average, Normalized to 100k */}
             <Line
                 isAnimationActive={false}
                 yAxisId={"L"}
                 dataKey={"Average Daily Case (Normalized)"}
-                stroke={color.active_cases}
+                stroke={color.new_cases}
             />
 
             {/* Vaccine Administration - First Dose */}
@@ -179,23 +174,23 @@ const Chart = ({ country, code, display, data }: ChartProps) => {
             />
 
             {/* Reference Area selected by the user */}]
-            {(refAreaLeft && refAreaRight) &&
-                <ReferenceArea
-                    yAxisId={"L"}
-                    x1={refAreaLeft}
-                    x2={refAreaRight}
-                    strokeOpacity={0.3}
-                />
-            }
-
-            <ReferenceArea
-                yAxisId={"R"}
-                x1={"29-01-2020"}
-                x2={"31-01-2020"}
+            {refAreaLeft && refAreaRight && <ReferenceArea
+                yAxisId={"L"}
+                x1={refAreaLeft}
+                x2={refAreaRight}
                 strokeOpacity={0.3}
-            />
+            />}
+        </LineChart>
 
-        </LineChart>}
+    }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
+
+    return (<div className={`${style.container} ${Threshold}`}>
+
+        <h4>{display ?? code}</h4>
+
+        <hr />
+
+        {Graph}
     </div>)
 }
 
