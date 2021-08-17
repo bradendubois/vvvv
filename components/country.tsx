@@ -30,20 +30,25 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
             <hr />
 
             {data && <button onClick={() => {
-                setOrdering(ordering.sort((a, b) => {
+
+                let x = initialOrdering.sort((a, b) => {
 
                     let a_data = data[a.code][data[a.code].length-1]["Average Daily Case (Normalized)"]
                     let b_data = data[b.code][data[b.code].length-1]["Average Daily Case (Normalized)"]
 
                     return parseFloat(b_data as unknown as string) - parseFloat(a_data as unknown as string)
-                }))
+                })
+
+                setOrdering(x)
+
             }}>Sort by Cases</button>}
 
             <div className={style.regions}>
                 {ordering.map((region, index) => <Chart
                     key={index}
                     country={country}
-                    {...region} />)}
+                    {...region}
+                />)}
             </div>
 
         </div>
