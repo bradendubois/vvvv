@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ReferenceArea, Tooltip, XAxis, YAxis } from "recharts";
 import { ScaleLoader } from "react-spinners";
 
@@ -89,14 +89,14 @@ const Chart = ({ country, code, display }: ChartProps) => {
     }, [data, code, context.dateLower, context.dateUpper])
 
     /// Compute what style / color of threshold should be provided based on available / selected data
-    const Threshold = useMemo(() => {
+    const Threshold = useCallback(() => {
 
         let points = data?.[code]
 
         if (!points) return style.lowerThreshold
 
         let index = points.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
-        if (index == -1) {
+        if (index === -1) {
             index = points.length - 1
         }
 
@@ -184,7 +184,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
 
-    return (<div className={`${style.container} ${Threshold}`}>
+    return (<div className={`${style.container} ${Threshold()}`}>
 
         <h4>{display ?? code}</h4>
 
