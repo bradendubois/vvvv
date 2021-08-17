@@ -97,6 +97,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         let index = points.findIndex(x => x.date.getTime() == context.dateUpper.getTime())
         if (index === -1) {
+            console.error(context.dateUpper)
             index = points.length - 1
         }
 
