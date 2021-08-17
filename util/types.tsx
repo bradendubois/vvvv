@@ -128,5 +128,5 @@ export type COVIDDaily = {
     deaths_cumulative: number
 
     new_cases_normalized_100k: number
-    "Average Daily Case (Normalized)": number
+    "Avg. Case (Normalized)": number
 }

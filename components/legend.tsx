@@ -6,17 +6,17 @@ import style from "../styles/Legend.module.scss"
 
 /// Example data for the Graph used in the Legend
 const example = [{
-    "Average Daily Case (Normalized)": 15,
+    "Avg. Case (Normalized)": 15,
     "First Dose Pop.": 0.55,
     "Final Dose Pop.": 0.20,
     date: "Lower"
 }, {
-    "Average Daily Case (Normalized)": 13,
+    "Avg. Case (Normalized)": 13,
     "First Dose Pop.": 0.65,
     "Final Dose Pop.": 0.45,
     date: "Intermediary"
 }, {
-    "Average Daily Case (Normalized)": 7,
+    "Avg. Case (Normalized)": 7,
     "First Dose Pop.": 0.75,
     "Final Dose Pop.": 0.50,
     date: "Upper"
@@ -85,7 +85,7 @@ const Legend = () => {
                             <Line
                                 isAnimationActive={false}
                                 yAxisId={"L"}
-                                dataKey={"Average Daily Case (Normalized)"}
+                                dataKey={"Avg. Case (Normalized)"}
                                 stroke={color.new_cases}
                             />
 

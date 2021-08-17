@@ -23,7 +23,7 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
             date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
             new_case: -1,
             // new_death: -1,
-            "Daily New Cases (Normalized-100k)": -1,
+            "Avg. Case (Normalized)": -1,
             "First Dose Pop.": parseInt(x.administered_dose1_pop_pct) / 100,
             "Final Dose Pop.": parseInt(x.series_complete_pop_pct) / 100,
         }
@@ -51,7 +51,7 @@ const handleRegion = (cases: SocrataCaseDaily[], vaccination: SocrataVaccination
             current = current.slice(-7)
         }
 
-        day["Average Daily Case (Normalized)"] = (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2)
+        day["Avg. Case (Normalized)"] = (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2)
     })
 
     return mapped

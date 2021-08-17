@@ -26,7 +26,7 @@ const handleRegion = (covid: OpenCOVIDDaily[], population: number) => {
             cases: x.cases,
             date_string: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
             new_cases: x.active_cases,
-            "Average Daily Case (Normalized)": (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2),
+            "Avg. Case (Normalized)": (current.reduce((a, b) => a + b, 0) / current.length / population * 100000).toFixed(2),
             "First Dose Pop.": ((x.cumulative_avaccine -  x.cumulative_cvaccine) / population).toFixed(2),
             "Final Dose Pop.": (x.cumulative_cvaccine / population).toFixed(2),
         }

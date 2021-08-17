@@ -100,7 +100,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             index = points.length - 1
         }
 
-        let x = points[index]["Average Daily Case (Normalized)"]
+        let x = points[index]["Avg. Case (Normalized)"]
 
         if (x >= context.upperThreshold) {
             return style.upperThreshold
@@ -152,7 +152,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             <Line
                 isAnimationActive={false}
                 yAxisId={"L"}
-                dataKey={"Average Daily Case (Normalized)"}
+                dataKey={"Avg. Case (Normalized)"}
                 stroke={color.new_cases}
             />
 

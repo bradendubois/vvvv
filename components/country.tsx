@@ -34,8 +34,8 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
 
                 let x = initialOrdering.slice(0).sort((a, b) => {
 
-                    let a_data = data[a.code][data[a.code].length-1]["Average Daily Case (Normalized)"]
-                    let b_data = data[b.code][data[b.code].length-1]["Average Daily Case (Normalized)"]
+                    let a_data = data[a.code][data[a.code].length-1]["Avg. Case (Normalized)"]
+                    let b_data = data[b.code][data[b.code].length-1]["Avg. Case (Normalized)"]
 
                     return parseFloat(b_data as unknown as string) - parseFloat(a_data as unknown as string)
                 })

@@ -52,8 +52,8 @@ const App = () => {
 
         source.forEach((point, index) => {
 
-            let a = point["Average Daily Case (Normalized)"]
-            let b = target[index]["Average Daily Case (Normalized)"]
+            let a = point["Avg. Case (Normalized)"]
+            let b = target[index]["Avg. Case (Normalized)"]
 
             // -1 is used as an error value if a range cannot be properly computed
             if (a === undefined || b === undefined) {
