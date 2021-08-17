@@ -4,7 +4,7 @@ import { ScaleLoader } from "react-spinners";
 
 import { color } from "../pages";
 import { Country } from "../util/api_codes";
-import { useMapContext } from "../util/context/provider";
+import { sizes, useMapContext } from "../util/context/provider";
 
 import style from "../styles/Chart.module.scss"
 
@@ -184,7 +184,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
     }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
 
-    return (<div className={`${style.container} ${Threshold()}`}>
+    return (<div className={`${style.container} ${Threshold()} ${context.size == sizes.default ? style.default : style.mini}`}>
 
         <h4>{display ?? code}</h4>
 

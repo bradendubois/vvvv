@@ -21,6 +21,7 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
     const context = useMapContext()
 
     const [ordering, setOrdering] = useState(initialOrdering)
+    const [show, showSort] = useState(true)
 
     const data = country == Country.Canada ? context.canadaData : context.americaData
 
@@ -29,9 +30,9 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
             <h2>{country.charAt(0).toUpperCase() + country.slice(1)}</h2>
             <hr />
 
-            {data && <button onClick={() => {
+            {data && show && <button onClick={() => {
 
-                let x = initialOrdering.sort((a, b) => {
+                let x = initialOrdering.slice(0).sort((a, b) => {
 
                     let a_data = data[a.code][data[a.code].length-1]["Average Daily Case (Normalized)"]
                     let b_data = data[b.code][data[b.code].length-1]["Average Daily Case (Normalized)"]
@@ -40,6 +41,7 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
                 })
 
                 setOrdering(x)
+                showSort(false)
 
             }}>Sort by Cases</button>}
 

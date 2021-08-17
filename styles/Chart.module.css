@@ -22,10 +22,18 @@
   background-color: #fff0f0;
 }
 
+.lowerThreshold {
+  background-color: white;
+}
+
 .loader > span {
   position: relative;
   top: 40%;
   left: 45%;
+}
+
+.mini {
+  padding: 5px 0;
 }
 
 /*# sourceMappingURL=Chart.module.css.map */

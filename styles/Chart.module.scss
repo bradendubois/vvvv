@@ -29,7 +29,7 @@
 }
 
 .lowerThreshold {
-
+  background-color: white;
 }
 
 .loader {
@@ -39,4 +39,10 @@
     top: 40%;
     left: 45%;
   };
+}
+
+.default {}
+
+.mini {
+  padding: 5px 0;
 }

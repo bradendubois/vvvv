@@ -68,10 +68,10 @@ type MapInterface = {
 
 
 // Sizes of the Charts in pixel values
-const sizes = {
+export const sizes = {
     mini: {
-        height: 150,
-        width: 250
+        height: 125,
+        width: 225
     },
 
     default: {
