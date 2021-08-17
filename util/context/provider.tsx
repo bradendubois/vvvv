@@ -143,8 +143,10 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             .then(result => {
                 Object.values(result).forEach((region) => {
                     // @ts-ignore
-                    region.forEach((day: any) =>
-                        day.date = new Date(day.date as unknown as string)
+                    region.forEach((day: any) => {
+                            day.date = new Date(day.date as unknown as string)
+                            day.date.setHours(0, 0, 0, 0)
+                        }
                     )
                 })
 
@@ -156,8 +158,10 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             .then(result => {
                 Object.values(result).forEach((region) => {
                     // @ts-ignore
-                    region.forEach((day: any) =>
-                        day.date = new Date(day.date as unknown as string)
+                    region.forEach((day: any) => {
+                            day.date = new Date(day.date as unknown as string)
+                            day.date.setHours(0, 0, 0, 0)
+                        }
                     )
                 })
 
