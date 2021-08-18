@@ -147,15 +147,6 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
             <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
 
-            {/* Daily New Cases / 7 Day Average, Normalized to 100k */}
-            <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
-            <Line
-                isAnimationActive={false}
-                yAxisId={"L"}
-                dataKey={"Avg. Case (Normalized)"}
-                stroke={color.new_cases}
-            />
-
             {/* Vaccine Administration - First Dose */}
             <YAxis fontSize={12} yAxisId={"R"} orientation={"right"} domain={[0, 1]}/>
             <Line
@@ -173,6 +164,15 @@ const Chart = ({ country, code, display }: ChartProps) => {
                 stroke={color.final_dose}
             />
 
+            {/* Daily New Cases / 7 Day Average, Normalized to 100k */}
+            <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
+            <Line
+                isAnimationActive={false}
+                yAxisId={"L"}
+                dataKey={"Avg. Case (Normalized)"}
+                stroke={color.new_cases}
+            />
+
             {/* Reference Area selected by the user */}]
             {refAreaLeft && refAreaRight && <ReferenceArea
                 yAxisId={"L"}
@@ -180,6 +180,8 @@ const Chart = ({ country, code, display }: ChartProps) => {
                 x2={refAreaRight}
                 strokeOpacity={0.3}
             />}
+
+
         </LineChart>
 
     }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])

@@ -1,21 +1,15 @@
-.country {
-
-}
-
 .regions {
-
   display: flex;
   flex-flow: row wrap;
-
 }
 
 .buttons {
-
   display: flex;
   flex-direction: row;
-
-  button {
-    flex: 1 1 0;
-    margin: 0 15px 15px;
-  }
 }
+.buttons button {
+  flex: 1 1 0;
+  margin: 0 15px 15px;
+}
+
+/*# sourceMappingURL=Country.module.css.map */

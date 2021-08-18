@@ -21,7 +21,6 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
     const context = useMapContext()
 
     const [ordering, setOrdering] = useState(initialOrdering)
-    const [show, showSort] = useState(true)
 
     const data = country == Country.Canada ? context.canadaData : context.americaData
 
@@ -30,20 +29,32 @@ export const CountryGraph = ({ country, initialOrdering }: CountryProps) => {
             <h2>{country.charAt(0).toUpperCase() + country.slice(1)}</h2>
             <hr />
 
-            {data && show && <button onClick={() => {
+            <div className={style.buttons}>
 
-                let x = initialOrdering.slice(0).sort((a, b) => {
+                {data && <button onClick={() => {
 
-                    let a_data = data[a.code][data[a.code].length-1]["Avg. Case (Normalized)"]
-                    let b_data = data[b.code][data[b.code].length-1]["Avg. Case (Normalized)"]
+                    let x = initialOrdering.slice(0).sort((a, b) => {
+                        return a.display.localeCompare(b.display)
+                    })
 
-                    return parseFloat(b_data as unknown as string) - parseFloat(a_data as unknown as string)
-                })
+                    setOrdering(x)
 
-                setOrdering(x)
-                showSort(false)
+                }}>Sort Alphabetically</button>}
 
-            }}>Sort by Cases</button>}
+                {data && <button onClick={() => {
+
+                    let x = initialOrdering.slice(0).sort((a, b) => {
+
+                        let a_data = data[a.code][data[a.code].length-1]["Avg. Case (Normalized)"]
+                        let b_data = data[b.code][data[b.code].length-1]["Avg. Case (Normalized)"]
+
+                        return parseFloat(b_data as unknown as string) - parseFloat(a_data as unknown as string)
+                    })
+
+                    setOrdering(x)
+
+                }}>Sort by Cases</button>}
+            </div>
 
             <div className={style.regions}>
                 {ordering.map((region, index) => <Chart
