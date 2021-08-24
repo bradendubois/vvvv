@@ -142,7 +142,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             onMouseUp={() => search()}
         >
 
-            <Tooltip />
+            <Tooltip formatter={(value: any) => [value, ""]} separator={""} />
             <CartesianGrid strokeDasharray={"3 3"} stroke={"#ccc"}/>
 
             <XAxis fontSize={12} dataKey={"date_string"} allowDuplicatedCategory={false}/>
