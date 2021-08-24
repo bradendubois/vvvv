@@ -54,6 +54,14 @@ const Filter = () => {
                 <p>Case Lower Threshold</p>
                 <input type={"number"} value={context.lowerThreshold} onChange={e => context.setLowerThreshold(parseInt(e.target.value))}/>
             </div>
+
+            {/* Set Y Max */}
+            <div>
+                <p>Max. Cases Shown / 100,000</p>
+                <input type={"number"} value={context.ymax} step={25} min={0} onChange={e => context.setYmax(Math.max(parseInt(e.target.value), 0))}/>
+            </div>
+
+            {/* Flag graphs above a certain threshold */}
             <div>
                 <p>Case Upper Threshold</p>
                 <input type={"number"} value={context.upperThreshold} onChange={e => context.setUpperThreshold(parseInt(e.target.value))}/>

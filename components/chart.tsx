@@ -165,7 +165,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
             />
 
             {/* Daily New Cases / 7 Day Average, Normalized to 100k */}
-            <YAxis tickCount={6} domain={[0, 25]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
+            <YAxis tickCount={6} domain={[0, context.ymax]} allowDataOverflow={true} allowDecimals={false} fontSize={12} yAxisId={"L"} orientation={"left"}/>
             <Line
                 isAnimationActive={false}
                 yAxisId={"L"}
@@ -184,7 +184,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         </LineChart>
 
-    }, [data, code, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
+    }, [data, code, context.ymax, context.dateLower, context.dateUpper, refAreaLeft, refAreaRight, context.size])
 
     return (<div className={`${style.container} ${Threshold()} ${context.size == sizes.default ? style.default : style.mini}`}>
 
