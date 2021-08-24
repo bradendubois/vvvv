@@ -3,6 +3,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 import { Country } from "../api_codes";
 import { dates } from "./dates";
 import { CountryData } from "../../pages";
+import { COVIDDaily } from "../types";
 
 
 /// A 'result' computed for each region when searching for a range that best fits a source/selected range
@@ -172,6 +173,134 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             })
 
      }, [])
+
+    useEffect(() => {
+
+        if (canadaData === undefined || americaData === undefined) {
+            return
+        }
+
+        let threeweeksago = new Date()
+        threeweeksago.setDate(threeweeksago.getDate() - 21)
+        threeweeksago.setHours(0, 0, 0, 0)
+
+        // By default, search last 21 days in SK
+        searchMatch(Country.Canada, "SK", threeweeksago, 21)
+
+    }, [canadaData, americaData])
+
+    /**
+     * Computes a basic RMSE between the two sets of daily COVID data
+     * @param source One set of data points - usually the one that initiated the search
+     * @param target A second set of data points
+     */
+    const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
+
+        if (source.length !== target.length) {
+            return -1
+            // throw new Error("Non-matching lengths across given parameters")
+        }
+
+        let total = 0
+
+        source.forEach((point, index) => {
+
+            let a = point["Avg. Case (Normalized)"]
+            let b = target[index]["Avg. Case (Normalized)"]
+
+            // -1 is used as an error value if a range cannot be properly computed
+            if (a === undefined || b === undefined) {
+                return -1
+            }
+
+            total += (a - b) ** 2
+        })
+
+        return Math.sqrt(total)
+    }
+
+
+    /**
+     * Hook to compute all 'closest' ranges for each dataset; this is used when the user has selected a range on one
+     * graph with the intention of finding the best match on all other graphs.
+     */
+    useEffect(() => {
+
+        if (match === undefined) return
+
+        let source = (match.country === Country.Canada ? canadaData : americaData)
+
+        let target = source?.[match.region]
+        if (target === undefined) {
+            return
+        }
+
+        // Slice desired window from source
+        let idx = target.findIndex(x => x.date.getTime() == match?.date.getTime())
+        target = target.slice(idx,  idx+match?.points)
+
+        // Helper - computes all updates on one dataset (one country)
+        const countryUpdate = (dataset: CountryData) => {
+
+            let data = Object.entries(dataset).map(([k, v]) => {
+
+                let data = v
+                let i = 0
+                let best
+
+                while (true) {
+
+                    // Slice a window - if it's too small, we've hit passed the end / newest window
+                    let slice = data.slice(i, i + (match?.points ?? 0))
+                    if (slice.length < (match?.points ?? 1)) {
+                        break
+                    }
+
+                    // Slice out of viewable range
+                    if (slice[0].date < dateLower || slice[slice.length-1].date > dateUpper) {
+                        i += 1
+                        continue
+                    }
+
+                    // Compute RMSE - Update 'best' if better
+                    let result = rmse(slice, target ?? [])
+                    if (result != -1 && (!best || result < best.rmse)) {
+                        best = {
+                            rmse: result,
+                            startDate: slice[0].date,
+                            points: slice.length
+                        }
+                    }
+
+                    i += 1
+                }
+
+                return [k, best]
+            })
+
+            return data
+        }
+
+        // @ts-ignore
+        let canadian = countryUpdate(canadaData)
+
+        // @ts-ignore
+        let american = countryUpdate(americaData)
+
+        let threshold = canadian.concat(american)
+            // @ts-ignore
+            .map(([k, v]) => v.rmse)
+            .sort((a, b) => b - a)[4]
+
+        // @ts-ignore
+        // Canadian data
+        updateMatches(Country.Canada, Object.fromEntries(canadian.filter(([k, v]) => v.rmse >= threshold || v.rmse === 0)))
+
+        // @ts-ignore
+        // American data
+        updateMatches(Country.America, Object.fromEntries(american.filter(([k, v]) => v.rmse >= threshold || v.rmse === 0)))
+
+    }, [match])
 
     /// Toggle sizes of the graphs
     const toggleMini = () => {

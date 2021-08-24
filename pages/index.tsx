@@ -34,104 +34,6 @@ export type CountryData = {
  */
 const App = () => {
 
-    const context = useMapContext()
-
-    /**
-     * Computes a basic RMSE between the two sets of daily COVID data
-     * @param source One set of data points - usually the one that initiated the search
-     * @param target A second set of data points
-     */
-    const rmse = (source: COVIDDaily[], target: COVIDDaily[]) => {
-
-        if (source.length !== target.length) {
-            return -1
-            // throw new Error("Non-matching lengths across given parameters")
-        }
-
-        let total = 0
-
-        source.forEach((point, index) => {
-
-            let a = point["Avg. Case (Normalized)"]
-            let b = target[index]["Avg. Case (Normalized)"]
-
-            // -1 is used as an error value if a range cannot be properly computed
-            if (a === undefined || b === undefined) {
-                return -1
-            }
-
-            total += (a - b) ** 2
-        })
-
-        return Math.sqrt(total)
-    }
-
-
-    /**
-     * Hook to compute all 'closest' ranges for each dataset; this is used when the user has selected a range on one
-     * graph with the intention of finding the best match on all other graphs.
-     */
-    useEffect(() => {
-
-        if (context.match === undefined) return
-
-        let source = (context.match.country === Country.Canada ? context.canadaData : context.americaData)
-
-        let target = source?.[context.match.region]
-        if (target === undefined) {
-            return
-        }
-
-        // Slice desired window from source
-        let idx = target.findIndex(x => x.date.getTime() == context.match?.date.getTime())
-        target = target.slice(idx,  idx+context.match?.points)
-
-        // Helper - computes all updates on one dataset (one country)
-        const countryUpdate = (dataset: CountryData) => {
-
-            let data = Object.fromEntries(Object.entries(dataset).map(([k, v]) => {
-
-                let data = v
-                let i = 0
-                let best
-
-                while (true) {
-
-                    // Slice a window - if it's too small, we've hit passed the end / newest window
-                    let slice = data.slice(i, i + (context.match?.points ?? 0))
-                    if (slice.length < (context.match?.points ?? 1)) {
-                        break
-                    }
-
-                    // Compute RMSE - Update 'best' if better
-                    let result = rmse(slice, target ?? [])
-                    if (result != -1 && (!best || result < best.rmse)) {
-                        best = {
-                            rmse: result,
-                            startDate: slice[0].date,
-                            points: slice.length
-                        }
-                    }
-
-                    i += 1
-                }
-
-                return [k, best]
-            }))
-
-            return data
-        }
-
-        // @ts-ignore
-        // Canadian data
-        context.updateMatches(Country.Canada, countryUpdate(context.canadaData))
-
-        // @ts-ignore
-        // American data
-        context.updateMatches(Country.America, countryUpdate(context.americaData))
-
-    }, [context.match])
-
     return (<>
 
         {/* Head component with any metadata for SEO / etc. */}
@@ -169,6 +71,7 @@ const App = () => {
                     <p>The graphs present snapshot comparisons of total vaccinations and daily new cases (7 day rolling average to eliminate vacillations) over time by region in the US and Canada (states, provinces, territories).</p>
                     <p>Both numbers are presented as proportions (percentages of population for vaccinations, and cases/100,000). The green line indicates percentage of persons with first doses, the blue line percentage of persons completely vaccinated (right hand y labels), and the red line shows daily cases (left hand y labels).</p>
                     <p>Additionally, graphs are tinted according to case thresholds. A white background indicates fewer than 9 daily cases/100,000, the lighter shade of red indicates between 9 and 18 cases/100,000 per day, and the darkest red indicates more than 18 cases/100,000 per day. It is possible to edit the start and end dates for the display and to change these thresholds.</p>
+                    <p> Grayed out areas indicate graphs that are closest to those of the selected graph segment, which is Saskatchewan for the last 21 days. To select different segment, just click and drag on any graph.</p>
                     <p>Because some jurisdictions have stopped daily reporting, this visualization has been developed on the fly for those interested in continuously monitoring these numbers, which are presented without editorial comment. The 60+ graphs may take some time to draw and the response time is slow in the edit boxes. The website will be tweaked to improve performance and presentation.</p>
                 </div>
             </div>

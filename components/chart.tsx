@@ -41,7 +41,7 @@ const Chart = ({ country, code, display }: ChartProps) => {
         let match = matches?.[code]
 
         // No match ; clear
-        if (match === undefined) {
+        if (match === undefined || data === undefined) {
             setRefAreaLeft(undefined)
             setRefAreaRight(undefined)
             return
@@ -51,6 +51,10 @@ const Chart = ({ country, code, display }: ChartProps) => {
 
         let upper = new Date(lower.getTime())
         upper.setDate(upper.getDate() + match.points + 1)
+
+        if (upper > data[code][data[code].length-1].date) {
+            upper = data[code][data[code].length-1].date
+        }
 
         setRefAreaLeft(`${lower.getDate()}-${lower.getMonth()+1}-${lower.getFullYear()}`)
         setRefAreaRight(`${upper.getDate()}-${upper.getMonth()+1}-${upper.getFullYear()}`)
