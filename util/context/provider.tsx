@@ -41,8 +41,8 @@ type MapInterface = {
     upperThreshold: number  // Value above which is considered high
     setLowerThreshold(x: number): void  // Setter the lower/medium boundary
     setUpperThreshold(x: number): void  // Setter for the medium/upper boundary
-
-
+    ymax: number                // y-axis maximum for graph
+    setYmax(x: number): void    // setter for y-max
     /// Data on COVID Cases / Vaccinations for each country
     canadaData?: CountryData
     americaData?: CountryData
@@ -92,6 +92,8 @@ export const MapContext = createContext<MapInterface>({
     upperThreshold: 15,
     setLowerThreshold: () => {},
     lowerThreshold: 15,
+    ymax: 25,
+    setYmax: () => {},
     searchMatch: () => {},
     canadaData: {},
     americaData: {},
@@ -134,6 +136,7 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
     const [americaMatches, setAmericaMatches] = useState<SearchMatch>()
 
     const [size, setSize] = useState(sizes.default)
+    const [ymax, setymax] = useState(25)
 
     /// Get all data for the Graphs from OpenCOVID and Socrata
     useEffect(() => {
@@ -221,6 +224,9 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
             upperThreshold,
             setLowerThreshold,
             setUpperThreshold,
+
+            ymax,
+            setYmax: setymax,
 
             canadaData,
             americaData,
