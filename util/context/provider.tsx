@@ -289,16 +289,16 @@ export const MapProvider = ({ children }: { children: ReactNode}) => {
 
         let threshold = canadian.concat(american)
             // @ts-ignore
-            .map(([k, v]) => v.rmse)
+            .map(([k, v]) => v.rmse ?? 0)
             .sort((a, b) => b - a)[4]
 
         // @ts-ignore
         // Canadian data
-        updateMatches(Country.Canada, Object.fromEntries(canadian.filter(([k, v]) => v.rmse >= threshold || v.rmse === 0)))
+        updateMatches(Country.Canada, Object.fromEntries(canadian.filter(([k, v]) => (v.rmse ?? 0) >= threshold || (v.rmse ?? 0) === 0)))
 
         // @ts-ignore
         // American data
-        updateMatches(Country.America, Object.fromEntries(american.filter(([k, v]) => v.rmse >= threshold || v.rmse === 0)))
+        updateMatches(Country.America, Object.fromEntries(american.filter(([k, v]) => (v.rmse ?? 0) >= threshold || (v.rmse ?? 0) === 0)))
 
     }, [match])
 
